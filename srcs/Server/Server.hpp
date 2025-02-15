@@ -17,9 +17,8 @@ namespace IRC
 			static bool	_signal;
 			std::vector<struct pollfd> fds;
 
-			//These two can change to vector
 			std::map<int, Client*> clients; /**<client_fd, Client*> */
-			std::map<string, Channel*> channels;
+			std::map<string, Channel*> channels; /**<channel name Client*> */
 			
             Server();
             ~Server();
