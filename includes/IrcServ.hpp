@@ -25,13 +25,13 @@
 # include <pthread.h> //-> for mutex in singleton class
 # include <cstdarg>
 
-# include "Server.hpp"
-# include "Client.hpp"
-# include "Channel.hpp"
-# include "Logger.hpp"
-
 //--------------------namespace-------------------------//
 using std::cout;
 using std::endl;
 using std::cerr;
 using std::string;
+
+# include "Client.hpp"
+# include "Channel.hpp"
+# include "Server.hpp"
+# include "Logger.hpp"

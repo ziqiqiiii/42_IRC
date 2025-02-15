@@ -4,7 +4,7 @@
 
 SRCS_PATH		=	srcs/
 OBJS_PATH		=	objs/
-HEAD_PATH		=	srcs/
+HEAD_PATH		=	includes/
 
 # Finds every header in the src directory
 FILES			=	$(shell find $(SRCS_PATH) -name '*.cpp')
@@ -13,14 +13,14 @@ FILES			=	$(shell find $(SRCS_PATH) -name '*.cpp')
 HEAD_FILES		=	$(shell find $(HEAD_PATH) -name '*.hpp')
 
 #Finds every directory and subdirectories in include directory and adds -I
-INCLUDES		=	$(addprefix -I, $(shell find $(HEAD_PATH) -type d))
+INCLUDES		=	$(addprefix -I, $(shell find $(HEAD_PATH) $(SRCS_PATH) -type d))
 
 OBJS			=	$(patsubst $(SRCS_PATH)%.cpp, $(OBJS_PATH)%.o, $(FILES))
 DEPS			=	$(patsubst $(SRCS_PATH)%.cpp, $(OBJS_PATH)%.d, $(FILES))
 
 NAME			=	ircserv
 
-CC				=	g++
+CC				=	c++
 RM				=	rm -rf
 CFLAGS			=	-Wall -Wextra -Werror -std=c++98
 

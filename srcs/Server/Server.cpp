@@ -1,5 +1,9 @@
 # include "Server.hpp"
 
+bool            IRC::Server::_signal = false;
+IRC::Server* 	IRC::Server::instancePtr = NULL; /**< Static pointer to the Singleton instance of Server. */
+pthread_mutex_t IRC::Server::mtx = PTHREAD_MUTEX_INITIALIZER; /**< Mutex to ensure thread safety during Singleton instance creation. */
+
 /**
  * @brief Default constructor for Server.
  * Initializes a Server object. Private to enforce Singleton design.
@@ -36,8 +40,6 @@ IRC::Server& IRC::Server::operator=(const Server &other)
     return *this;
 }
 
-IRC::Server* IRC::Server::instancePtr = NULL; /**< Static pointer to the Singleton instance of Server. */
-pthread_mutex_t IRC::Server::mtx = PTHREAD_MUTEX_INITIALIZER; /**< Mutex to ensure thread safety during Singleton instance creation. */
 
 /**
  * @brief Retrieves the Singleton instance of the Server class.

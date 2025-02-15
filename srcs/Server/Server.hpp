@@ -2,6 +2,8 @@
 
 # include "IrcServ.hpp"
 
+class Channel;
+
 namespace IRC
 {
     class Server
@@ -41,6 +43,3 @@ namespace IRC
 
     };
 }
-
-bool            IRC::Server::_signal = false;
-IRC::Server*    IRC::Server::instancePtr = NULL;
