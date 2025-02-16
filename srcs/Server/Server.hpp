@@ -2,7 +2,8 @@
 
 # include "IrcServ.hpp"
 
-class Channel;
+class ISubject;
+class IObserver;
 
 namespace IRC
 {
@@ -17,8 +18,8 @@ namespace IRC
 			static bool	_signal;
 			std::vector<struct pollfd> fds;
 
-			std::map<int, Client*> clients; /**<client_fd, Client*> */
-			std::map<string, Channel*> channels; /**<channel name Client*> */
+			std::map<int, IObserver*> _clients; /**<client_fd, IObserver* client>*/
+			std::map<string, ISubject*> _channels; /**<channel_name, ISubject* channel>*/
 			
             Server();
             ~Server();
@@ -33,10 +34,13 @@ namespace IRC
 			void	receiveNewData(int fd);
 			void	closeFds();
 			void	clearClient(int fd);
+
 			// Observer Pattern Methods
-			void attach(Client* client);
-			void detach(int fd);
-			void notifyAll(const string& message);
+			void	addClient(const IObserver* client);
+			void	createChannel(const string& channel_name);
+			void	joinChannel(const string& channel_name, const IObserver* client);
+			void	leaveChannel(const string& channel_name, const IObserver* client);
+			void	notifyAll(const string& message);
 
 			static void	signalHandler(int signum);
 

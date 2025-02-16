@@ -2,12 +2,15 @@
 
 # include "IrcServ.hpp"
 
+class IObserver;
+
 class ISubject {
     public:
-        virtual void attach(int client_fd, IObserver* client) = 0;
-        virtual void detach(int client_fd) = 0;
-        virtual void notify(const std::string& message) = 0;
         virtual ~ISubject() {}
+        virtual void    attach(int client_fd, IObserver* client) = 0;
+        virtual void    detach(int client_fd) = 0;
+        virtual void    notify(const std::string& message) = 0;
+        virtual string  getName() const = 0;
 };
 
 namespace IRC
@@ -32,6 +35,6 @@ namespace IRC
 			void	setChannelName(const string& channel_name);
 
             //Getter(s)
-            string    getChannelName() const;
+            string  getName() const;
     };
 }
