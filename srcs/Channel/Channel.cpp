@@ -17,7 +17,7 @@ IRC::Channel& IRC::Channel::operator=(const Channel &other)
 //ISubject Functions
 void	IRC::Channel::attach(int client_fd, IObserver* client)
 {
-	IRC::Logger* logManager;
+	IRC::Logger* logManager = IRC::Logger::getInstance();
 
 	if (this->_clients.find(client_fd) != this->_clients.end())
 		logManager->logMsg(RED, (client_fd + " already exist in channel " + this->_channelName).c_str(), strerror(errno));
@@ -27,7 +27,7 @@ void	IRC::Channel::attach(int client_fd, IObserver* client)
 
 void	IRC::Channel::detach(int client_fd)
 {
-	IRC::Logger* logManager;
+	IRC::Logger* logManager = IRC::Logger::getInstance();
 
 	std::map<int, IObserver*>::iterator it = this->_clients.find(client_fd);
 	if (it != this->_clients.end())
@@ -53,4 +53,4 @@ void	IRC::Channel::sendMessage(const IObserver* sender, const string& msg)
 void	IRC::Channel::setChannelName(const string& channel_name) { this->_channelName = channel_name; }
 
 //Getter(s)
-string	IRC::Channel::getChannelName() const { return this->_channelName; }
+string	IRC::Channel::getName() const { return this->_channelName; }
