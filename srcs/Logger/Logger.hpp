@@ -5,7 +5,7 @@
 //--------------------Colors-----------------------------//
 // ANSI escape codes for colored output
 # define RESET			"\x1B[0m" /**< Resets text formatting to default. */
-# define RED				"\x1B[31m" /**< Red text color. */
+# define RED			"\x1B[31m" /**< Red text color. */
 # define LIGHT_RED		"\x1B[91m" /**< Light red text color. */
 # define WHITE			"\x1B[37m" /**< White text color. */
 # define BLINK			"\x1b[5m" /**< Blinking text. */
