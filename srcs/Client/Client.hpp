@@ -7,7 +7,9 @@ class IObserver {
 	public:
 		virtual ~IObserver() {}
 		virtual void	update(const string& message) = 0;
-		virtual	string	getName() const = 0;
+		virtual	string	getUsername() const = 0;
+		virtual	string	getNickname() const = 0;
+		virtual int		getClientFd() const = 0;
 };
 
 namespace IRC
@@ -35,8 +37,7 @@ namespace IRC
 			void	setAuthenticated(bool auth);
 
 			//Getters
-			int		getFd() const;
-			string	getName() const;
+			int		getClientFd() const;
 			string	getUsername() const;
 			string	getNickname() const;
 			bool	isClienAutheticated() const;
