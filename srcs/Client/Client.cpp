@@ -41,7 +41,7 @@ bool	IRC::Client::isClienAutheticated() const { return this->_autheticated; }
 
 void	IRC::Client::update(const string& message)
 {
-	IRC::Logger* logManager;
+	IRC::Logger* logManager = IRC::Logger::getInstance();
 
     logManager->logMsg(LIGHT_BLUE, ("[ " + this->getNickname() + " ] received: " + message).c_str());
 }
