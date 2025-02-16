@@ -36,13 +36,12 @@ namespace IRC
 			void	clearClient(int fd);
 
 			// Observer Pattern Methods
-			void	addClient(const IObserver* client);
+			void	addClient(IObserver* client);
 			void	createChannel(const string& channel_name);
-			void	joinChannel(const string& channel_name, const IObserver* client);
-			void	leaveChannel(const string& channel_name, const IObserver* client);
+			void	joinChannel(const string& channel_name, IObserver* client);
+			void	leaveChannel(const string& channel_name, IObserver* client);
 			void	notifyAll(const string& message);
 
 			static void	signalHandler(int signum);
-
     };
 }
