@@ -1,6 +1,6 @@
 #pragma once
 
-# include "IrcServ.hpp"
+# include "ircserv.hpp"
 
 //--------------------Colors-----------------------------//
 // ANSI escape codes for colored output
