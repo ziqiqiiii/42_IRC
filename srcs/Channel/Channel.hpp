@@ -1,6 +1,6 @@
 #pragma once
 
-# include "IrcServ.hpp"
+# include "ircserv.hpp"
 
 class IObserver;
 
