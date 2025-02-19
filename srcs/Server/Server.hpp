@@ -28,7 +28,7 @@ namespace IRC
         public:
             static Server* getInstance();
 
-			void	serverInit();
+			void	serverInit(int port);
 			void	serverSocket();
 			void	acceptNewClient();
 			void	receiveNewData(int fd);
