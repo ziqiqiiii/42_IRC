@@ -11,10 +11,12 @@ namespace IRC
         private:
             static Server *instancePtr; /**< Pointer to the Singleton instance of Server. */
             static pthread_mutex_t mtx; /**< Mutex for thread-safe Singleton access. */
-
+			
             int	_port;
             int	serverSocketFd;
 			static bool	_signal;
+			Socket	_socket;
+			string	_password;
 			std::vector<struct pollfd> fds;
 
 			std::map<int, Client*> clients; /**<client_fd, Client*> */
@@ -24,11 +26,13 @@ namespace IRC
             ~Server();
             Server(const Server &other);
             Server &operator=(const Server &other);
-        public:
+		
+			void	socketInit();
+		
+		public:
             static Server* getInstance();
 
-			void	serverInit();
-			void	serverSocket();
+			void	serverInit(int port, string password);
 			void	acceptNewClient();
 			void	receiveNewData(int fd);
 			void	closeFds();

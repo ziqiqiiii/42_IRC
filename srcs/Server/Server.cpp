@@ -58,6 +58,18 @@ IRC::Server* IRC::Server::getInstance() {
 	return instancePtr;
 }
 
+void	IRC::Server::serverInit(int port, string password)
+{
+	this->_password = password;
+	this->_port = port;
+	this->socketInit();
+}
+
+void	IRC::Server::socketInit()
+{
+	this->_socket = Socket(AF_INET, SOCK_STREAM, 0, this->_port, INADDR_ANY);
+}
+
 void	IRC::Server::signalHandler(int signum)
 {
 	IRC::Logger	*logManager = IRC::Logger::getInstance();
