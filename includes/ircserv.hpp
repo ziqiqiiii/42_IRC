@@ -31,6 +31,7 @@ using std::endl;
 using std::cerr;
 using std::string;
 
+# include "Socket.hpp"
 # include "Client.hpp"
 # include "Channel.hpp"
 # include "Server.hpp"
