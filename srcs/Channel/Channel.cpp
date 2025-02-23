@@ -12,7 +12,7 @@ IRC::Channel& IRC::Channel::operator=(const Channel &other)
 {
 	if (this != &other)
         this->_channel_name = other._channel_name;
-        this->_clients = other._clients;
+        this->_channel_clients = other._channel_clients;
     return *this;
 }
 
@@ -22,10 +22,10 @@ void	IRC::Channel::attach(IObserver* client)
 	int client_fd = client->getClientFd();
 	IRC::Logger* logManager = IRC::Logger::getInstance();
 
-	if (this->_clients.find(client_fd) != this->_clients.end())
+	if (this->_channel_clients.find(client_fd) != this->_channel_clients.end())
 		logManager->logMsg(RED, (client->getNickname() + " already exist in channel " + this->_channel_name).c_str(), strerror(errno));
 	else
-		this->_clients[client_fd] = client;
+		this->_channel_clients[client_fd] = client;
 }
 
 void	IRC::Channel::detach(IObserver* client)
@@ -33,9 +33,9 @@ void	IRC::Channel::detach(IObserver* client)
 	int	client_fd = client->getClientFd();
 	IRC::Logger* logManager = IRC::Logger::getInstance();
 
-	std::map<int, IObserver*>::iterator it = this->_clients.find(client_fd);
-	if (it != this->_clients.end())
-		this->_clients.erase(it);
+	std::map<int, IObserver*>::iterator it = this->_channel_clients.find(client_fd);
+	if (it != this->_channel_clients.end())
+		this->_channel_clients.erase(it);
 	else
 		logManager->logMsg(RED, (client->getNickname() + " deosn't exist in channel " + this->_channel_name).c_str(), strerror(errno));
 }
@@ -44,7 +44,7 @@ void	IRC::Channel::notify(const std::string& message)
 {
 	std::map<int, IObserver*>::iterator	it;
 
-	for (it = this->_clients.begin(); it != this->_clients.end(); ++it)
+	for (it = this->_channel_clients.begin(); it != this->_channel_clients.end(); ++it)
 		it->second->update(message);
 }
 
@@ -61,9 +61,9 @@ string	IRC::Channel::getName() const { return this->_channel_name; }
 
 bool	IRC::Channel::isClientExist(const int client_fd)
 {
-	std::map<int, IObserver*>::iterator it = this->_clients.find(client_fd);
+	std::map<int, IObserver*>::iterator it = this->_channel_clients.find(client_fd);
 
-	if (it != this->_clients.end())
+	if (it != this->_channel_clients.end())
 		return true;
 	return false;
 }
