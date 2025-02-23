@@ -15,16 +15,6 @@
 int	main(int argc, char **argv)
 {
 	(void)argv;
-	// if (argc < 3)
-	// {
-	// 	cerr << "Too few arguments\n";
-	// 	return (1);
-	// }
-	// if (argc > 3)
-	// {
-	// 	cerr << "Too many arguments\n";
-	// 	return (1);
-	// }
 	try {
 		IRC::Utils::checker(argc);
 	} catch(std::exception &e) {
