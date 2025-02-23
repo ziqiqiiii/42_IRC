@@ -4,6 +4,7 @@
 
 class ISubject;
 class IObserver;
+class Socket;
 
 namespace IRC
 {
@@ -16,7 +17,7 @@ namespace IRC
             int	_port;
             int	serverSocketFd;
 			static bool	_signal;
-			Socket	_socket;
+			Socket*	_socket;
 			string	_password;
 			std::vector<struct pollfd> fds;
 
@@ -33,8 +34,8 @@ namespace IRC
 		public:
             static Server* getInstance();
 
-			void	serverInit(int port);
-			void	serverSocket();
+			void	serverInit(int port, string password);
+			// void	serverSocket();
 			void	acceptNewClient();
 			void	receiveNewData(int fd);
 			void	closeFds();
