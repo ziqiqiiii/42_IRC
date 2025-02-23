@@ -27,6 +27,6 @@ class Socket
 		// Socket Class Functions
 		void bindConnection();
 		void listenConnection();
-		int acceptConnection();
+		int acceptConnection(struct sockaddr_in* client_addr);
 		void testConnection(int test_variable);
 };
