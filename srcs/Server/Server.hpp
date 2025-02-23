@@ -19,9 +19,9 @@ namespace IRC
 			static bool	_signal;
 			Socket*	_socket;
 			string	_password;
-			std::vector<struct pollfd> fds;
+			std::vector<struct pollfd> _fds_poll;
 
-			std::map<int, IObserver*> _clients; /**<client_fd, IObserver* client>*/
+			std::map<int, IObserver*> _server_clients; /**<client_fd, IObserver* client>*/
 			std::map<string, ISubject*> _channels; /**<channel_name, ISubject* channel>*/
 			
             Server();
@@ -30,23 +30,29 @@ namespace IRC
             Server &operator=(const Server &other);
 		
 			void	socketInit();
-		
+			void	serverLoop();
 		public:
             static Server* getInstance();
 
 			void	serverInit(int port, string password);
-			// void	serverSocket();
 			void	acceptNewClient();
-			void	receiveNewData(int fd);
-			void	closeFds();
-			void	clearClient(int fd);
-
+			void	receiveNewData(int client_fd);
+			void	addFdToPoll(int fd);
+			void	setNonBlock(int fd);
+			
 			// Observer Pattern Methods
 			void	addClient(IObserver* client);
 			void	createChannel(const string& channel_name);
 			void	joinChannel(const string& channel_name, IObserver* client);
 			void	leaveChannel(const string& channel_name, IObserver* client);
 			void	notifyAll(const string& message);
+			void	removeClient(int client_fd);
+			void	removeChannel(ISubject* channel);
+			
+			// For destructor
+			void	closeFds();
+			void	clearClients();
+			void	clearChannels();
 
 			static void	signalHandler(int signum);
     };
