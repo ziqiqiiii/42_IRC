@@ -67,10 +67,10 @@ void	IRC::Server::serverInit(int port, string password)
 
 void	IRC::Server::socketInit()
 {
-	this->_socket = Socket(AF_INET, SOCK_STREAM, 0, this->_port, INADDR_ANY);
-	this->_socket.bindConnection();
-	this->_socket.listenConnection();
-	this->_socket.acceptConnection();
+	this->_socket = new Socket(AF_INET, SOCK_STREAM, 0, this->_port, INADDR_ANY);
+	this->_socket->bindConnection();
+	this->_socket->listenConnection();
+	this->_socket->acceptConnection();
 }
 
 void	IRC::Server::signalHandler(int signum)
