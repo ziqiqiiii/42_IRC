@@ -29,8 +29,8 @@ namespace IRC
             Channel(const string channel_name);
             Channel(const Channel &other);
             Channel &operator=(const Channel &other);
-            void	attach(int client_fd, IObserver* client);
-			void	detach(int client_fd);
+            void	attach(IObserver* client);
+			void	detach(IObserver* client);
 			void	notify(const std::string& message);
 			void	sendMessage(const IObserver* sender, const string& msg);
 
@@ -38,6 +38,7 @@ namespace IRC
 			void	setChannelName(const string& channel_name);
 
             //Getter(s)
-            string    getChannelName() const;
+            string  getName() const;
+            bool    isClientExist(const int client_fd);
     };
 }
