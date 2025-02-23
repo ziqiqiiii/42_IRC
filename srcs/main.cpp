@@ -14,9 +14,16 @@
 
 int	main(int argc, char **argv)
 {
-	(void)argv;
+	IRC::Server* server = IRC::Server::getInstance();
+	(void) argv;
+	(void) argc;
+
 	try {
-		IRC::Utils::checker(argc);
+		signal(SIGINT, IRC::Server::signalHandler); //-> catch the signal (ctrl + c)
+		signal(SIGQUIT, IRC::Server::signalHandler); //-> catch the signal (ctrl + \)
+		// IRC::Utils::checker(argc);
+
+		server->serverInit(8080, string("abc"));
 	} catch(std::exception &e) {
 		std::cerr << "Error: " << e.what() << std::endl;
 		return (1);

@@ -25,6 +25,8 @@
 # include <pthread.h> //-> for mutex in singleton class
 # include <cstdarg>
 # include <stdexcept>
+# include <cstdio>
+# include <sys/epoll.h>
 
 //--------------------namespace-------------------------//
 using std::cout;
