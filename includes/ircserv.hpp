@@ -24,6 +24,7 @@
 # include <map>
 # include <pthread.h> //-> for mutex in singleton class
 # include <cstdarg>
+# include <stdexcept>
 
 //--------------------namespace-------------------------//
 using std::cout;
@@ -36,3 +37,4 @@ using std::string;
 # include "Channel.hpp"
 # include "Server.hpp"
 # include "Logger.hpp"
+# include "Utils.hpp"
