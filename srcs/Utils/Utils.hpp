@@ -12,6 +12,7 @@ namespace IRC
             Utils(const Utils& other);
             Utils& operator=(const Utils& other);
         public:
-            static void checker(int argc);
+            static void		checker(int argc);
+            static string	intToString(int num);
     };
 }
