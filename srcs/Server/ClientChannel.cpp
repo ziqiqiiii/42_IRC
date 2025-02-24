@@ -17,8 +17,10 @@ void	IRC::Server::removeClient(int client_fd)
 	std::map<int, IObserver*>::iterator it = this->_server_clients.find(client_fd);
 	IRC::Logger* logManager = IRC::Logger::getInstance();
 
-	if (it != this->_server_clients.end())
+	if (it != this->_server_clients.end()) {
+		close(it->first);
 		this->_server_clients.erase(it);
+	}
 	else
 		logManager->logMsg(RED, (it->second->getNickname() + " deosn't exist in server").c_str(), strerror(errno));
 }
