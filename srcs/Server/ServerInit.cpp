@@ -17,56 +17,80 @@ void	IRC::Server::socketInit()
 	this->setNonBlock(this->_socket->getFd());
 	this->_socket->bindConnection();
 	this->_socket->listenConnection();
-	// Add server fd into the fds poll
-	this->addFdToPoll(this->_socket->getFd());
+	// Epoll functions
+	this->initEpoll();
+	this->myEpollAdd(this->_socket->getFd(), EPOLLIN | EPOLLPRI);
 
 	logManager->logMsg(LIGHT_BLUE, ("Server " + IRC::Utils::intToString(this->_socket->getFd()) + " connected").c_str());
 	logManager->logMsg(DARK_GREY, "Waiting to accept a connection ...");
 
-	this->serverLoop();
+	this->eventLoop();
 	this->closeFds();
 }
 
-void	IRC::Server::serverLoop()
+void	IRC::Server::eventLoop()
 {
-	// while (IRC::Server::_signal == false) {
-	// 	if 
-	// }
+	int					epoll_return;
+	struct epoll_event	events[100];
+	int					timeout = -1;
+	int					maxevents = 1;
+
+	while (IRC::Server::_signal == false) {
+		epoll_return = epoll_wait(this->_epoll_fd, events, maxevents, timeout);
+		for (int i = 0; i < epoll_return; i++)
+		{
+			if (events[i].data.fd == this->_socket->getFd() && events[i].events == EPOLLIN)
+				this->acceptNewClient();
+			else if (events[i].events == EPOLLIN)
+				this->receiveNewData(events[i], epoll_return);
+		}
+	}
 }
 
 void	IRC::Server::acceptNewClient()
 {
-	Client				new_client;
+	Client				*new_client = new Client();
 	struct	sockaddr_in client_addr;
 	int					client_fd;
 	IRC::Logger* 		logManager = IRC::Logger::getInstance();
+	char				message[100];
 
+	memset(&client_addr, 0, sizeof(client_addr));
 	client_fd = this->_socket->acceptConnection(&client_addr);
-	if (client_fd == -1)
+	if (client_fd == -1) {
+		if (errno == EAGAIN)
+			return ;
 		throw std::runtime_error("accept() failed");
-	this->setNonBlock(client_fd);
-	this->addFdToPoll(client_fd);
-	new_client.setFd(client_fd);
-	new_client.setIpAddr(inet_ntoa((client_addr.sin_addr)));
-	this->addClient(&new_client);
+	}
+	this->setNonBlock(client_fd);	
+	this->myEpollAdd(client_fd, EPOLLIN | EPOLLPRI);
+	new_client->setFd(client_fd);
+	new_client->setIpAddr(inet_ntoa((client_addr.sin_addr)));
+	this->addClient(new_client);
 
-	logManager->logMsg(YELLOW, ("Client " + IRC::Utils::intToString(client_fd) + " connected").c_str());
+	sprintf(message, "Cliend [fd: %d] is connected", client_fd);
+	logManager->logMsg(YELLOW, message);
 }
 
-void	IRC::Server::receiveNewData(int client_fd)
+void	IRC::Server::receiveNewData(epoll_event& event, int& num_event)
 {
 	char			buffer[1024];
 	size_t			bytes;
 	IRC::Logger*	logManager = IRC::Logger::getInstance();
+	char			message[1500];
+	int				client_fd = event.data.fd;
 	
 	memset(buffer, 0, sizeof(buffer));
 	bytes = recv(client_fd, buffer, sizeof(buffer) - 1, 0);
 	if (bytes <= 0) {
 		logManager->logMsg(LIGHT_BLUE, ("Client " + IRC::Utils::intToString(client_fd) + " disconnected ").c_str());
+		this->myEpollDelete(client_fd);
 		this->removeClient(client_fd);
+		num_event--;
 	} else {
 		buffer[bytes] = '\0';
-		logManager->logMsg(LIGHTMAGENTA, ("Client " + IRC::Utils::intToString(client_fd) + " receive Data : [ " + buffer + " ]").c_str());
+		sprintf(message, "Client [fd: %d] receive data: [%s]", client_fd, buffer);
+		logManager->logMsg(LIGHTMAGENTA, message);
 	}
 }
 
@@ -76,33 +100,34 @@ void	IRC::Server::setNonBlock(int fd)
 		throw std::runtime_error("Failed to set socket to non-blocking mode");
 }
 
-void	IRC::Server::addFdToPoll(int fd)
+void	IRC::Server::initEpoll()
 {
-	struct pollfd 	poll_fd;
-
-	poll_fd.fd		= fd;
-	poll_fd.events	= POLL_IN;
-	poll_fd.revents = 0;
-	this->_fds_poll.push_back(poll_fd);
+	this->_epoll_fd = epoll_create(1024);
+	if (this->_epoll_fd < 0)
+		throw std::runtime_error("Failed to epoll_create()");
 }
 
-//For the destructors 
-void	IRC::Server::closeFds()
+void	IRC::Server::myEpollAdd(int fd, uint32_t events)
 {
-	IRC::Logger* logManager = IRC::Logger::getInstance();
+	struct epoll_event	event;
 
-	for (size_t i = 0; i < this->_server_clients.size(); i++) {
-		logManager->logMsg(LIGHT_BLUE, ("Client " + IRC::Utils::intToString(this->_server_clients[i]->getClientFd()) + " disconnected ").c_str());
-		close(this->_server_clients[i]->getClientFd());
-	}
+	memset(&event, 0, sizeof(struct epoll_event));
+	event.events = events;
+	if (epoll_ctl(this->_epoll_fd, EPOLL_CTL_ADD, fd, &event) != 0)
+		throw std::runtime_error("Failed to add fd to epoll");
 }
 
-void	IRC::Server::clearClients()
+void	IRC::Server::myEpollDelete(int fd)
 {
-
+	if (epoll_ctl(this->_epoll_fd, EPOLL_CTL_DEL, fd, NULL) != 0)
+		throw std::runtime_error("Failed to delete fd from epoll");
 }
 
-void	IRC::Server::clearChannels()
+void	IRC::Server::signalHandler(int signum)
 {
+	IRC::Logger	*logManager = IRC::Logger::getInstance();
 
+	(void)signum;
+	logManager->logMsg(RED, "Interrup signal (%d) received.\n", signum);
+	IRC::Server::_signal = true;
 }

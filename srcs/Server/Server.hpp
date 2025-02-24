@@ -19,7 +19,7 @@ namespace IRC
 			static bool	_signal;
 			Socket*	_socket;
 			string	_password;
-			std::vector<struct pollfd> _fds_poll;
+			int		_epoll_fd;
 
 			std::map<int, IObserver*> _server_clients; /**<client_fd, IObserver* client>*/
 			std::map<string, ISubject*> _channels; /**<channel_name, ISubject* channel>*/
@@ -30,15 +30,17 @@ namespace IRC
             Server &operator=(const Server &other);
 		
 			void	socketInit();
-			void	serverLoop();
+			void	eventLoop();
 		public:
             static Server* getInstance();
 
 			void	serverInit(int port, string password);
 			void	acceptNewClient();
-			void	receiveNewData(int client_fd);
-			void	addFdToPoll(int fd);
+			void	receiveNewData(epoll_event& event, int& num_event);
 			void	setNonBlock(int fd);
+			void	initEpoll();
+			void	myEpollAdd(int fd, uint32_t events);
+			void	myEpollDelete(int fd);
 			
 			// Observer Pattern Methods
 			void	addClient(IObserver* client);
