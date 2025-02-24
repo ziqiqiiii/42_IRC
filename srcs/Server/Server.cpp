@@ -59,11 +59,3 @@ IRC::Server* IRC::Server::getInstance() {
 }
 
 
-void	IRC::Server::signalHandler(int signum)
-{
-	IRC::Logger	*logManager = IRC::Logger::getInstance();
-
-	(void)signum;
-	logManager->logMsg(RED, "Interrup signal (%d) received.\n", signum);
-	IRC::Server::_signal = true;
-}
