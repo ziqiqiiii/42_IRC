@@ -21,7 +21,6 @@ namespace IRC
     {
         private:
 			string						_channel_name;
-			string						_channelName;
 			std::map<int, IObserver*>	_clients; /**<client_fd, Client*> */
         public:
             Channel();

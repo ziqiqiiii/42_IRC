@@ -15,7 +15,7 @@ namespace IRC
             static pthread_mutex_t mtx; /**< Mutex for thread-safe Singleton access. */
 			
             int	_port;
-            int	serverSocketFd;
+            int	_socketFd;
 			static bool	_signal;
 			Socket*	_socket;
 			string	_password;
@@ -36,18 +36,23 @@ namespace IRC
 
 			void	serverInit(int port, string password);
 			// void	serverSocket();
+			int		acceptConnection();
 			void	acceptNewClient();
 			void	receiveNewData(int fd);
 			void	closeFds();
 			void	clearClient(int fd);
 
 			// Observer Pattern Methods
-			void	addClient(IObserver* client);
-			void	createChannel(const string& channel_name);
-			void	joinChannel(const string& channel_name, IObserver* client);
-			void	leaveChannel(const string& channel_name, IObserver* client);
-			void	notifyAll(const string& message);
+			IObserver	&getClient(int fd);
+			ISubject	&getChannel(string name);
+			void		addClient(IObserver* client);
+			void		createChannel(const string& channel_name);
+			void		joinChannel(const string& channel_name, IObserver* client);
+			void		leaveChannel(const string& channel_name, IObserver* client);
+			void		notifyAll(const string& message);
 
 			static void	signalHandler(int signum);
+
+			int			getSocketFd() const;
     };
 }

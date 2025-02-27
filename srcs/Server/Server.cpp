@@ -40,7 +40,6 @@ IRC::Server& IRC::Server::operator=(const Server &other)
     return *this;
 }
 
-
 /**
  * @brief Retrieves the Singleton instance of the Server class.
  *
@@ -67,3 +66,25 @@ void	IRC::Server::signalHandler(int signum)
 	logManager->logMsg(RED, "Interrup signal (%d) received.\n", signum);
 	IRC::Server::_signal = true;
 }
+
+int	IRC::Server::acceptConnection()
+{
+	return this->_socket->acceptConnection();
+}
+
+void	IRC::Server::receiveNewData(int fd)
+{
+	(void) fd;
+}
+
+void	IRC::Server::closeFds()
+{
+
+}
+
+void	IRC::Server::clearClient(int fd)
+{
+	(void) fd;
+}
+
+int		IRC::Server::getSocketFd() const {return this->_socketFd;}

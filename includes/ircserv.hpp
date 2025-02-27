@@ -9,6 +9,7 @@
 # include <unistd.h> //-> for close()
 # include <arpa/inet.h> //-> for inet_ntoa()
 # include <poll.h> //-> for poll()
+# include <sys/epoll.h> //-> for poll()
 # include <csignal> //-> for signal()
 # include <stdio.h>
 # include <stdlib.h>
@@ -32,8 +33,9 @@ using std::endl;
 using std::cerr;
 using std::string;
 
-# include "Socket.hpp"
+# include "Command.hpp"
 # include "Client.hpp"
+# include "Socket.hpp"
 # include "Channel.hpp"
 # include "Server.hpp"
 # include "Logger.hpp"

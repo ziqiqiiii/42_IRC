@@ -21,6 +21,7 @@ namespace IRC
 			string	_ipAddr;
 			string	_username;
 			string	_nickname;
+			string	_modes;
 			bool	_autheticated;
 			
         public:
