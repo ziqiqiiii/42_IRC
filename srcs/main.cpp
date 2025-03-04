@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   main.cpp                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: pringles <pringles@student.42.fr>          +#+  +:+       +#+        */
+/*   By: amaligno <amaligno@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/14 22:57:34 by amaligno          #+#    #+#             */
-/*   Updated: 2025/02/25 18:27:54 by pringles         ###   ########.fr       */
+/*   Updated: 2025/03/04 17:25:36 by amaligno         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,27 +23,45 @@ int	main(int argc, char **argv)
 	IRC::Server	*server = IRC::Server::getInstance();
 	server->serverInit(atoi(argv[1]), argv[2]);
 	int					epoll_fd = epoll_create1(0);
-	struct epoll_event	server_socket;
-	struct epoll_event	queue[2];
+	struct epoll_event	event;
+	 struct epoll_event	queue[3];
 	int					event_count;
 	int		new_fd;
 	char	buffer[100];
-	server_socket.data.fd = server->getSocketFd();
-	server_socket.events = EPOLLOUT;
-	epoll_ctl(epoll_fd, EPOLL_CTL_ADD, server->getSocketFd(), &server_socket);
-	cout << "Entering event loop\n";
+	event.data.fd = server->getSocketFd();
+	event.events = EPOLLIN | EPOLLPRI;
+	epoll_ctl(epoll_fd, EPOLL_CTL_ADD, server->getSocketFd(), &event);
+	cout << "Entering event loop\n" << std::endl;
 	while (true)
 	{
-		event_count = epoll_wait(epoll_fd, queue, 2, -1);
+		event_count = epoll_wait(epoll_fd, queue, 3, -1);
 		if (event_count < 0)
 			exit (1);
-		cout << "Event count: " << event_count << '\n';
+		cout << "Event count: " << event_count << std::endl;
 		for (int i = 0; i < event_count; i++)
 		{
-			new_fd = server->acceptConnection();
-			read(new_fd, buffer, 100);
-			epoll_ctl(epoll_fd, EPOLL_CTL_ADD, new_fd, &server_socket);
-			cout << buffer << '\n';
+			if (queue[i].data.fd == server->getSocketFd())
+			{
+				// cout << "Accepting connection...\n";
+				new_fd = server->acceptConnection();
+				if (new_fd < 0)
+					continue ;
+				cout << "New Connection accepted!" << std::endl;
+				event.data.fd = new_fd;
+				epoll_ctl(epoll_fd, EPOLL_CTL_ADD, new_fd, &event);
+			}
+			else
+			{
+				if ((queue[i].events & (EPOLLERR | EPOLLHUP)) || recv(queue[i].data.fd, buffer, sizeof(buffer), 0) == 0)
+				{
+					epoll_ctl(epoll_fd, EPOLL_CTL_DEL, queue[i].data.fd, NULL);
+					close(queue[i].data.fd);
+					cout << "socket closed connection\n";
+					continue ;
+				}
+				cout << "Buffer: " << buffer << '\n';
+				bzero(buffer, 100);
+			}
 		}
 	}
 	return (0);

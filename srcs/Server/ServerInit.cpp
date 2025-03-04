@@ -10,7 +10,7 @@ void	IRC::Server::serverInit(int port, string password)
 
 void	IRC::Server::socketInit()
 {
-	this->_socket = new Socket(AF_INET, SOCK_STREAM, 0, this->_port, INADDR_ANY);
+	this->_socket = new Socket(AF_INET, SOCK_STREAM | SOCK_NONBLOCK, 0, this->_port, INADDR_ANY);
 	this->_socket->bindConnection();
 	this->_socket->listenConnection();
 }
