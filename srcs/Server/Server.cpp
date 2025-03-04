@@ -67,9 +67,9 @@ void	IRC::Server::signalHandler(int signum)
 	IRC::Server::_signal = true;
 }
 
-int	IRC::Server::acceptConnection()
+int	IRC::Server::acceptConnection(sockaddr_in &address)
 {
-	return this->_socket->acceptConnection();
+	return this->_socket->acceptConnection(address);
 }
 
 void	IRC::Server::receiveNewData(int fd)
@@ -88,3 +88,19 @@ void	IRC::Server::clearClient(int fd)
 }
 
 int		IRC::Server::getSocketFd() const {return this->_socketFd;}
+
+void	IRC::Server::run()
+{
+	struct	epoll_event	queue[MAX_CLIENTS];
+	int					event_count;
+	while (true)
+	{
+		event_count = epoll_wait(this->_epollfd, queue, MAX_CLIENTS, -1);
+		if (event_count < 0)
+			return ;
+		for (int i; i < event_count; i++)
+		{
+			if (queue[i].data.fd == this->_socket.getFd())
+		}
+	}
+}

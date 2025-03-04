@@ -42,9 +42,8 @@ void Socket::bindConnection()
     this->testConnection(this->getConnection());
 }
 
-int Socket::acceptConnection()
+int Socket::acceptConnection(sockaddr_in &address)
 {
-    struct sockaddr_in address = this->getAddress();
     int addr_len = sizeof(address);
     int new_socket = accept(this->getFd(), (struct sockaddr *)&address, (socklen_t*)&addr_len);
     this->testConnection(new_socket);

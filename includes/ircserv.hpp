@@ -27,6 +27,8 @@
 # include <cstdarg>
 # include <stdexcept>
 
+#define MAX_CLIENTS 50
+
 //--------------------namespace-------------------------//
 using std::cout;
 using std::endl;

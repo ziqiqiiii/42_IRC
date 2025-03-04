@@ -14,6 +14,7 @@ namespace IRC
             static Server *instancePtr; /**< Pointer to the Singleton instance of Server. */
             static pthread_mutex_t mtx; /**< Mutex for thread-safe Singleton access. */
 			
+			int	_epollFd;
             int	_port;
             int	_socketFd;
 			static bool	_signal;
@@ -29,14 +30,12 @@ namespace IRC
             Server(const Server &other);
             Server &operator=(const Server &other);
 		
-			void	socketInit();
-		
 		public:
             static Server* getInstance();
 
 			void	serverInit(int port, string password);
 			// void	serverSocket();
-			int		acceptConnection();
+			int		acceptConnection(sockaddr_in &address);
 			void	acceptNewClient();
 			void	receiveNewData(int fd);
 			void	closeFds();
@@ -54,5 +53,7 @@ namespace IRC
 			static void	signalHandler(int signum);
 
 			int			getSocketFd() const;
+
+			void		run();
     };
 }
