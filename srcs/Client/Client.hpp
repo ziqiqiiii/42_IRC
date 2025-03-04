@@ -17,22 +17,23 @@ namespace IRC
     class Client: public IObserver
     {
         private:
-			int		_fd;
-			string	_ipAddr;
-			string	_username;
-			string	_nickname;
-			string	_modes;
-			bool	_autheticated;
+			int					_fd;
+			struct sockaddr_in	_address;
+			string				_username;
+			string				_nickname;
+			string				_modes;
+			bool				_autheticated;
 			
         public:
             Client();
+            Client(int fd, struct sockaddr_in address);
             ~Client();
             Client(const Client &other);
             Client &operator=(const Client &other);
 
 			//Setters
 			void	setFd(int fd);
-			void	setIpAddr(string ipAddr);
+			void	setAddress(struct sockaddr_in ipAddr);
 			void	setNickname(string& nickname);
 			void	setUsername(string& username);
 			void	setAuthenticated(bool auth);

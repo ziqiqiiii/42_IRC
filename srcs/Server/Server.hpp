@@ -23,12 +23,16 @@ namespace IRC
 			std::vector<struct pollfd> fds;
 
 			std::map<int, IObserver*> _clients; /**<client_fd, IObserver* client>*/
+			std::map<struct sockaddr_in, IObserver *> _oldClients;
 			std::map<string, ISubject*> _channels; /**<channel_name, ISubject* channel>*/
 			
             Server();
             ~Server();
             Server(const Server &other);
             Server &operator=(const Server &other);
+
+			void	handleNewConnection();
+			void	handleClientPacket(struct epoll_event &event);
 		
 		public:
             static Server* getInstance();

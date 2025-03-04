@@ -1,6 +1,8 @@
 # include "Client.hpp"
 
-IRC::Client::Client() {}
+IRC::Client::Client() : _fd(-1), _autheticated(false) {}
+
+IRC::Client::Client(int fd, struct sockaddr_in address) : _fd(fd), _address(address), _autheticated(false) {}
 
 IRC::Client::~Client() {}
 
@@ -10,7 +12,7 @@ IRC::Client& IRC::Client::operator=(const Client &other)
 {
 	if (this != &other)
         this->_fd = other._fd;
-        this->_ipAddr = other._ipAddr;
+        this->_address = other._address;
         this->_username = other._username;
         this->_nickname = other._nickname;
         this->_autheticated = other._autheticated;
@@ -20,7 +22,7 @@ IRC::Client& IRC::Client::operator=(const Client &other)
 //Settes
 void    IRC::Client::setFd(int fd) { this->_fd = fd; }
 
-void    IRC::Client::setIpAddr(string ipAddr) { this->_ipAddr = ipAddr; }
+void    IRC::Client::setAddress(struct sockaddr_in address) { this->_address = address; }
 
 void    IRC::Client::setNickname(string& nickname) { this->_nickname = nickname; }
 

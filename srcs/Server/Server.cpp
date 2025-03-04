@@ -89,18 +89,49 @@ void	IRC::Server::clearClient(int fd)
 
 int		IRC::Server::getSocketFd() const {return this->_socketFd;}
 
+void	IRC::Server::handleNewConnection()
+{
+	struct epoll_event	event;
+	struct sockaddr_in	address; 
+
+	event.events = EPOLLIN | EPOLLPRI;
+	cout << "Accepting connection...\n";
+	event.data.fd = this->acceptConnection(address);
+	cout << "Connection accepted!\n";
+	if (event.data.fd < 0)
+		return ;
+	epoll_ctl(this->_epollFd, EPOLL_CTL_ADD, event.data.fd, &event);
+}
+
+void	IRC::Server::handleClientPacket(struct epoll_event &event)
+{
+	char	buffer[100];
+
+	if (event.events & (EPOLLERR | EPOLLHUP) || recv(event.data.fd, buffer, 100, 0) == 0)
+	{
+		epoll_ctl(this->_epollFd, EPOLL_CTL_DEL, event.data.fd, NULL);
+		close(event.data.fd);
+		return ;
+	}
+	cout << "Buffer: " << buffer << '\n';
+	memset(buffer, 0, 100);
+}
+
 void	IRC::Server::run()
 {
 	struct	epoll_event	queue[MAX_CLIENTS];
 	int					event_count;
 	while (true)
 	{
-		event_count = epoll_wait(this->_epollfd, queue, MAX_CLIENTS, -1);
+		event_count = epoll_wait(this->_epollFd, queue, MAX_CLIENTS, -1);
 		if (event_count < 0)
 			return ;
-		for (int i; i < event_count; i++)
+		for (int i = 0; i < event_count; i++)
 		{
-			if (queue[i].data.fd == this->_socket.getFd())
+			if (queue[i].data.fd == this->_socketFd)
+				this->handleNewConnection();
+			else
+				this->handleClientPacket(queue[i]);
 		}
 	}
 }
