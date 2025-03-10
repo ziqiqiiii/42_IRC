@@ -13,7 +13,7 @@
 # include <csignal> //-> for signal()
 # include <stdio.h>
 # include <stdlib.h>
-# include <string.h>
+# include <string.h> //-> for strtok()
 # include <fcntl.h>
 # include <iostream>
 # include <unistd.h>
@@ -26,8 +26,14 @@
 # include <pthread.h> //-> for mutex in singleton class
 # include <cstdarg>
 # include <stdexcept>
+# include <algorithm> //-> for tranform()
 
-#define MAX_CLIENTS 50
+# define MAX_CLIENTS 50
+# define BUFFER_SIZE 512
+
+// Error replies
+# define RPL_ERR_UNKNOWNCOMMAND(nick, command) (string(nick) + command).c_str()
+# define RPL_ERR_NOTREGISTERED ":451 :You have not registered"
 
 //--------------------namespace-------------------------//
 using std::cout;
@@ -35,7 +41,6 @@ using std::endl;
 using std::cerr;
 using std::string;
 
-# include "Command.hpp"
 # include "Client.hpp"
 # include "Socket.hpp"
 # include "Channel.hpp"

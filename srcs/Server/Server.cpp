@@ -79,42 +79,56 @@ void	IRC::Server::receiveNewData(int fd)
 
 void	IRC::Server::closeFds()
 {
+	
+}
 
+void	IRC::Server::sendResponse(string response, int fd)
+{
+	if (send(fd, response.c_str(), response.size(), 0))
+		cerr << "Could not send responde to fd: " << fd << '\n';
+}
+
+IRC::Client	&IRC::Server::getClient(int fd)
+{
+	Client	*cli = static_cast<Client *>(_clients.at(fd));
+	return (*cli);
 }
 
 void	IRC::Server::clearClient(int fd)
 {
-	(void) fd;
+	this->_clients.erase(fd);
 }
 
 int		IRC::Server::getSocketFd() const {return this->_socketFd;}
 
 void	IRC::Server::handleNewConnection()
 {
-	struct epoll_event	event;
+	Client				*client;
+	int					client_fd;
 	struct sockaddr_in	address; 
 
-	event.events = EPOLLIN | EPOLLPRI;
-	cout << "Accepting connection...\n";
-	event.data.fd = this->acceptConnection(address);
-	cout << "Connection accepted!\n";
-	if (event.data.fd < 0)
+	client_fd = this->_socket->acceptConnection(address);
+	if (client_fd < 0)
 		return ;
-	epoll_ctl(this->_epollFd, EPOLL_CTL_ADD, event.data.fd, &event);
+	client = new Client(client_fd, address);
+	this->addClient(client);
+	this->epollAdd(client_fd, EPOLLIN | EPOLLPRI);
 }
 
 void	IRC::Server::handleClientPacket(struct epoll_event &event)
 {
-	char	buffer[100];
+	char	buffer[BUFFER_SIZE];
+	bzero(buffer, BUFFER_SIZE);
 
-	if (event.events & (EPOLLERR | EPOLLHUP) || recv(event.data.fd, buffer, 100, 0) == 0)
+	if (event.events & (EPOLLERR | EPOLLHUP) || !recv(event.data.fd, buffer, BUFFER_SIZE, 0))
 	{
-		epoll_ctl(this->_epollFd, EPOLL_CTL_DEL, event.data.fd, NULL);
+		epollDel(event.data.fd);
 		close(event.data.fd);
+		clearClient(event.data.fd);
 		return ;
 	}
 	cout << "Buffer: " << buffer << '\n';
-	memset(buffer, 0, 100);
+	parseExec(buffer, event.data.fd);
 }
 
 void	IRC::Server::run()
@@ -133,5 +147,60 @@ void	IRC::Server::run()
 			else
 				this->handleClientPacket(queue[i]);
 		}
+	}
+}
+
+void	IRC::Server::parseExec(char *buffer, int fd)
+{
+	string	token;
+	char	*cr;
+	int		recv_val;
+
+	recv_val = recv(fd, buffer, BUFFER_SIZE, 0);
+	buffer[recv_val] = '\0';
+	cr = strchr(buffer, '\r');
+	cout << "cr : " << cr << '\n';
+	if (cr || *(cr + 1) != '\n')
+		return ;
+	token = strtok(buffer, " ");
+	if (token.empty() || token[0] == ':')
+		return ;
+	std::transform(token.begin(), token.end(), token.begin(), toupper);
+	cout << "Token: " << token << '\n';
+	if (!getClient(fd).isAuthenticated() && token != "PASS")
+	{
+		this->sendResponse(RPL_ERR_NOTREGISTERED, fd);
+		this->epollDel(fd);
+		clearClient(fd);
+		close(fd);
+		return ;
+	}
+	try
+	{
+		(this->*(this->_commands.at(token)))(buffer, fd);
+	}
+	catch(const std::exception& e)
+	{
+		this->sendResponse(RPL_ERR_UNKNOWNCOMMAND(buffer, token), fd);
+	}
+}
+
+void	IRC::Server::epollAdd(int fd, int flags)
+{
+	struct epoll_event event;
+
+	event.data.fd = fd;
+	event.events = flags;
+	if (epoll_ctl(this->_epollFd, EPOLL_CTL_ADD, fd, &event) == -1)
+	{
+		cerr << "Could not add event for fd: " << fd << " to epoll\n";
+	}
+}
+
+void	IRC::Server::epollDel(int fd)
+{
+	if (epoll_ctl(this->_epollFd, EPOLL_CTL_DEL, fd, NULL) == -1)
+	{
+		cerr << "Could not delete event for fd: " << fd << " from epoll\n";
 	}
 }
