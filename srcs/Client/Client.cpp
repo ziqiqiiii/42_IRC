@@ -19,6 +19,11 @@ IRC::Client& IRC::Client::operator=(const Client &other)
     return *this;
 }
 
+void    IRC::Client::addToBuffer(string str)
+{
+    this->_buffer += str;
+}
+
 //Settes
 void    IRC::Client::setFd(int fd) { this->_fd = fd; }
 

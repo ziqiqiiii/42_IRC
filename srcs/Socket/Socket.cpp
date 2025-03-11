@@ -59,7 +59,7 @@ void Socket::listenConnection()
 void Socket::testConnection(int test_variable)
 {
     if (test_variable < 0) {
-        // perror("Failed to connect ...");
+        perror("Failed to connect ...");
     }
 }
 

@@ -46,6 +46,7 @@ namespace IRC
 			void	receiveNewData(int fd);
 			void	closeFds();
 			void	clearClient(int fd);
+			void	closeConnection(int fd);
 
 			// Observer Pattern Methods
 			Client		&getClient(int fd);

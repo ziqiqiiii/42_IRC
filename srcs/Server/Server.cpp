@@ -84,8 +84,10 @@ void	IRC::Server::closeFds()
 
 void	IRC::Server::sendResponse(string response, int fd)
 {
-	if (send(fd, response.c_str(), response.size(), 0))
-		cerr << "Could not send responde to fd: " << fd << '\n';
+	if (send(fd, response.c_str(), response.size(), 0) == -1)
+	{
+		perror("Unable to send message : ");
+	}
 }
 
 IRC::Client	&IRC::Server::getClient(int fd)
@@ -94,9 +96,36 @@ IRC::Client	&IRC::Server::getClient(int fd)
 	return (*cli);
 }
 
+void	IRC::Server::closeConnection(int fd)
+{
+	this->_clients.erase(fd);
+	shutdown(fd, SHUT_RDWR);
+	epollDel(fd);
+}
+
 void	IRC::Server::clearClient(int fd)
 {
 	this->_clients.erase(fd);
+}
+
+void	IRC::Server::epollAdd(int fd, int flags)
+{
+	struct epoll_event event;
+	
+	event.data.fd = fd;
+	event.events = flags;
+	if (epoll_ctl(this->_epollFd, EPOLL_CTL_ADD, fd, &event) == -1)
+	{
+		cerr << "Could not add event for fd: " << fd << " to epoll\n";
+	}
+}
+
+void	IRC::Server::epollDel(int fd)
+{
+	if (epoll_ctl(this->_epollFd, EPOLL_CTL_DEL, fd, NULL) == -1)
+	{
+		cerr << "Could not delete event for fd: " << fd << " from epoll\n";
+	}
 }
 
 int		IRC::Server::getSocketFd() const {return this->_socketFd;}
@@ -117,18 +146,65 @@ void	IRC::Server::handleNewConnection()
 
 void	IRC::Server::handleClientPacket(struct epoll_event &event)
 {
-	char	buffer[BUFFER_SIZE];
+	char	buffer[BUFFER_SIZE + 1];
 	bzero(buffer, BUFFER_SIZE);
 
 	if (event.events & (EPOLLERR | EPOLLHUP) || !recv(event.data.fd, buffer, BUFFER_SIZE, 0))
 	{
-		epollDel(event.data.fd);
-		close(event.data.fd);
-		clearClient(event.data.fd);
+		closeConnection(event.data.fd);
 		return ;
 	}
-	cout << "Buffer: " << buffer << '\n';
 	parseExec(buffer, event.data.fd);
+}
+
+static string	nextToken(string s, string delim)
+{
+	string				token;
+	static string::iterator	s_it = token.begin();
+	string::iterator	delim_it;
+
+	while (s_it != s.end())
+	{
+		delim_it = delim.begin();
+		while (delim_it != delim.end())
+		{
+			if (*delim_it != *s_it)
+				break ;
+			delim_it++;
+			s_it++;
+		}
+		if (delim_it == delim.end())
+		{
+			break;
+		}
+		s_it++;
+	}
+	return (token);
+}
+
+void	IRC::Server::parseExec(char *buffer, int fd)
+{
+	Client				&client = this->getClient(fd);
+	char				*message;
+	std::vector<char *>	args;
+
+	message = "";
+	while (message)
+	{
+		message = strtok(buffer, CRLF);
+		for (char *token = strtok(token, " "); token; token = strtok(NULL, " "))
+			args.push_back(token);
+		try
+		{
+			(this->*(this->_commands.at(args[0])))(buffer, fd);
+		}
+		catch(const std::exception& e)
+		{
+			if (getClient(fd).isAuthenticated())
+			this->sendResponse(RPL_ERR_UNKNOWNCOMMAND(buffer, args[0]), fd);
+		}
+	}
+	client.addToBuffer(buffer);
 }
 
 void	IRC::Server::run()
@@ -147,60 +223,5 @@ void	IRC::Server::run()
 			else
 				this->handleClientPacket(queue[i]);
 		}
-	}
-}
-
-void	IRC::Server::parseExec(char *buffer, int fd)
-{
-	string	token;
-	char	*cr;
-	int		recv_val;
-
-	recv_val = recv(fd, buffer, BUFFER_SIZE, 0);
-	buffer[recv_val] = '\0';
-	cr = strchr(buffer, '\r');
-	cout << "cr : " << cr << '\n';
-	if (cr || *(cr + 1) != '\n')
-		return ;
-	token = strtok(buffer, " ");
-	if (token.empty() || token[0] == ':')
-		return ;
-	std::transform(token.begin(), token.end(), token.begin(), toupper);
-	cout << "Token: " << token << '\n';
-	if (!getClient(fd).isAuthenticated() && token != "PASS")
-	{
-		this->sendResponse(RPL_ERR_NOTREGISTERED, fd);
-		this->epollDel(fd);
-		clearClient(fd);
-		close(fd);
-		return ;
-	}
-	try
-	{
-		(this->*(this->_commands.at(token)))(buffer, fd);
-	}
-	catch(const std::exception& e)
-	{
-		this->sendResponse(RPL_ERR_UNKNOWNCOMMAND(buffer, token), fd);
-	}
-}
-
-void	IRC::Server::epollAdd(int fd, int flags)
-{
-	struct epoll_event event;
-
-	event.data.fd = fd;
-	event.events = flags;
-	if (epoll_ctl(this->_epollFd, EPOLL_CTL_ADD, fd, &event) == -1)
-	{
-		cerr << "Could not add event for fd: " << fd << " to epoll\n";
-	}
-}
-
-void	IRC::Server::epollDel(int fd)
-{
-	if (epoll_ctl(this->_epollFd, EPOLL_CTL_DEL, fd, NULL) == -1)
-	{
-		cerr << "Could not delete event for fd: " << fd << " from epoll\n";
 	}
 }

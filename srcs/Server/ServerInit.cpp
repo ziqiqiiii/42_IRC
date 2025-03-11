@@ -25,9 +25,9 @@ void	IRC::Server::serverInit(int port, string password)
 {
 	this->_password = password;
 	this->_port = port;
+	this->_signal = false;
 	socketInit(this->_socket, port, this->_socketFd);
 	this->_epollFd = epoll_create1(0);
 	epollAdd(this->_socketFd, EPOLLIN | EPOLLPRI);
 	commandsInit(this->_commands);
 }
-
