@@ -19,6 +19,11 @@ IRC::Client& IRC::Client::operator=(const Client &other)
     return *this;
 }
 
+void    IRC::Client::addToBuffer(string str)
+{
+    this->_buffer += str;
+}
+
 //Settes
 void    IRC::Client::setFd(int fd) { this->_fd = fd; }
 
@@ -37,7 +42,7 @@ string	IRC::Client::getUsername() const { return this->_username; }
 
 string	IRC::Client::getNickname() const { return this->_nickname; }
 
-bool	IRC::Client::isClienAutheticated() const { return this->_autheticated; }
+bool	IRC::Client::isAuthenticated() const { return this->_autheticated; }
 
 void	IRC::Client::update(const string& message)
 {

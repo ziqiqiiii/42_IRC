@@ -19,6 +19,7 @@ namespace IRC
         private:
 			int					_fd;
 			struct sockaddr_in	_address;
+			string				_buffer;
 			string				_username;
 			string				_nickname;
 			string				_modes;
@@ -31,6 +32,8 @@ namespace IRC
             Client(const Client &other);
             Client &operator=(const Client &other);
 
+			void	parse();
+			void	addToBuffer(string str);
 			//Setters
 			void	setFd(int fd);
 			void	setAddress(struct sockaddr_in ipAddr);
@@ -39,10 +42,12 @@ namespace IRC
 			void	setAuthenticated(bool auth);
 
 			//Getters
+			string	getBuffer() const;
 			int		getClientFd() const;
 			string	getUsername() const;
 			string	getNickname() const;
-			bool	isClienAutheticated() const;
+			bool	isAuthenticated() const;
+
 
 			// Observer Update Method
 			void	update(const string& message);

@@ -8,20 +8,26 @@ static void	socketInit(Socket *&socket, int &port, int &socketFd)
 	socketFd = socket->getFd();
 }
 
-static void	epollInit(int &socketFd, int &epollFd)
+static void	commandsInit(std::map<string, void (IRC::Server::*)(char *, int)> &commands)
 {
-	struct epoll_event	event;
-	epollFd = epoll_create1(0);
-	event.data.fd = socketFd;
-	event.events = EPOLLIN | EPOLLPRI;
-	epoll_ctl(epollFd, EPOLL_CTL_ADD, socketFd, &event);
+	commands["PASS"] = &IRC::Server::pass;
+	commands["JOIN"] = &IRC::Server::join;
+	commands["NICK"] = &IRC::Server::nick;
+	commands["USER"] = &IRC::Server::user;
+	commands["TOPIC"] = &IRC::Server::topic;
+	commands["PART"] = &IRC::Server::part;
+	commands["PRIVMSG"] = &IRC::Server::privmsg;
+	commands["INVITE"] = &IRC::Server::invite;
+	commands["MODE"] = &IRC::Server::mode;
 }
 
 void	IRC::Server::serverInit(int port, string password)
 {
 	this->_password = password;
 	this->_port = port;
+	this->_signal = false;
 	socketInit(this->_socket, port, this->_socketFd);
-	epollInit(this->_socketFd, this->_epollFd);
+	this->_epollFd = epoll_create1(0);
+	epollAdd(this->_socketFd, EPOLLIN | EPOLLPRI);
+	commandsInit(this->_commands);
 }
-
