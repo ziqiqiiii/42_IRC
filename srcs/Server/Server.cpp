@@ -14,7 +14,12 @@ IRC::Server::Server() {}
  * @brief Destructor for Server.
  * Cleans up resources used by the Server object. Private to enforce Singleton design.
  */
-IRC::Server::~Server() {}
+IRC::Server::~Server()
+{
+	this->_clearClients();
+	this->_clearChannels();
+	this->_closeFds();
+}
 
 /**
  * @brief Copy constructor for Server.

@@ -22,8 +22,8 @@ namespace IRC
 			static bool	_signal;
 			Socket*	_socket;
 			string	_password;
-			std::vector<struct pollfd> fds;
 
+			std::vector<struct pollfd> fds;
 			std::map<int, IObserver*> _server_clients; /**<client_fd, IObserver* client>*/
 			std::map<string, ISubject*> _channels; /**<channel_name, ISubject* channel>*/
 			std::map<string, void(IRC::Server::*)(std::stringstream &, int)> _commands;
