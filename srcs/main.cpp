@@ -15,7 +15,7 @@
 int	main(int argc, char **argv)
 {
 	try {
-		IRC::Utils::checker(argc);
+		Utils::checker(argc);
 	} catch(std::exception &e) {
 		std::cerr << "Error: " << e.what() << '\n';
 		return (1);

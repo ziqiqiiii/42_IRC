@@ -3,30 +3,39 @@
 void    IRC::Server::addClient(IObserver* client)
 {
     int	client_fd = client->getClientFd();
-    std::map<int, IObserver*>::iterator it = this->_clients.find(client_fd);
+    std::map<int, IObserver*>::iterator it = this->_server_clients.find(client_fd);
     IRC::Logger* logManager = IRC::Logger::getInstance();
 
-    if (it != this->_clients.end())
+    if (it != this->_server_clients.end())
         logManager->logMsg(RED, (client->getNickname() + " already exist").c_str(), strerror(errno));
     else
-        this->_clients[client_fd] = client;
+        this->_server_clients[client_fd] = client;
 }
 
-void	IRC::Server::createChannel(const string& channel_name)
+void	IRC::Server::createChannel(const string channel_name)
 {
-	std::map<string, ISubject*>::iterator it = this->_channels.find(channel_name);
-    IRC::Logger* logManager = IRC::Logger::getInstance();
+	string	tmp_channel_name = Utils::stringToUpper(channel_name);
+	IRC::Logger* logManager = IRC::Logger::getInstance();
+	std::map<string, ISubject*>::iterator it;
+
+	if (tmp_channel_name.length() > 50) {
+		logManager->logMsg(RED, "Channel name too long", strerror(errno));
+		return;
+	}
+
+	it = this->_channels.find(tmp_channel_name);
 
 	if (it != this->_channels.end())
-        logManager->logMsg(RED, ("Channel" + channel_name + " already exist").c_str(), strerror(errno));
+        logManager->logMsg(RED, ("Channel" + tmp_channel_name + " already exist").c_str(), strerror(errno));
 	else
-		this->_channels[channel_name] = new Channel(channel_name);
+		this->_channels[tmp_channel_name] = new Channel(tmp_channel_name);
 }
+
 
 void	IRC::Server::joinChannel(const string& channel_name, IObserver* client)
 {
-	std::map<string, ISubject*>::iterator channel_it	= this->_channels.find(channel_name);
-	IRC::Logger* logManager								= IRC::Logger::getInstance();
+	std::map<string, ISubject*>::iterator	channel_it	= this->_channels.find(Utils::stringToUpper(channel_name));
+	IRC::Logger* 							logManager  = IRC::Logger::getInstance();
 
 	// std::map<int, IObserver*>	client_it  = this->_clients.find(client->)
 	if (channel_it->second->isClientExist(client->getClientFd()))
@@ -37,7 +46,7 @@ void	IRC::Server::joinChannel(const string& channel_name, IObserver* client)
 
 void	IRC::Server::leaveChannel(const string& channel_name, IObserver* client)
 {
-	std::map<string, ISubject*>::iterator channel_it	= this->_channels.find(channel_name);
+	std::map<string, ISubject*>::iterator channel_it	= this->_channels.find(Utils::stringToUpper(channel_name));
 	IRC::Logger* logManager								= IRC::Logger::getInstance();
 
 	if (!channel_it->second->isClientExist(client->getClientFd()))
@@ -45,6 +54,7 @@ void	IRC::Server::leaveChannel(const string& channel_name, IObserver* client)
 	else
 		channel_it->second->detach(client);
 }
+
 
 void	IRC::Server::notifyAll(const string& message)
 {

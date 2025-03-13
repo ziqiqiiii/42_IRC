@@ -77,11 +77,6 @@ void	IRC::Server::receiveNewData(int fd)
 	(void) fd;
 }
 
-void	IRC::Server::closeFds()
-{
-	
-}
-
 void	IRC::Server::sendResponse(string response, int fd)
 {
 	if (send(fd, response.c_str(), response.size(), 0) == -1)
@@ -92,20 +87,20 @@ void	IRC::Server::sendResponse(string response, int fd)
 
 IRC::Client	&IRC::Server::getClient(int fd)
 {
-	Client	*cli = static_cast<Client *>(_clients.at(fd));
+	Client	*cli = static_cast<Client *>(_server_clients.at(fd));
 	return (*cli);
 }
 
 void	IRC::Server::closeConnection(int fd)
 {
-	this->_clients.erase(fd);
+	this->_server_clients.erase(fd);
 	shutdown(fd, SHUT_RDWR);
 	epollDel(fd);
 }
 
 void	IRC::Server::clearClient(int fd)
 {
-	this->_clients.erase(fd);
+	this->_server_clients.erase(fd);
 }
 
 void	IRC::Server::epollAdd(int fd, int flags)
