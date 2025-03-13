@@ -103,12 +103,6 @@ void	IRC::Server::clearClient(int fd)
 	this->_server_clients.erase(fd);
 }
 
-void	IRC::Server::setNonBlock(int fd)
-{
-	if (fcntl(fd, F_SETFL,O_NONBLOCK) == -1)
-		throw std::runtime_error("Failed to set socket to non-blocking mode");
-}
-
 void	IRC::Server::epollInit()
 {
 	this->_epollFd = epoll_create1(0);

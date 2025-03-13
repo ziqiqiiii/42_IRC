@@ -84,7 +84,6 @@ namespace IRC
 			void		mode(char *args, int fd);
 			void		privmsg(char *args, int fd);
 
-			void		setNonBlock(int fd);
 			void		epollAdd(int fd, int flags);
 			void		epollDel(int fd);
 			void		epollInit();
