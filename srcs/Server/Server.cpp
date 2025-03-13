@@ -16,6 +16,7 @@ IRC::Server::Server() {}
  */
 IRC::Server::~Server()
 {
+	cout << "Server Destructor " << endl;
 	this->_clearClients();
 	this->_clearChannels();
 	this->_closeFds();
@@ -113,6 +114,7 @@ void	IRC::Server::epollInit()
 	this->_epollFd = epoll_create1(0);
 	if (this->_epollFd < 0)
 		throw std::runtime_error("Failed to epoll_create()");
+	cout << "Epoll fd : " << this->_epollFd << endl;
 }
 
 void	IRC::Server::epollAdd(int fd, int flags)
@@ -189,7 +191,8 @@ void	IRC::Server::run()
 {
 	struct	epoll_event	queue[MAX_CLIENTS];
 	int					event_count;
-	while (true)
+
+	while (this->_signal == false)
 	{
 		event_count = epoll_wait(this->_epollFd, queue, MAX_CLIENTS, -1);
 		if (event_count < 0)
@@ -202,4 +205,8 @@ void	IRC::Server::run()
 				this->handleClientPacket(queue[i]);
 		}
 	}
+	cout << "Clearing ..." << endl;
+	this->_clearClients();
+	this->_clearChannels();
+	this->_closeFds();
 }

@@ -3,6 +3,8 @@
 // Default Constructor
 Socket::Socket(int domain, int service,  int protocol, int port, unsigned long interface)
 {
+    // Clear the memory for the address struct
+    memset(&this->_address, 0, sizeof(this->_address));
     // Define address struct
     this->_address.sin_family = domain;
     this->_address.sin_port = htons(port);
@@ -17,7 +19,9 @@ Socket::Socket(int domain, int service,  int protocol, int port, unsigned long i
 // Default Destructor
 Socket::~Socket()
 {
-    close(this->getFd());
+	cout << "Socket destructor" << endl;
+    close(this->_fd);
+    memset(&this->_address, 0, sizeof(struct sockaddr_in));
 }
 
 Socket::Socket(const Socket& temp) { *this = temp; }
@@ -39,6 +43,7 @@ void Socket::bindConnection()
     struct sockaddr_in address = this->getAddress();
     int addr_len = sizeof(address);
     this->setConnection(bind(this->getFd(), (struct sockaddr *)&address, addr_len));
+    cout << "Bind : " << this->getFd() << endl;
     this->testConnection(this->getConnection());
 }
 
@@ -46,12 +51,14 @@ int Socket::acceptConnection(sockaddr_in &address)
 {
     int addr_len = sizeof(address);
     int new_socket = accept(this->getFd(), (struct sockaddr *)&address, (socklen_t*)&addr_len);
+	cout << "Accept : " << new_socket << endl;
     this->testConnection(new_socket);
     return new_socket;
 }
     
 void Socket::listenConnection()
 {
+	cout << "Listen : " << this->getFd() << endl;
     this->testConnection(listen(this->getFd(), this->getMaxTry()));
 }
 
@@ -59,7 +66,7 @@ void Socket::listenConnection()
 void Socket::testConnection(int test_variable)
 {
     if (test_variable < 0) {
-        perror("Failed to connect ...");
+        throw std::runtime_error("Failed to connect ...");
     }
 }
 
