@@ -4,14 +4,9 @@
 
 namespace IRC
 {
-    class Utils
+    namespace Utils
     {
-        private:
-            Utils();
-            ~Utils();
-            Utils(const Utils& other);
-            Utils& operator=(const Utils& other);
-        public:
-            static void checker(int argc);
+            void	checker(int argc);
+			size_t	find_crlf(string &str);
     };
 }
