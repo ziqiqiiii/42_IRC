@@ -42,6 +42,7 @@ namespace IRC
 	
 		public:
             static Server* getInstance();
+
 			void		serverInit(int port, string password);
 			int			acceptConnection(sockaddr_in &address);
 			void		receiveNewData(int fd);
@@ -69,8 +70,10 @@ namespace IRC
 			void		mode(char *args, int fd);
 			void		privmsg(char *args, int fd);
 
+			void		setNonBlock(int fd);
 			void		epollAdd(int fd, int flags);
 			void		epollDel(int fd);
+			void		epollInit();
 
 			static void	signalHandler(int signum);
 
