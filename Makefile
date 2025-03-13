@@ -47,6 +47,6 @@ fclean:			clean
 re:				fclean all
 
 test: all
-				./$(NAME)
+				./$(NAME) 6667 abc
 
 .PHONY:			all clean fclean re
