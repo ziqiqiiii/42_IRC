@@ -2,9 +2,12 @@
 
 # include "ircserv.hpp"
 
-namespace Utils
+namespace IRC
 {
-    static void		checker(int argc);
-    static string	stringToUpper(const string& str);
-    static string	intToString(int num);
+    namespace Utils
+    {
+        void    checker(int argc);
+        string	stringToUpper(const string& str);
+        string	intToString(int num);
+    }
 }

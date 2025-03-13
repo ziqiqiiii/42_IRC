@@ -1,12 +1,12 @@
 # include "Utils.hpp"
 
-void Utils::checker(int argc)
+void IRC::Utils::checker(int argc)
 {
     if (argc != 3)
         throw std::invalid_argument("Invalid number of arguments");
 }
 
-string	Utils::stringToUpper(const string& str)
+string	IRC::Utils::stringToUpper(const string& str)
 {
 	string	tmp;
 	size_t	len = str.length();
@@ -15,7 +15,7 @@ string	Utils::stringToUpper(const string& str)
 	return tmp;
 }
 
-string Utils::intToString(int num)
+string IRC::Utils::intToString(int num)
 {
     char buffer[30];
     std::sprintf(buffer, "%d", num);
