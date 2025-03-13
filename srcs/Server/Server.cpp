@@ -157,51 +157,26 @@ void	IRC::Server::handleClientPacket(struct epoll_event &event)
 	parseExec(buffer, event.data.fd);
 }
 
-static string	nextToken(string s, string delim)
-{
-	string				token;
-	static string::iterator	s_it = token.begin();
-	string::iterator	delim_it;
-
-	while (s_it != s.end())
-	{
-		delim_it = delim.begin();
-		while (delim_it != delim.end())
-		{
-			if (*delim_it != *s_it)
-				break ;
-			delim_it++;
-			s_it++;
-		}
-		if (delim_it == delim.end())
-		{
-			break;
-		}
-		s_it++;
-	}
-	return (token);
-}
-
-void	IRC::Server::parseExec(char *buffer, int fd)
+void	IRC::Server::parseExec(string buffer, int fd)
 {
 	Client				&client = this->getClient(fd);
-	char				*message;
-	std::vector<char *>	args;
+	string 				command;
+	size_t				delim = 0;
 
-	message = "";
-	while (message)
+	while ((delim = IRC::Utils::find_crlf(buffer)))
 	{
-		message = strtok(buffer, CRLF);
-		for (char *token = strtok(token, " "); token; token = strtok(NULL, " "))
-			args.push_back(token);
+		std::stringstream message(buffer.substr(0, delim));
+		message >> command;
+		buffer.erase(0, delim);
 		try
-		{
-			(this->*(this->_commands.at(args[0])))(buffer, fd);
+		{	
+			std::transform(command.begin(), command.end(), command.begin(), toupper);
+			(this->*(this->_commands.at(command)))(message, fd);
 		}
 		catch(const std::exception& e)
 		{
 			if (getClient(fd).isAuthenticated())
-			this->sendResponse(RPL_ERR_UNKNOWNCOMMAND(buffer, args[0]), fd);
+				this->sendResponse(RPL_ERR_UNKNOWNCOMMAND(this->getClient(fd).getNickname(), command), fd);
 		}
 	}
 	client.addToBuffer(buffer);

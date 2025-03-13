@@ -8,7 +8,7 @@ static void	socketInit(Socket *&socket, int &port, int &socketFd)
 	socketFd = socket->getFd();
 }
 
-static void	commandsInit(std::map<string, void (IRC::Server::*)(char *, int)> &commands)
+static void	commandsInit(std::map<string, void (IRC::Server::*)(std::stringstream &, int)> &commands)
 {
 	commands["PASS"] = &IRC::Server::pass;
 	commands["JOIN"] = &IRC::Server::join;

@@ -26,7 +26,7 @@ namespace IRC
 
 			std::map<int, IObserver*> _clients; /**<client_fd, IObserver* client>*/
 			std::map<string, ISubject*> _channels; /**<channel_name, ISubject* channel>*/
-			std::map<string, void(IRC::Server::*)(char *, int)> _commands;
+			std::map<string, void(IRC::Server::*)(std::stringstream &, int)> _commands;
 			
             Server();
             ~Server();
@@ -35,7 +35,7 @@ namespace IRC
 
 			void	handleNewConnection();
 			void	handleClientPacket(struct epoll_event &event);
-			void	parseExec(char *buffer, int fd);
+			void	parseExec(string buffer, int fd);
 	
 		public:
             static Server* getInstance();
@@ -57,15 +57,15 @@ namespace IRC
 			void		leaveChannel(const string& channel_name, IObserver* client);
 
 			// commands
-			void	pass(char *args, int fd);
-			void	join(char *args, int fd);
-			void	part(char *args, int fd);
-			void	nick(char *args, int fd);
-			void	user(char *args, int fd);
-			void	topic(char *args, int fd);
-			void	invite(char *args, int fd);
-			void	mode(char *args, int fd);
-			void	privmsg(char *args, int fd);
+			void	pass(std::stringstream &args, int fd);
+			void	join(std::stringstream &args, int fd);
+			void	part(std::stringstream &args, int fd);
+			void	nick(std::stringstream &args, int fd);
+			void	user(std::stringstream &args, int fd);
+			void	topic(std::stringstream &args, int fd);
+			void	invite(std::stringstream &args, int fd);
+			void	mode(std::stringstream &args, int fd);
+			void	privmsg(std::stringstream &args, int fd);
 
 			void	epollAdd(int fd, int flags);
 			void	epollDel(int fd);

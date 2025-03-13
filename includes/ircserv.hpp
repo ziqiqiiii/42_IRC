@@ -42,9 +42,9 @@ using std::endl;
 using std::cerr;
 using std::string;
 
+# include "Utils.hpp"
 # include "Client.hpp"
 # include "Socket.hpp"
 # include "Channel.hpp"
 # include "Server.hpp"
 # include "Logger.hpp"
-# include "Utils.hpp"
