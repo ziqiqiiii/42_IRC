@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   main.cpp                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: pringles <pringles@student.42.fr>          +#+  +:+       +#+        */
+/*   By: amaligno <amaligno@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/14 22:57:34 by amaligno          #+#    #+#             */
-/*   Updated: 2025/03/04 23:23:08 by pringles         ###   ########.fr       */
+/*   Updated: 2025/03/13 18:14:57 by amaligno         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,7 +15,7 @@
 int	main(int argc, char **argv)
 {
 	try {
-		Utils::checker(argc);
+		IRC::Utils::checker(argc);
 	} catch(std::exception &e) {
 		std::cerr << "Error: " << e.what() << '\n';
 		return (1);

@@ -4,6 +4,8 @@
 
 class ISubject;
 class IObserver;
+class Channel;
+class Client;
 class Socket;
 
 namespace IRC
@@ -38,13 +40,13 @@ namespace IRC
 
 			void		handleNewConnection();
 			void		handleClientPacket(struct epoll_event &event);
-			void		parseExec(char *buffer, int fd);
+			void		parseExec(string buffer, int fd);
 	
 		public:
-            static Server* getInstance();
-			void		serverInit(int port, string password);
-			int			acceptConnection(sockaddr_in &address);
-			void		receiveNewData(int fd);
+            static Server*	getInstance();
+			void			serverInit(int port, string password);
+			int				acceptConnection(sockaddr_in &address);
+			void			receiveNewData(int fd);
 			
 			// Observer Pattern Methods
 			Client		&getClient(int fd);
@@ -83,9 +85,6 @@ namespace IRC
 			void		invite(char *args, int fd);
 			void		mode(char *args, int fd);
 			void		privmsg(char *args, int fd);
-
-			void		epollAdd(int fd, int flags);
-			void		epollDel(int fd);
 
 			static void	signalHandler(int signum);
 
