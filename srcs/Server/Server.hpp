@@ -43,10 +43,11 @@ namespace IRC
 			void		parseExec(string buffer, int fd);
 	
 		public:
-            static Server*	getInstance();
-			void			serverInit(int port, string password);
-			int				acceptConnection(sockaddr_in &address);
-			void			receiveNewData(int fd);
+            static Server* getInstance();
+
+			void		serverInit(int port, string password);
+			int			acceptConnection(sockaddr_in &address);
+			void		receiveNewData(int fd);
 			
 			// Observer Pattern Methods
 			Client		&getClient(int fd);
@@ -68,9 +69,6 @@ namespace IRC
 			void	mode(std::stringstream &args, int fd);
 			void	privmsg(std::stringstream &args, int fd);
 
-			void	epollAdd(int fd, int flags);
-			void	epollDel(int fd);
-
 			void		sendResponse(string response, int fd);
 			void		notifyAll(const string& message);
 			void		closeConnection(int fd);
@@ -85,6 +83,11 @@ namespace IRC
 			void		invite(char *args, int fd);
 			void		mode(char *args, int fd);
 			void		privmsg(char *args, int fd);
+
+			void		setNonBlock(int fd);
+			void		epollAdd(int fd, int flags);
+			void		epollDel(int fd);
+			void		epollInit();
 
 			static void	signalHandler(int signum);
 

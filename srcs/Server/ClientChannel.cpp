@@ -14,7 +14,7 @@ void    IRC::Server::addClient(IObserver* client)
 
 void	IRC::Server::createChannel(const string channel_name)
 {
-	string	tmp_channel_name = Utils::stringToUpper(channel_name);
+	string	tmp_channel_name = IRC::Utils::stringToUpper(channel_name);
 	IRC::Logger* logManager = IRC::Logger::getInstance();
 	std::map<string, ISubject*>::iterator it;
 
@@ -34,7 +34,7 @@ void	IRC::Server::createChannel(const string channel_name)
 
 void	IRC::Server::joinChannel(const string& channel_name, IObserver* client)
 {
-	std::map<string, ISubject*>::iterator	channel_it	= this->_channels.find(Utils::stringToUpper(channel_name));
+	std::map<string, ISubject*>::iterator	channel_it	= this->_channels.find(IRC::Utils::stringToUpper(channel_name));
 	IRC::Logger* 							logManager  = IRC::Logger::getInstance();
 
 	// std::map<int, IObserver*>	client_it  = this->_clients.find(client->)
@@ -46,7 +46,7 @@ void	IRC::Server::joinChannel(const string& channel_name, IObserver* client)
 
 void	IRC::Server::leaveChannel(const string& channel_name, IObserver* client)
 {
-	std::map<string, ISubject*>::iterator channel_it	= this->_channels.find(Utils::stringToUpper(channel_name));
+	std::map<string, ISubject*>::iterator channel_it	= this->_channels.find(IRC::Utils::stringToUpper(channel_name));
 	IRC::Logger* logManager								= IRC::Logger::getInstance();
 
 	if (!channel_it->second->isClientExist(client->getClientFd()))
