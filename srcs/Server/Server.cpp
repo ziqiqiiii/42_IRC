@@ -117,17 +117,13 @@ void	IRC::Server::epollAdd(int fd, int flags)
 	event.data.fd = fd;
 	event.events = flags;
 	if (epoll_ctl(this->_epollFd, EPOLL_CTL_ADD, fd, &event) == -1)
-	{
-		cerr << "Could not add event for fd: " << fd << " to epoll\n";
-	}
+		throw std::runtime_error("Failed to add fd to epoll");
 }
 
 void	IRC::Server::epollDel(int fd)
 {
 	if (epoll_ctl(this->_epollFd, EPOLL_CTL_DEL, fd, NULL) == -1)
-	{
-		cerr << "Could not delete event for fd: " << fd << " from epoll\n";
-	}
+		throw std::runtime_error("Failed to delete fd from epoll");
 }
 
 int		IRC::Server::getSocketFd() const {return this->_socketFd;}
