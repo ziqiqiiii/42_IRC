@@ -175,18 +175,25 @@ void	IRC::Server::parseExec(string buffer, int fd)
 	{
 		std::stringstream message(buffer.substr(0, delim));
 		message >> command;
-		buffer.erase(0, delim);
+		buffer.erase(0, delim + 1);
 		try
 		{	
 			std::transform(command.begin(), command.end(), command.begin(), toupper);
-			(this->*(this->_commands.at(command)))(message, fd);
+			if (!this->getClient(fd).isAuthenticated() && command != "PASS")
+			{
+				this->sendResponse(RPL_ERR_NOTREGISTERED, fd);
+			}
+			else
+				(this->*(this->_commands.at(command)))(message, fd);
 		}
 		catch(const std::exception& e)
 		{
 			if (getClient(fd).isAuthenticated())
 				this->sendResponse(RPL_ERR_UNKNOWNCOMMAND(this->getClient(fd).getNickname(), command), fd);
 		}
+		command.clear();
 	}
+	cout << "Buffer : [" << buffer << "]\n";
 	client.addToBuffer(buffer);
 }
 
