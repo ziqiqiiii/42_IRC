@@ -34,7 +34,7 @@
 
 // Error replies
 # define RPL_ERR_UNKNOWNCOMMAND(nick, command) (string(nick) + command + CRLF).c_str()
-# define RPL_ERR_NOTREGISTERED (":451 :You have not registered" + CRLF)
+# define RPL_ERR_NOTREGISTERED ":451 :You have not registered\r\n"
 
 //--------------------namespace-------------------------//
 using std::cout;

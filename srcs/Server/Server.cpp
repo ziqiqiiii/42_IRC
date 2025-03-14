@@ -159,12 +159,14 @@ void	IRC::Server::handleClientPacket(struct epoll_event &event)
 		closeConnection(event.data.fd);
 		return ;
 	}
-	parseExec(buffer, event.data.fd);
+	this->getClient(event.data.fd).addToBuffer(buffer);
+	parseExec(event.data.fd);
 }
 
-void	IRC::Server::parseExec(string buffer, int fd)
+void	IRC::Server::parseExec(int fd)
 {
 	Client				&client = this->getClient(fd);
+	string				&buffer = client.getBuffer();
 	string 				command;
 	size_t				delim = 0;
 
@@ -172,19 +174,24 @@ void	IRC::Server::parseExec(string buffer, int fd)
 	{
 		std::stringstream message(buffer.substr(0, delim));
 		message >> command;
-		buffer.erase(0, delim);
+		std::transform(command.begin(), command.end(), command.begin(), toupper);
 		try
 		{	
-			std::transform(command.begin(), command.end(), command.begin(), toupper);
-			(this->*(this->_commands.at(command)))(message, fd);
+			if (!this->getClient(fd).isAuthenticated() && command != "PASS")
+			{
+				this->sendResponse(RPL_ERR_NOTREGISTERED, fd);
+			}
+			else
+				(this->*(this->_commands.at(command)))(message, fd);
 		}
 		catch(const std::exception& e)
 		{
 			if (getClient(fd).isAuthenticated())
-				this->sendResponse(RPL_ERR_UNKNOWNCOMMAND(this->getClient(fd).getNickname(), command), fd);
+			this->sendResponse(RPL_ERR_UNKNOWNCOMMAND(this->getClient(fd).getNickname(), command), fd);
 		}
+		buffer.erase(0, delim + 1);
+		command.clear();
 	}
-	client.addToBuffer(buffer);
 }
 
 void	IRC::Server::run()

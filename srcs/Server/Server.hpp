@@ -40,7 +40,7 @@ namespace IRC
 
 			void		handleNewConnection();
 			void		handleClientPacket(struct epoll_event &event);
-			void		parseExec(string buffer, int fd);
+			void		parseExec(int fd);
 	
 		public:
             static Server* getInstance();

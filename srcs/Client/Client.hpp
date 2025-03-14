@@ -42,7 +42,7 @@ namespace IRC
 			void	setAuthenticated(bool auth);
 
 			//Getters
-			string	getBuffer() const;
+			string	&getBuffer() ;
 			int		getClientFd() const;
 			string	getUsername() const;
 			string	getNickname() const;
