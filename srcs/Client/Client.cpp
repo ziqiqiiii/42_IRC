@@ -1,8 +1,8 @@
 # include "Client.hpp"
 
-IRC::Client::Client() : _fd(-1), _autheticated(false) {}
+IRC::Client::Client() : _fd(-1), _nickname("*"), _autheticated(false) {}
 
-IRC::Client::Client(int fd, struct sockaddr_in address) : _fd(fd), _address(address), _autheticated(false) {}
+IRC::Client::Client(int fd, struct sockaddr_in address) : _fd(fd), _address(address), _nickname("*"), _autheticated(false) {}
 
 IRC::Client::~Client() {}
 
@@ -24,7 +24,21 @@ void    IRC::Client::addToBuffer(string str)
     this->_buffer += str;
 }
 
-//Settes
+void	IRC::Client::sendResponse(string response) const
+{
+	
+	response += CRLF;
+	if (send(this->_fd, response.c_str(), response.size(), 0) == -1)
+	{
+		std::stringstream	error;
+	
+		error << "Unable to send response to client with fd" << this->_fd << ": ";
+		perror(error.str().c_str());
+	}
+}
+
+
+//Setters
 void    IRC::Client::setFd(int fd) { this->_fd = fd; }
 
 void    IRC::Client::setAddress(struct sockaddr_in address) { this->_address = address; }

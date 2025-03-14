@@ -8,16 +8,12 @@
 # include <fcntl.h> //-> for fcntl()
 # include <unistd.h> //-> for close()
 # include <arpa/inet.h> //-> for inet_ntoa()
-# include <poll.h> //-> for poll()
 # include <sys/epoll.h> //-> for poll()
 # include <csignal> //-> for signal()
 # include <cstdio>
 # include <cstdlib>
 # include <cstring>
-# include <fcntl.h>
 # include <iostream>
-# include <unistd.h>
-# include <stdlib.h>
 # include <limits.h>
 # include <sstream>
 # include <iterator>
@@ -33,8 +29,11 @@
 # define BUFFER_SIZE 512
 
 // Error replies
-# define RPL_ERR_UNKNOWNCOMMAND(nick, command) (string(nick) + command + CRLF).c_str()
-# define RPL_ERR_NOTREGISTERED ":451 :You have not registered\r\n"
+# define ERR_UNKNOWNCOMMAND(client, command)	(": 421 " + client + " " + command + " :Unknown command")
+# define ERR_NOTREGISTERED(client) 				(": 451 " + client + " :You have not registered")
+# define ERR_NEEDMOREPARAMS(client, command)	(": 461 " + client + " " + command + " :Not enough paramaters")
+# define ERR_ALREADYREGISTERED(client)		(": 462 " + client +  " :You may not register")
+# define ERR_PASSWDMISMATCH(client)			(": 464 " + client + " :Password incorrect")
 
 //--------------------namespace-------------------------//
 using std::cout;

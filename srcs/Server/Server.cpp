@@ -179,21 +179,26 @@ void	IRC::Server::parseExec(int fd)
 	while ((delim = IRC::Utils::find_crlf(buffer)))
 	{
 		std::stringstream message(buffer.substr(0, delim));
-		message >> command;
+		while (message >> command)
+		{
+			if (command[0] != '@' && command[0] != ':')
+				break ;
+			command.clear();
+		}
 		std::transform(command.begin(), command.end(), command.begin(), toupper);
 		try
 		{	
 			if (!this->getClient(fd).isAuthenticated() && command != "PASS")
 			{
-				this->sendResponse(RPL_ERR_NOTREGISTERED, fd);
+				client.sendResponse(ERR_NOTREGISTERED(client.getNickname()));
 			}
 			else
-				(this->*(this->_commands.at(command)))(message, fd);
+				(this->*(this->_commands.at(command)))(message, client);
 		}
 		catch(const std::exception& e)
 		{
 			if (getClient(fd).isAuthenticated())
-			this->sendResponse(RPL_ERR_UNKNOWNCOMMAND(this->getClient(fd).getNickname(), command), fd);
+				client.sendResponse(ERR_UNKNOWNCOMMAND(client.getNickname(), command));
 		}
 		buffer.erase(0, delim + 1);
 		command.clear();
