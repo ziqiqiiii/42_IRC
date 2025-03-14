@@ -36,6 +36,8 @@ void    IRC::Client::setUsername(string& username) { this->_username = username;
 void    IRC::Client::setAuthenticated(bool auth) { this->_autheticated = auth; }
 
 //Getters
+string	&IRC::Client::getBuffer() {return this->_buffer; }
+
 int		IRC::Client::getClientFd() const { return this->_fd; }
 
 string	IRC::Client::getUsername() const { return this->_username; }
