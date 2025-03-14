@@ -16,9 +16,13 @@ IRC::Server::Server() {}
  */
 IRC::Server::~Server()
 {
+	IRC::Logger	*logManager = IRC::Logger::getInstance();
+
+	logManager->logMsg(LIGHTMAGENTA, "Server shutting down");
 	this->_clearClients();
 	this->_clearChannels();
 	this->_closeFds();
+	this->_deleteSocket();
 }
 
 /**
@@ -62,6 +66,15 @@ IRC::Server* IRC::Server::getInstance() {
 	return instancePtr;
 }
 
+void		IRC::Server::destroyInstance()
+{
+	if (instancePtr != NULL) {
+		pthread_mutex_lock(&mtx);
+		delete instancePtr;
+		instancePtr = NULL;
+		pthread_mutex_unlock(&mtx);
+	}
+}
 
 void	IRC::Server::signalHandler(int signum)
 {
@@ -72,14 +85,12 @@ void	IRC::Server::signalHandler(int signum)
 	IRC::Server::_signal = true;
 }
 
-int	IRC::Server::acceptConnection(sockaddr_in &address)
+void	IRC::Server::sendResponse(string response, int fd)
 {
-	return this->_socket->acceptConnection(address);
-}
-
-void	IRC::Server::receiveNewData(int fd)
-{
-	(void) fd;
+	if (send(fd, response.c_str(), response.size(), 0) == -1)
+	{
+		perror("Unable to send message : ");
+	}
 }
 
 IRC::Client	&IRC::Server::getClient(int fd)
@@ -93,6 +104,7 @@ void	IRC::Server::closeConnection(int fd)
 	this->_server_clients.erase(fd);
 	shutdown(fd, SHUT_RDWR);
 	epollDel(fd);
+	close(fd);
 }
 
 void	IRC::Server::clearClient(int fd)
@@ -130,6 +142,7 @@ void	IRC::Server::handleNewConnection()
 	Client				*client;
 	int					client_fd;
 	struct sockaddr_in	address; 
+	IRC::Logger* 		logManager = IRC::Logger::getInstance();
 
 	client_fd = this->_socket->acceptConnection(address);
 	if (client_fd < 0)
@@ -137,15 +150,18 @@ void	IRC::Server::handleNewConnection()
 	client = new Client(client_fd, address);
 	this->addClient(client);
 	this->epollAdd(client_fd, EPOLLIN | EPOLLPRI);
+	logManager->logMsg(LIGHT_BLUE, ("Client " + IRC::Utils::intToString(client_fd) + " connected ").c_str());
 }
 
 void	IRC::Server::handleClientPacket(struct epoll_event &event)
 {
 	char	buffer[BUFFER_SIZE + 1];
-	bzero(buffer, BUFFER_SIZE);
+	IRC::Logger* logManager = IRC::Logger::getInstance();
 
+	bzero(buffer, BUFFER_SIZE);
 	if (event.events & (EPOLLERR | EPOLLHUP) || !recv(event.data.fd, buffer, BUFFER_SIZE, 0))
 	{
+		logManager->logMsg(LIGHT_BLUE, ("Client " + IRC::Utils::intToString(event.data.fd) + " disconnected ").c_str());
 		closeConnection(event.data.fd);
 		return ;
 	}
@@ -193,7 +209,8 @@ void	IRC::Server::run()
 {
 	struct	epoll_event	queue[MAX_CLIENTS];
 	int					event_count;
-	while (true)
+
+	while (this->_signal == false)
 	{
 		event_count = epoll_wait(this->_epollFd, queue, MAX_CLIENTS, -1);
 		if (event_count < 0)

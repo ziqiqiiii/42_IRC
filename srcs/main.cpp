@@ -15,13 +15,19 @@
 int	main(int argc, char **argv)
 {
 	try {
+		signal(SIGINT, IRC::Server::signalHandler); //-> catch the signal (ctrl + c)
+		signal(SIGQUIT, IRC::Server::signalHandler); //-> catch the signal (ctrl + \)
+		IRC::Server	*server = IRC::Server::getInstance();
+
 		IRC::Utils::checker(argc);
+		server->serverInit(atoi(argv[1]), argv[2]);
+		server->run();
+
 	} catch(std::exception &e) {
+		cout << "catching error ";
 		std::cerr << "Error: " << e.what() << '\n';
 		return (1);
 	}
-	IRC::Server	*server = IRC::Server::getInstance();
-	server->serverInit(atoi(argv[1]), argv[2]);
-	server->run();
+	IRC::Server::destroyInstance();
 	return (0);
 }
