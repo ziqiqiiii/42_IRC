@@ -142,6 +142,7 @@ void	IRC::Server::handleNewConnection()
 	Client				*client;
 	int					client_fd;
 	struct sockaddr_in	address; 
+	IRC::Logger* 		logManager = IRC::Logger::getInstance();
 
 	client_fd = this->_socket->acceptConnection(address);
 	if (client_fd < 0)
@@ -149,6 +150,7 @@ void	IRC::Server::handleNewConnection()
 	client = new Client(client_fd, address);
 	this->addClient(client);
 	this->epollAdd(client_fd, EPOLLIN | EPOLLPRI);
+	logManager->logMsg(LIGHT_BLUE, ("Client " + IRC::Utils::intToString(client_fd) + " connected ").c_str());
 }
 
 void	IRC::Server::handleClientPacket(struct epoll_event &event)
