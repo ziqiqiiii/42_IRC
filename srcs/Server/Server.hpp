@@ -69,14 +69,14 @@ namespace IRC
 			void			closeConnection(int fd);
 
 			// Commands
-			void		pass(std::stringstream &args, Client &client);
-			void		join(std::stringstream &args, Client &client);
-			void		part(std::stringstream &args, Client &client);
-			void		nick(std::stringstream &args, Client &client);
-			void		user(std::stringstream &args, Client &client);
-			void		topic(std::stringstream &args, Client &client);
-			void		invite(std::stringstream &args, Client &client);
-			void		mode(std::stringstream &args, Client &client);
-			void		privmsg(std::stringstream &args, Client &client);
+			void			pass(std::stringstream &args, Client &client);
+			void			join(std::stringstream &args, Client &client);
+			void			part(std::stringstream &args, Client &client);
+			void			nick(std::stringstream &args, Client &client);
+			void			user(std::stringstream &args, Client &client);
+			void			topic(std::stringstream &args, Client &client);
+			void			invite(std::stringstream &args, Client &client);
+			void			mode(std::stringstream &args, Client &client);
+			void			privmsg(std::stringstream &args, Client &client);
     };
 }
