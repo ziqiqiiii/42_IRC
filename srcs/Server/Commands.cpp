@@ -47,6 +47,17 @@ void	IRC::Server::join(std::stringstream &args, Client &client)
 {
 	(void)client;
 	(void)args;
+	string				msg;
+	std::vector<string>	channels;
+	std::vector<string>	keys;
+
+	args >> msg;
+	cout << msg << endl;
+	channels = IRC::Utils::splitString(msg, ",");
+	msg.erase();
+	args >> msg;
+	keys = IRC::Utils::splitString(msg, ",");
+	cout << msg << endl;
 	cout << "join command\n";
 }
 

@@ -4,15 +4,24 @@ IRC::Channel::Channel() {}
 
 IRC::Channel::~Channel() {}
 
-IRC::Channel::Channel(const string channel_name): _channel_name(channel_name) {}
+IRC::Channel::Channel(const string channel_name, const IObserver& client)
+{
+	this->setChannelName(channel_name);
+	*this->_channel_operator = client;
+	this->_channel_mode = ChannelModes::No_Mode;
+}
 
 IRC::Channel::Channel(const Channel &other) { *this = other; }
 
 IRC::Channel& IRC::Channel::operator=(const Channel &other)
 {
-	if (this != &other)
+	if (this != &other) {
         this->_channel_name = other._channel_name;
         this->_clients = other._clients;
+		this->_channel_mode = other._channel_mode;
+		this->_channel_operator = other._channel_operator;
+		this->_topic = other._topic;
+	}
     return *this;
 }
 
@@ -56,6 +65,26 @@ void	IRC::Channel::sendMessage(const IObserver* sender, const string& msg)
 //Setter(s)
 void	IRC::Channel::setChannelName(const string& channel_name) { this->_channel_name = channel_name; }
 
+void	IRC::Channel::setTopic(const string& new_topic) {this->_topic = new_topic; }
+
+void	IRC::Channel::setChannelMode(int channel_mode)
+{
+	bool	mode_exist = false;
+
+	for (int mode = ChannelModes::Ban_Channel_Mode; mode != ChannelModes::No_Mode; ++mode)
+	{
+		ChannelModes current_mode = static_cast<ChannelModes>(mode);
+		if (current_mode == this->_channel_mode)
+		{
+			mode_exist = true;
+			this->_channel_mode = current_mode;
+			break ;
+		}
+	}
+	if (!mode_exist)
+		throw std::runtime_error("Mode is not valid"); //Handle by mode command 
+}
+
 //Getter(s)
 string	IRC::Channel::getName() const { return this->_channel_name; }
 
@@ -67,3 +96,5 @@ bool	IRC::Channel::isClientExist(const int client_fd)
 		return true;
 	return false;
 }
+
+IObserver*	IRC::Channel::getChannelOperator() const { return this->_channel_operator; }
