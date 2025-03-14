@@ -85,14 +85,6 @@ void	IRC::Server::signalHandler(int signum)
 	IRC::Server::_signal = true;
 }
 
-void	IRC::Server::sendResponse(string response, int fd)
-{
-	if (send(fd, response.c_str(), response.size(), 0) == -1)
-	{
-		perror("Unable to send message : ");
-	}
-}
-
 IRC::Client	&IRC::Server::getClient(int fd)
 {
 	Client	*cli = static_cast<Client *>(_server_clients.at(fd));
@@ -110,6 +102,20 @@ void	IRC::Server::closeConnection(int fd)
 void	IRC::Server::clearClient(int fd)
 {
 	this->_server_clients.erase(fd);
+}
+
+int	IRC::Server::_nickIsInUse(string nickname)
+{
+	std::map<int, IObserver *>::iterator	it = this->_server_clients.begin();
+	std::map<int, IObserver *>::iterator	end = this->_server_clients.end();
+
+	while (it != end)
+	{
+		if (it->second->getNickname() == nickname)
+			return (1);
+		it++;
+	}
+	return (0);
 }
 
 void	IRC::Server::epollInit()
@@ -171,6 +177,7 @@ void	IRC::Server::handleClientPacket(struct epoll_event &event)
 
 void	IRC::Server::parseExec(int fd)
 {
+	void				(IRC::Server::*f)(std::stringstream &, IRC::Client &);
 	Client				&client = this->getClient(fd);
 	string				&buffer = client.getBuffer();
 	string 				command;
@@ -181,25 +188,25 @@ void	IRC::Server::parseExec(int fd)
 		std::stringstream message(buffer.substr(0, delim));
 		while (message >> command)
 		{
-			if (command[0] != '@' && command[0] != ':')
+			if (!strchr("@:", command[0]) && !isdigit(command[0]))
 				break ;
 			command.clear();
 		}
 		std::transform(command.begin(), command.end(), command.begin(), toupper);
 		try
 		{	
-			if (!this->getClient(fd).isAuthenticated() && command != "PASS")
-			{
-				client.sendResponse(ERR_NOTREGISTERED(client.getNickname()));
-			}
-			else
-				(this->*(this->_commands.at(command)))(message, client);
+			f = this->_commands.at(command);
 		}
 		catch(const std::exception& e)
 		{
-			if (getClient(fd).isAuthenticated())
-				client.sendResponse(ERR_UNKNOWNCOMMAND(client.getNickname(), command));
+			f = NULL;
 		}
+		if (!this->getClient(fd).isAuthenticated() && f && command != "PASS")
+			client.sendResponse(ERR_NOTREGISTERED(client.getNickname()));
+		else if (getClient(fd).isAuthenticated() && !f)
+			client.sendResponse(ERR_UNKNOWNCOMMAND(client.getNickname(), command));
+		else if (f)
+			(this->*f)(message, client);
 		buffer.erase(0, delim + 1);
 		command.clear();
 	}

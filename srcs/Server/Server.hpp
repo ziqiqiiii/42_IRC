@@ -38,6 +38,7 @@ namespace IRC
 			void			_clearChannels();
 			void			_deleteSocket();
 			
+			int				_nickIsInUse(string nickname);
 			void			handleNewConnection();
 			void			handleClientPacket(struct epoll_event &event);
 			void			parseExec(int fd);
@@ -64,7 +65,6 @@ namespace IRC
 			void			createChannel(const string channel_name);
 			void			joinChannel(const string& channel_name, IObserver* client);
 			void			leaveChannel(const string& channel_name, IObserver* client);
-			void			sendResponse(string response, int fd);
 			void			notifyAll(const string& message);
 			void			closeConnection(int fd);
 

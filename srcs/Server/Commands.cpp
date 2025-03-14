@@ -16,16 +16,22 @@ void	IRC::Server::pass(std::stringstream &args, Client &client)
 
 void	IRC::Server::nick(std::stringstream &args, Client &client)
 {
-	(void)client;
-	(void)args;
-	cout << "nick command\n";
+	string nickname;
+	args >> nickname;
+	if (nickname.empty())
+		client.sendResponse(ERR_NONICKNAMEGIVEN(client.getNickname()));
+	else if (strchr("$#:", nickname[0] || isdigit(nickname[0] || nickname.find(" ,*?!@."))))
+		client.sendResponse(ERR_ERRONEUSNICKNAME(client.getNickname(), nickname));
+	if (this->_nickIsInUse(nickname))
+		client.sendResponse(ERR_NICKNAMEINUSE(client.getNickname(), nickname));
+	else
+		client.setNickname(nickname);
 }
 
 void	IRC::Server::user(std::stringstream &args, Client &client)
 {
-	(void)client;
 	(void)args;
-	cout << "user command\n";
+	(void)client;
 }
 
 void	IRC::Server::join(std::stringstream &args, Client &client)
