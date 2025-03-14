@@ -13,12 +13,12 @@ namespace IRC
     class Server
     {
         private:
-            static Server *instancePtr; /**< Pointer to the Singleton instance of Server. */
-            static pthread_mutex_t mtx; /**< Mutex for thread-safe Singleton access. */
+			static Server *instancePtr; /**< Pointer to the Singleton instance of Server. */
+			static pthread_mutex_t mtx; /**< Mutex for thread-safe Singleton access. */
 			
 			int	_epollFd;
-            int	_port;
-            int	_socketFd;
+			int	_port;
+			int	_socketFd;
 			static bool	_signal;
 			Socket*	_socket;
 			string	_password;
@@ -27,10 +27,10 @@ namespace IRC
 			std::map<string, ISubject*> _channels; /**<channel_name, ISubject* channel>*/
 			std::map<string, void(IRC::Server::*)(std::stringstream &, Client &)> _commands;
 			
-            Server();
-            ~Server();
-            Server(const Server &other);
-            Server &operator=(const Server &other);
+			Server();
+			~Server();
+			Server(const Server &other);
+			Server &operator=(const Server &other);
 
 			// For destructor
 			void			_closeFds();
