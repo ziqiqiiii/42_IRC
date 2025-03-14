@@ -14,7 +14,12 @@ IRC::Server::Server() {}
  * @brief Destructor for Server.
  * Cleans up resources used by the Server object. Private to enforce Singleton design.
  */
-IRC::Server::~Server() {}
+IRC::Server::~Server()
+{
+	this->_clearClients();
+	this->_clearChannels();
+	this->_closeFds();
+}
 
 /**
  * @brief Copy constructor for Server.
@@ -103,12 +108,6 @@ void	IRC::Server::clearClient(int fd)
 	this->_server_clients.erase(fd);
 }
 
-void	IRC::Server::setNonBlock(int fd)
-{
-	if (fcntl(fd, F_SETFL,O_NONBLOCK) == -1)
-		throw std::runtime_error("Failed to set socket to non-blocking mode");
-}
-
 void	IRC::Server::epollInit()
 {
 	this->_epollFd = epoll_create1(0);
@@ -123,17 +122,13 @@ void	IRC::Server::epollAdd(int fd, int flags)
 	event.data.fd = fd;
 	event.events = flags;
 	if (epoll_ctl(this->_epollFd, EPOLL_CTL_ADD, fd, &event) == -1)
-	{
-		cerr << "Could not add event for fd: " << fd << " to epoll\n";
-	}
+		throw std::runtime_error("Failed to add fd to epoll");
 }
 
 void	IRC::Server::epollDel(int fd)
 {
 	if (epoll_ctl(this->_epollFd, EPOLL_CTL_DEL, fd, NULL) == -1)
-	{
-		cerr << "Could not delete event for fd: " << fd << " from epoll\n";
-	}
+		throw std::runtime_error("Failed to delete fd from epoll");
 }
 
 int		IRC::Server::getSocketFd() const {return this->_socketFd;}

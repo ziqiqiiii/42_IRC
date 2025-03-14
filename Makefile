@@ -47,6 +47,8 @@ fclean:			clean
 re:				fclean all
 
 test: all
-				./$(NAME)
+				./$(NAME) 6667 abc
+nc: all
+				nc -C 127.0.0.1 6667
 
 .PHONY:			all clean fclean re
