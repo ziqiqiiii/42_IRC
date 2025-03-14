@@ -85,16 +85,6 @@ void	IRC::Server::signalHandler(int signum)
 	IRC::Server::_signal = true;
 }
 
-int	IRC::Server::acceptConnection(sockaddr_in &address)
-{
-	return this->_socket->acceptConnection(address);
-}
-
-void	IRC::Server::receiveNewData(int fd)
-{
-	(void) fd;
-}
-
 void	IRC::Server::sendResponse(string response, int fd)
 {
 	if (send(fd, response.c_str(), response.size(), 0) == -1)
@@ -127,7 +117,6 @@ void	IRC::Server::epollInit()
 	this->_epollFd = epoll_create1(0);
 	if (this->_epollFd < 0)
 		throw std::runtime_error("Failed to epoll_create()");
-	cout << "Epoll fd : " << this->_epollFd << endl;
 }
 
 void	IRC::Server::epollAdd(int fd, int flags)
@@ -225,9 +214,6 @@ void	IRC::Server::run()
 				this->handleNewConnection();
 			else
 				this->handleClientPacket(queue[i]);
-			// if (queue->events == EPOLLIN) 
-			// {
-			// }
 		}
 	}
 }

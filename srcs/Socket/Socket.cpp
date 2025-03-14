@@ -26,7 +26,6 @@ Socket::Socket(int domain, int service,  int protocol, int port, unsigned long i
 // Default Destructor
 Socket::~Socket()
 {
-	cout << "Socket destructor" << endl;
     close(this->_fd);
     memset(&this->_address, 0, sizeof(struct sockaddr_in));
 }
@@ -50,7 +49,6 @@ void Socket::bindConnection()
     struct sockaddr_in address = this->getAddress();
     int addr_len = sizeof(address);
     this->setConnection(bind(this->getFd(), (struct sockaddr *)&address, addr_len));
-    cout << "Bind : " << this->getFd() << endl;
     this->testConnection(this->getConnection());
 }
 
@@ -58,14 +56,12 @@ int Socket::acceptConnection(sockaddr_in &address)
 {
     int addr_len = sizeof(address);
     int new_socket = accept(this->getFd(), (struct sockaddr *)&address, (socklen_t*)&addr_len);
-	cout << "Accept : " << new_socket << endl;
     this->testConnection(new_socket);
     return new_socket;
 }
     
 void Socket::listenConnection()
 {
-	cout << "Listen : " << this->getFd() << endl;
     this->testConnection(listen(this->getFd(), this->getMaxTry()));
 }
 
@@ -73,7 +69,6 @@ void Socket::listenConnection()
 void Socket::testConnection(int test_variable)
 {
     if (test_variable < 0) {
-        perror("Failed to connect ...");
         throw std::runtime_error("Failed to connect ...");
     }
 }

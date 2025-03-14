@@ -34,66 +34,50 @@ namespace IRC
             Server &operator=(const Server &other);
 
 			// For destructor
-			void		_closeFds();
-			void		_clearClients();
-			void		_clearChannels();
-			void		_deleteSocket();
+			void			_closeFds();
+			void			_clearClients();
+			void			_clearChannels();
+			void			_deleteSocket();
 			
-			void		handleNewConnection();
-			void		handleClientPacket(struct epoll_event &event);
-			void		parseExec(int fd);
-	
+			void			handleNewConnection();
+			void			handleClientPacket(struct epoll_event &event);
+			void			parseExec(int fd);
 		public:
-            static Server*	getInstance();
+			static Server*	getInstance();
 			static void		destroyInstance();
-
-			void		serverInit(int port, string password);
-			int			acceptConnection(sockaddr_in &address);
-			void		receiveNewData(int fd);
+			static void		signalHandler(int signum);
+			void			serverInit(int port, string password);
+			void			run();
 			
-			// Observer Pattern Methods
-			Client		&getClient(int fd);
-			Channel		&getChannel(string name);
-			void		addClient(IObserver* client);
-			void		clearClient(int fd);
-			void		createChannel(const string channel_name);
-			void		joinChannel(const string& channel_name, IObserver* client);
-			void		leaveChannel(const string& channel_name, IObserver* client);
+			// Getter(s)
+			Client			&getClient(int fd);
+			Channel			&getChannel(string name);
+			int				getSocketFd() const;
 
-			// commands
-			void	pass(std::stringstream &args, int fd);
-			void	join(std::stringstream &args, int fd);
-			void	part(std::stringstream &args, int fd);
-			void	nick(std::stringstream &args, int fd);
-			void	user(std::stringstream &args, int fd);
-			void	topic(std::stringstream &args, int fd);
-			void	invite(std::stringstream &args, int fd);
-			void	mode(std::stringstream &args, int fd);
-			void	privmsg(std::stringstream &args, int fd);
+			// Epoll functions
+			void			epollAdd(int fd, int flags);
+			void			epollDel(int fd);
+			void			epollInit();
+			
+			// Channel-Client functions
+			void			addClient(IObserver* client);
+			void			clearClient(int fd);
+			void			createChannel(const string channel_name);
+			void			joinChannel(const string& channel_name, IObserver* client);
+			void			leaveChannel(const string& channel_name, IObserver* client);
+			void			sendResponse(string response, int fd);
+			void			notifyAll(const string& message);
+			void			closeConnection(int fd);
 
-			void		sendResponse(string response, int fd);
-			void		notifyAll(const string& message);
-			void		closeConnection(int fd);
-
-			// commands
-			void		pass(char *args, int fd);
-			void		join(char *args, int fd);
-			void		part(char *args, int fd);
-			void		nick(char *args, int fd);
-			void		user(char *args, int fd);
-			void		topic(char *args, int fd);
-			void		invite(char *args, int fd);
-			void		mode(char *args, int fd);
-			void		privmsg(char *args, int fd);
-
-			void		epollAdd(int fd, int flags);
-			void		epollDel(int fd);
-			void		epollInit();
-
-			static void	signalHandler(int signum);
-
-			int			getSocketFd() const;
-
-			void		run();
+			// Commands
+			void			pass(std::stringstream &args, int fd);
+			void			join(std::stringstream &args, int fd);
+			void			part(std::stringstream &args, int fd);
+			void			nick(std::stringstream &args, int fd);
+			void			user(std::stringstream &args, int fd);
+			void			topic(std::stringstream &args, int fd);
+			void			invite(std::stringstream &args, int fd);
+			void			mode(std::stringstream &args, int fd);
+			void			privmsg(std::stringstream &args, int fd);
     };
 }
