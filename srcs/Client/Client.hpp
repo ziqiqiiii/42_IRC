@@ -48,7 +48,7 @@ namespace IRC
 			string	getNickname() const;
 			bool	isAuthenticated() const;
 
-
+			void	sendResponse(string response) const;
 			// Observer Update Method
 			void	update(const string& message);
     };

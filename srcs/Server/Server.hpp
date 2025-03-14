@@ -23,10 +23,9 @@ namespace IRC
 			Socket*	_socket;
 			string	_password;
 
-			std::vector<struct pollfd> fds;
 			std::map<int, IObserver*> _server_clients; /**<client_fd, IObserver* client>*/
 			std::map<string, ISubject*> _channels; /**<channel_name, ISubject* channel>*/
-			std::map<string, void(IRC::Server::*)(std::stringstream &, int)> _commands;
+			std::map<string, void(IRC::Server::*)(std::stringstream &, Client &)> _commands;
 			
             Server();
             ~Server();
@@ -59,30 +58,18 @@ namespace IRC
 			void		leaveChannel(const string& channel_name, IObserver* client);
 
 			// commands
-			void	pass(std::stringstream &args, int fd);
-			void	join(std::stringstream &args, int fd);
-			void	part(std::stringstream &args, int fd);
-			void	nick(std::stringstream &args, int fd);
-			void	user(std::stringstream &args, int fd);
-			void	topic(std::stringstream &args, int fd);
-			void	invite(std::stringstream &args, int fd);
-			void	mode(std::stringstream &args, int fd);
-			void	privmsg(std::stringstream &args, int fd);
+			void	pass(std::stringstream &args, Client &client);
+			void	join(std::stringstream &args, Client &client);
+			void	part(std::stringstream &args, Client &client);
+			void	nick(std::stringstream &args, Client &client);
+			void	user(std::stringstream &args, Client &client);
+			void	topic(std::stringstream &args, Client &client);
+			void	invite(std::stringstream &args, Client &client);
+			void	mode(std::stringstream &args, Client &client);
+			void	privmsg(std::stringstream &args, Client &client);
 
-			void		sendResponse(string response, int fd);
 			void		notifyAll(const string& message);
 			void		closeConnection(int fd);
-
-			// commands
-			void		pass(char *args, int fd);
-			void		join(char *args, int fd);
-			void		part(char *args, int fd);
-			void		nick(char *args, int fd);
-			void		user(char *args, int fd);
-			void		topic(char *args, int fd);
-			void		invite(char *args, int fd);
-			void		mode(char *args, int fd);
-			void		privmsg(char *args, int fd);
 
 			void		epollAdd(int fd, int flags);
 			void		epollDel(int fd);
