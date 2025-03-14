@@ -2,6 +2,7 @@
 
 void	IRC::Server::_closeFds()
 {
+
 	close(this->_epollFd);
 	close(this->_socketFd);
 }
@@ -11,6 +12,7 @@ void	IRC::Server::_clearClients()
 	IRC::Logger* logManager = IRC::Logger::getInstance();
 
 	for (std::map<int, IObserver*>::iterator it = _server_clients.begin(); it != _server_clients.end(); ++it) {
+		this->sendResponse("ERROR :Server shutting down\n", it->first);
 		logManager->logMsg(LIGHT_BLUE, ("Client " + IRC::Utils::intToString(it->first) + " disconnected ").c_str());
 		close(it->first);
 		delete it->second;
@@ -27,4 +29,9 @@ void	IRC::Server::_clearChannels()
 		delete it->second;
 	}
 	_channels.clear();
+}
+
+void	IRC::Server::_deleteSocket()
+{
+	delete this->_socket;
 }

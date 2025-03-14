@@ -16,10 +16,13 @@ IRC::Server::Server() {}
  */
 IRC::Server::~Server()
 {
-	cout << "Server Destructor " << endl;
+	IRC::Logger	*logManager = IRC::Logger::getInstance();
+
+	logManager->logMsg(LIGHTMAGENTA, "Server shutting down");
 	this->_clearClients();
 	this->_clearChannels();
 	this->_closeFds();
+	this->_deleteSocket();
 }
 
 /**
@@ -63,6 +66,15 @@ IRC::Server* IRC::Server::getInstance() {
 	return instancePtr;
 }
 
+void		IRC::Server::destroyInstance()
+{
+	if (instancePtr != NULL) {
+		pthread_mutex_lock(&mtx);
+		delete instancePtr;
+		instancePtr = NULL;
+		pthread_mutex_unlock(&mtx);
+	}
+}
 
 void	IRC::Server::signalHandler(int signum)
 {
@@ -102,6 +114,7 @@ void	IRC::Server::closeConnection(int fd)
 	this->_server_clients.erase(fd);
 	shutdown(fd, SHUT_RDWR);
 	epollDel(fd);
+	close(fd);
 }
 
 void	IRC::Server::clearClient(int fd)
@@ -152,10 +165,12 @@ void	IRC::Server::handleNewConnection()
 void	IRC::Server::handleClientPacket(struct epoll_event &event)
 {
 	char	buffer[BUFFER_SIZE + 1];
-	bzero(buffer, BUFFER_SIZE);
+	IRC::Logger* logManager = IRC::Logger::getInstance();
 
+	bzero(buffer, BUFFER_SIZE);
 	if (event.events & (EPOLLERR | EPOLLHUP) || !recv(event.data.fd, buffer, BUFFER_SIZE, 0))
 	{
+		logManager->logMsg(LIGHT_BLUE, ("Client " + IRC::Utils::intToString(event.data.fd) + " disconnected ").c_str());
 		closeConnection(event.data.fd);
 		return ;
 	}
@@ -210,10 +225,9 @@ void	IRC::Server::run()
 				this->handleNewConnection();
 			else
 				this->handleClientPacket(queue[i]);
+			// if (queue->events == EPOLLIN) 
+			// {
+			// }
 		}
 	}
-	cout << "Clearing ..." << endl;
-	this->_clearClients();
-	this->_clearChannels();
-	this->_closeFds();
 }

@@ -14,15 +14,6 @@
 
 int	main(int argc, char **argv)
 {
-	// (void)argc;
-	// (void)argv;
-	// close(3);
-	// close(4);
-	// close(5);
-	// close(6);
-	// close(7);
-
-	//When signal is send, event in epoll is modified. Need to check for that and epollDel, closeFds() and whatsoever 
 	try {
 		signal(SIGINT, IRC::Server::signalHandler); //-> catch the signal (ctrl + c)
 		signal(SIGQUIT, IRC::Server::signalHandler); //-> catch the signal (ctrl + \)
@@ -31,11 +22,12 @@ int	main(int argc, char **argv)
 		IRC::Utils::checker(argc);
 		server->serverInit(atoi(argv[1]), argv[2]);
 		server->run();
+
 	} catch(std::exception &e) {
 		cout << "catching error ";
 		std::cerr << "Error: " << e.what() << '\n';
 		return (1);
 	}
-	
+	IRC::Server::destroyInstance();
 	return (0);
 }

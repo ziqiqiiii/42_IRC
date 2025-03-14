@@ -37,13 +37,15 @@ namespace IRC
 			void		_closeFds();
 			void		_clearClients();
 			void		_clearChannels();
-
+			void		_deleteSocket();
+			
 			void		handleNewConnection();
 			void		handleClientPacket(struct epoll_event &event);
 			void		parseExec(int fd);
 	
 		public:
-            static Server* getInstance();
+            static Server*	getInstance();
+			static void		destroyInstance();
 
 			void		serverInit(int port, string password);
 			int			acceptConnection(sockaddr_in &address);
