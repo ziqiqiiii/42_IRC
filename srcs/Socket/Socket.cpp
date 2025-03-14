@@ -3,6 +3,8 @@
 // Default Constructor
 Socket::Socket(int domain, int service,  int protocol, int port, unsigned long interface)
 {
+    int	optval = 1;
+
     // Clear the memory for the address struct
     memset(&this->_address, 0, sizeof(this->_address));
     // Define address struct
@@ -12,6 +14,11 @@ Socket::Socket(int domain, int service,  int protocol, int port, unsigned long i
     memset(this->_address.sin_zero, '\0', sizeof(this->_address.sin_zero));
     // Establish Socket
     this->_fd = socket(domain, service, protocol);
+	if (this->_fd < 0)
+		throw std::runtime_error("Error:\t Creation socket failed");
+	// Set reuse address and port for socket
+    if (setsockopt(this->_fd, SOL_SOCKET, SO_REUSEADDR | SO_REUSEPORT, &optval, sizeof(optval)) < 0)
+		throw std::runtime_error("Error:\t Failed to set option to socket");
     // Set Max Try for Socket 
     this->_max_try = 10;
 }
