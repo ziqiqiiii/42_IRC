@@ -30,8 +30,17 @@ void	IRC::Server::nick(std::stringstream &args, Client &client)
 
 void	IRC::Server::user(std::stringstream &args, Client &client)
 {
-	(void)args;
-	(void)client;
+	string	user;
+	args >> user;
+	if (!client.getUsername().empty())
+		client.sendResponse(ERR_ALREADYREGISTERED(client.getNickname()));
+	if (user.empty())
+		client.sendResponse(ERR_NEEDMOREPARAMS(client.getNickname(), "USER"));
+	else
+	{
+		client.sendResponse(RPL_WELCOME(client.getNickname()));
+		client.setUsername(user);
+	}
 }
 
 void	IRC::Server::join(std::stringstream &args, Client &client)

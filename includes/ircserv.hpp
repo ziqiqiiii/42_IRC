@@ -27,6 +27,8 @@
 # define CRLF "\r\n"
 # define MAX_CLIENTS 50
 # define BUFFER_SIZE 512
+// Numeric replies
+# define RPL_WELCOME(client)				(": 001 " + client + " :Welcome to the lala mui zai network " + client) 
 
 // Error replies
 # define ERR_UNKNOWNCOMMAND(client, command)(": 421 " + client + " " + command + " :Unknown command")
@@ -35,7 +37,7 @@
 # define ERR_NICKNAMEINUSE(client, nick)	(": 433 " + client + " " + nick + " :Nickname is already in use")
 # define ERR_NOTREGISTERED(client) 			(": 451 " + client + " :You have not registered")
 # define ERR_NEEDMOREPARAMS(client, command)(": 461 " + client + " " + command + " :Not enough paramaters")
-# define ERR_ALREADYREGISTERED(client)		(": 462 " + client +  " :You may not register")
+# define ERR_ALREADYREGISTERED(client)		(": 462 " + client +  " :You may not reregister")
 # define ERR_PASSWDMISMATCH(client)			(": 464 " + client + " :Password incorrect")
 //--------------------namespace-------------------------//
 using std::cout;
