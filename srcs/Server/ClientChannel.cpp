@@ -14,21 +14,19 @@ void    IRC::Server::addClient(Client* client)
 
 void	IRC::Server::createChannel(const string channel_name, Client* client)
 {
-	string	tmp_channel_name = IRC::Utils::stringToUpper(channel_name);
 	IRC::Logger* logManager = IRC::Logger::getInstance();
-	std::map<string, Channel*>::iterator it;
+	std::map<string, IRC::Channel*>::iterator it;
 
-	if (tmp_channel_name.length() > 50) {
+	if (channel_name.length() > 50) {
 		logManager->logMsg(RED, "Channel name too long", strerror(errno));
 		return;
 	}
 
-	it = this->_channels.find(tmp_channel_name);
-
+	it = this->_channels.find(channel_name);
 	if (it != this->_channels.end())
-        logManager->logMsg(RED, ("Channel" + tmp_channel_name + " already exist").c_str(), strerror(errno));
+        logManager->logMsg(RED, ("Channel " + channel_name + " already exist").c_str(), strerror(errno));
 	else
-		this->_channels[tmp_channel_name] = new Channel(tmp_channel_name, *client);
+		this->_channels[channel_name] = new Channel(channel_name, *client);
 }
 
 
@@ -39,7 +37,7 @@ void	IRC::Server::joinChannel(const string& channel_name, Client* client)
 
 	// std::map<int, Client*>	client_it  = this->_clients.find(client->)
 	if (channel_it->second->isClientExist(client->getClientFd()))
-		logManager->logMsg(RED, ("Client" + client->getNickname() + " already exist in channel " + channel_name).c_str(), strerror(errno));
+		logManager->logMsg(RED, ("Client " + client->getNickname() + " already exist in channel " + channel_name).c_str(), strerror(errno));
 	else
 		channel_it->second->attach(client);
 }
@@ -50,7 +48,7 @@ void	IRC::Server::leaveChannel(const string& channel_name, Client* client)
 	IRC::Logger* logManager								= IRC::Logger::getInstance();
 
 	if (!channel_it->second->isClientExist(client->getClientFd()))
-		logManager->logMsg(RED, ("Client" + client->getNickname() + " doesn't exist in channel " + channel_name).c_str(), strerror(errno));
+		logManager->logMsg(RED, ("Client " + client->getNickname() + " doesn't exist in channel " + channel_name).c_str(), strerror(errno));
 	else
 		channel_it->second->detach(client);
 }
