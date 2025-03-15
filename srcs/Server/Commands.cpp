@@ -50,7 +50,6 @@ void	IRC::Server::join(std::stringstream &args, Client &client)
 	this->_parseJoinCommand(args, channels_keys_map);
 	this->_validateJoinCommand();
 	this->_operateJoinCommand(channels_keys_map, client);
-	cout << "join command\n";
 }
 
 void	IRC::Server::privmsg(std::stringstream &args, Client &client)
