@@ -42,6 +42,11 @@ namespace IRC
 			void			handleNewConnection();
 			void			handleClientPacket(struct epoll_event &event);
 			void			parseExec(int fd);
+
+			// Commands Helper functions
+			void			_parseJoinCommand(std::stringstream &args, std::map<string, string>& chan_keys_map);
+			void			_validateJoinCommand();
+			void			_operateJoinCommand(std::map<string, string>& chan_keys_map, Client& client);
 		public:
 			static Server*	getInstance();
 			static void		destroyInstance();

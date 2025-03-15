@@ -8,6 +8,7 @@ IRC::Channel::Channel(const string channel_name, const IObserver& client)
 {
 	this->setChannelName(channel_name);
 	*this->_channel_operator = client;
+	*this->_clients[client.getClientFd()] = client;
 	this->_channel_mode = ChannelMode::No_Mode;
 }
 
