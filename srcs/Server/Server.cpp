@@ -106,8 +106,8 @@ void	IRC::Server::clearClient(int fd)
 
 int	IRC::Server::_nickIsInUse(string nickname)
 {
-	std::map<int, IObserver *>::iterator	it = this->_server_clients.begin();
-	std::map<int, IObserver *>::iterator	end = this->_server_clients.end();
+	std::map<int, Client*>::iterator	it = this->_server_clients.begin();
+	std::map<int, Client*>::iterator	end = this->_server_clients.end();
 
 	while (it != end)
 	{

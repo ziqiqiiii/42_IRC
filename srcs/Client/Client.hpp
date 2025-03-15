@@ -2,19 +2,9 @@
 
 # include "ircserv.hpp"
 
-  // Observer Interface
-class IObserver {
-	public:
-		virtual ~IObserver() {}
-		virtual void	update(const string& message) = 0;
-		virtual	string	getUsername() const = 0;
-		virtual	string	getNickname() const = 0;
-		virtual int		getClientFd() const = 0;
-};
-
 namespace IRC
 {
-    class Client: public IObserver
+    class Client
     {
         private:
 			int					_fd;

@@ -20,50 +20,38 @@ namespace ChannelMode
 	};
 }
 
-class IObserver;
-
-class ISubject {
-    public:
-        virtual ~ISubject() {}
-        virtual void    attach(IObserver* client) = 0;
-        virtual void    detach(IObserver* client) = 0;
-        virtual void    notify(const std::string& message) = 0;
-        virtual string  getName() const = 0;
-        virtual bool    isClientExist(const int client_fd) = 0;
-};
-
-
 namespace IRC
 {
-    class Channel: public ISubject
+	class Client;
+    class Channel
     {
         private:
 			string						_channel_name;
             int							_channel_mode;
-			IObserver*					_channel_operator;
-			std::map<int, IObserver*>	_clients; /**<client_fd, Client*> */
+			IRC::Client*				_channel_operator;
+			std::map<int, IRC::Client*>		_clients; /**<client_fd, Client*> */
 			string						_topic;
         public:
             Channel();
             ~Channel();
             Channel(const Channel &other);
             Channel &operator=(const Channel &other);
-            Channel(const string channel_name, const IObserver& client);
+            Channel(const string channel_name, const IRC::Client& client);
 
-            void		attach(IObserver* client);
-			void		detach(IObserver* client);
-			void		notify(const std::string& message);
-			void		sendMessage(const IObserver* sender, const string& msg);
+            void				attach(IRC::Client* client);
+			void				detach(IRC::Client* client);
+			void				notify(const std::string& message);
+			void				sendMessage(const Client* sender, const string& msg);
 
 			//Setter(s)
-			void		setChannelName(const string& channel_name);
-			void		setTopic(const string& new_topic);
-			void		setChannelMode(int channel_mode);
+			void				setChannelName(const string& channel_name);
+			void				setTopic(const string& new_topic);
+			void				setChannelMode(int channel_mode);
 
             //Getter(s)
-            string		getName() const;
-            bool		isClientExist(const int client_fd);
-			string		getTopic() const;
-			IObserver*	getChannelOperator() const;
+            string				getName() const;
+            bool				isClientExist(const int client_fd);
+			string				getTopic() const;
+			IRC::Client*		getChannelOperator() const;
     };
 }

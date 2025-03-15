@@ -41,13 +41,15 @@ void	IRC::Server::_operateJoinCommand(std::map<string, string>& chan_keys_map, C
     {
     	const string& channel = it->first;
     	const string& key = it->second;
+		std::map<string, Channel*>::iterator channel_it;
 
 		(void)key;
+		channel_it = this->_channels.find(channel);
         // Check if the channel exists
-        if (this->_channels.find(channel) != this->_channels.end())
+        if (channel_it != this->_channels.end())
             this->joinChannel(channel, &client); // Channel exists, join the channel
         else
             this->createChannel(channel, &client); // Channel does not exist, create and join the channel
-		// client.sendResponse();
+		// channel_it->second->notify();
 	}
 }

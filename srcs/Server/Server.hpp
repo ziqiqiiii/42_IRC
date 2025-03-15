@@ -23,8 +23,8 @@ namespace IRC
 			Socket*	_socket;
 			string	_password;
 
-			std::map<int, IObserver*> _server_clients; /**<client_fd, IObserver* client>*/
-			std::map<string, ISubject*> _channels; /**<channel_name, ISubject* channel>*/
+			std::map<int, Client*> _server_clients; /**<client_fd, Client* client>*/
+			std::map<string, Channel*> _channels; /**<channel_name, ISubject* channel>*/
 			std::map<string, void(IRC::Server::*)(std::stringstream &, Client &)> _commands;
 			
 			Server();
@@ -65,11 +65,11 @@ namespace IRC
 			void			epollInit();
 			
 			// Channel-Client functions
-			void			addClient(IObserver* client);
+			void			addClient(Client* client);
 			void			clearClient(int fd);
-			void			createChannel(const string channel_name, IObserver* client);
-			void			joinChannel(const string& channel_name, IObserver* client);
-			void			leaveChannel(const string& channel_name, IObserver* client);
+			void			createChannel(const string channel_name, Client* client);
+			void			joinChannel(const string& channel_name, Client* client);
+			void			leaveChannel(const string& channel_name, Client* client);
 			void			notifyAll(const string& message);
 			void			closeConnection(int fd);
 

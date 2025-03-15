@@ -4,7 +4,7 @@ IRC::Channel::Channel() {}
 
 IRC::Channel::~Channel() {}
 
-IRC::Channel::Channel(const string channel_name, const IObserver& client)
+IRC::Channel::Channel(const string channel_name, const IRC::Client& client)
 {
 	this->setChannelName(channel_name);
 	*this->_channel_operator = client;
@@ -27,7 +27,7 @@ IRC::Channel& IRC::Channel::operator=(const Channel &other)
 }
 
 //ISubject Functions
-void	IRC::Channel::attach(IObserver* client)
+void	IRC::Channel::attach(IRC::Client* client)
 {
 	int client_fd = client->getClientFd();
 	IRC::Logger* logManager = IRC::Logger::getInstance();
@@ -38,12 +38,12 @@ void	IRC::Channel::attach(IObserver* client)
 		this->_clients[client_fd] = client;
 }
 
-void	IRC::Channel::detach(IObserver* client)
+void	IRC::Channel::detach(IRC::Client* client)
 {
 	int	client_fd = client->getClientFd();
 	IRC::Logger* logManager = IRC::Logger::getInstance();
 
-	std::map<int, IObserver*>::iterator it = this->_clients.find(client_fd);
+	std::map<int, IRC::Client*>::iterator it = this->_clients.find(client_fd);
 	if (it != this->_clients.end())
 		this->_clients.erase(it);
 	else
@@ -52,13 +52,13 @@ void	IRC::Channel::detach(IObserver* client)
 
 void	IRC::Channel::notify(const std::string& message)
 {
-	std::map<int, IObserver*>::iterator	it;
+	std::map<int, IRC::Client*>::iterator	it;
 
 	for (it = this->_clients.begin(); it != this->_clients.end(); ++it)
 		it->second->update(message);
 }
 
-void	IRC::Channel::sendMessage(const IObserver* sender, const string& msg)
+void	IRC::Channel::sendMessage(const IRC::Client* sender, const string& msg)
 {
 	this->notify("[" + sender->getNickname() + "] " + msg);
 }
@@ -91,11 +91,13 @@ string	IRC::Channel::getName() const { return this->_channel_name; }
 
 bool	IRC::Channel::isClientExist(const int client_fd)
 {
-	std::map<int, IObserver*>::iterator it = this->_clients.find(client_fd);
+	std::map<int, IRC::Client*>::iterator it = this->_clients.find(client_fd);
 
 	if (it != this->_clients.end())
 		return true;
 	return false;
 }
 
-IObserver*	IRC::Channel::getChannelOperator() const { return this->_channel_operator; }
+string	IRC::Channel::getTopic() const { return this->_topic; }
+
+IRC::Client*	IRC::Channel::getChannelOperator() const { return this->_channel_operator; }
