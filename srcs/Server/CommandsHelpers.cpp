@@ -49,6 +49,4 @@ void	IRC::Server::_operateJoinCommand(std::map<string, string>& chan_keys_map, C
 			this->createChannel(channel, &client); // Channel does not exist, create and join the channel
 		// channel_it->second->notify();
 	}
-	(void)chan_keys_map;
-	(void)client;
 }
