@@ -12,7 +12,7 @@ void    IRC::Server::addClient(IObserver* client)
         this->_server_clients[client_fd] = client;
 }
 
-void	IRC::Server::createChannel(const string channel_name)
+void	IRC::Server::createChannel(const string channel_name, IObserver* client)
 {
 	string	tmp_channel_name = IRC::Utils::stringToUpper(channel_name);
 	IRC::Logger* logManager = IRC::Logger::getInstance();
@@ -28,7 +28,7 @@ void	IRC::Server::createChannel(const string channel_name)
 	if (it != this->_channels.end())
         logManager->logMsg(RED, ("Channel" + tmp_channel_name + " already exist").c_str(), strerror(errno));
 	else
-		this->_channels[tmp_channel_name] = new Channel(tmp_channel_name);
+		this->_channels[tmp_channel_name] = new Channel(tmp_channel_name, *client);
 }
 
 
