@@ -8,7 +8,7 @@ IRC::Channel::Channel(const string channel_name, const IObserver& client)
 {
 	this->setChannelName(channel_name);
 	*this->_channel_operator = client;
-	this->_channel_mode = ChannelModes::No_Mode;
+	this->_channel_mode = ChannelMode::No_Mode;
 }
 
 IRC::Channel::Channel(const Channel &other) { *this = other; }
@@ -65,19 +65,19 @@ void	IRC::Channel::sendMessage(const IObserver* sender, const string& msg)
 //Setter(s)
 void	IRC::Channel::setChannelName(const string& channel_name) { this->_channel_name = channel_name; }
 
-void	IRC::Channel::setTopic(const string& new_topic) {this->_topic = new_topic; }
+void	IRC::Channel::setTopic(const string& new_topic) { this->_topic = new_topic; }
 
 void	IRC::Channel::setChannelMode(int channel_mode)
 {
 	bool	mode_exist = false;
 
-	for (int mode = ChannelModes::Ban_Channel_Mode; mode != ChannelModes::No_Mode; ++mode)
+	for (int mode = ChannelMode::Ban_Channel_Mode; mode != ChannelMode::No_Mode; ++mode)
 	{
-		ChannelModes current_mode = static_cast<ChannelModes>(mode);
-		if (current_mode == this->_channel_mode)
+		ChannelMode::ChannelModes current_mode = static_cast<ChannelMode::ChannelModes>(mode);
+		if (current_mode == channel_mode)
 		{
 			mode_exist = true;
-			this->_channel_mode = current_mode;
+			this->_channel_mode = channel_mode;
 			break ;
 		}
 	}

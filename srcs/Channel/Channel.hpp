@@ -2,20 +2,23 @@
 
 # include "ircserv.hpp"
 
-enum ChannelModes
+namespace ChannelMode
 {
-	Ban_Channel_Mode,
-	Exception_Channel_Mode,
-	Client_Limit_Channel_Mode,
-	Invite_only_Channel_Mode,
-	Invite_Exception_Channel_Mode,
-	Key_Channel_Mode,
-	Moderated_Channel_Mode,
-	Secret_Channel_Mode,
-	Protected_Topic_Mode,
-	No_External_Messages_Mode,
-	No_Mode,
-};
+	enum ChannelModes
+	{
+		Ban_Channel_Mode,
+		Exception_Channel_Mode,
+		Client_Limit_Channel_Mode,
+		Invite_only_Channel_Mode,
+		Invite_Exception_Channel_Mode,
+		Key_Channel_Mode,
+		Moderated_Channel_Mode,
+		Secret_Channel_Mode,
+		Protected_Topic_Mode,
+		No_External_Messages_Mode,
+		No_Mode,
+	};
+}
 
 class IObserver;
 
