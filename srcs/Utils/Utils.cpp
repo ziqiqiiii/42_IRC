@@ -15,11 +15,11 @@ string IRC::Utils::intToString(int num)
 
 string	IRC::Utils::stringToUpper(const string& str)
 {
-	string	tmp;
-	size_t	len = str.length();
-	for (size_t i = 0; i < len; i++)
-		tmp[i] = std::toupper(str[i]);
-	return tmp;
+    string tmp;
+
+    tmp = str;
+	std::transform(tmp.begin(), tmp.end(), tmp.begin(), ::toupper);
+    return tmp;
 }
 
 size_t	IRC::Utils::find_crlf(string &str)
