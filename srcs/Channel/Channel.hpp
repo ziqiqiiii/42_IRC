@@ -29,14 +29,14 @@ namespace IRC
 			string						_channel_name;
             int							_channel_mode;
 			IRC::Client*				_channel_operator;
-			std::map<int, IRC::Client*>		_clients; /**<client_fd, Client*> */
+			std::map<int, IRC::Client*>	_clients; /**<client_fd, Client*> */
 			string						_topic;
         public:
             Channel();
             ~Channel();
             Channel(const Channel &other);
             Channel &operator=(const Channel &other);
-            Channel(const string channel_name, const IRC::Client& client);
+            Channel(const string channel_name, IRC::Client& client);
 
             void				attach(IRC::Client* client);
 			void				detach(IRC::Client* client);

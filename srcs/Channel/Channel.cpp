@@ -4,11 +4,11 @@ IRC::Channel::Channel() {}
 
 IRC::Channel::~Channel() {}
 
-IRC::Channel::Channel(const string channel_name, const IRC::Client& client)
+IRC::Channel::Channel(const string channel_name, IRC::Client& client)
 {
 	this->setChannelName(channel_name);
-	*this->_channel_operator = client;
-	*this->_clients[client.getClientFd()] = client;
+	this->_channel_operator = &client;
+	this->_clients[client.getClientFd()] = &client;
 	this->_channel_mode = ChannelMode::No_Mode;
 }
 
