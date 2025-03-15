@@ -30,7 +30,7 @@
 // Numeric replies
 # define RPL_WELCOME(client)							(": 001 " + client + " :Welcome to the lala mui zai network " + client)
 # define RPL_NOTOPIC(client, channel)					(": 331 " + client + " " + channel + " :No topic is set")
-# define RPL_TOPIC(client, channel, topic)				(": 332 " + client + " " + channel + " :" topic)
+# define RPL_TOPIC(client, channel, topic)				(": 332 " + client + " " + channel + " :" + topic)
 # define RPL_TOPICWHOTIME(client, channel, nick, setat)	(": 333 " + client + " " + channel + " " + nick + " " + setat)
 # define RPL_NAMREPLY(client, symbol, channel, prefix_nick_pairs) \
 														(": 353 " + client + " " + symbol + " " + channel + " :" + prefix_nick_pairs)

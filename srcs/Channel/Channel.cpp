@@ -10,6 +10,8 @@ IRC::Channel::Channel(const string channel_name, IRC::Client& client)
 	this->_channel_operator = &client;
 	this->_clients[client.getClientFd()] = &client;
 	this->_channel_mode = ChannelMode::No_Mode;
+	this->_topic = "";
+	this->_prefix = " ";
 }
 
 IRC::Channel::Channel(const Channel &other) { *this = other; }
@@ -50,17 +52,27 @@ void	IRC::Channel::detach(IRC::Client* client)
 		logManager->logMsg(RED, (client->getNickname() + " deosn't exist in channel " + this->_channel_name).c_str(), strerror(errno));
 }
 
-void	IRC::Channel::notify(const std::string& message)
+void	IRC::Channel::notifyAll(const std::string& message)
 {
 	std::map<int, IRC::Client*>::iterator	it;
 
 	for (it = this->_clients.begin(); it != this->_clients.end(); ++it)
-		it->second->update(message);
+		it->second->sendResponse(message);
 }
 
-void	IRC::Channel::sendMessage(const IRC::Client* sender, const string& msg)
+void	IRC::Channel::joinNumericReplies(Client* new_client)
 {
-	this->notify("[" + sender->getNickname() + "] " + msg);
+	string	message;
+	string	nick = new_client->getNickname();
+
+	if (this->_topic.empty())
+		message += RPL_NOTOPIC(nick, this->_channel_name) + "\n";
+	else
+		message += RPL_TOPIC(nick, this->_channel_name, this->_topic) + "\n";
+	message += RPL_NAMREPLY(nick, "=", this->_channel_name, this->getClientsList()) + "\n";
+	message += RPL_ENDOFNAMES(nick, this->_channel_name) + "\n";
+
+	this->notifyAll(message);
 }
 
 //Setter(s)
@@ -101,3 +113,14 @@ bool	IRC::Channel::isClientExist(const int client_fd)
 string	IRC::Channel::getTopic() const { return this->_topic; }
 
 IRC::Client*	IRC::Channel::getChannelOperator() const { return this->_channel_operator; }
+
+string	IRC::Channel::getClientsList()
+{
+	std::map<int, IRC::Client*>::iterator	it;
+	string	name_list;
+
+	for (it = this->_clients.begin(); it != this->_clients.end(); ++it)
+		name_list += this->_prefix + it->second->getNickname() + " ";
+
+	return name_list;
+}

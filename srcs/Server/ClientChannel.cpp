@@ -26,7 +26,10 @@ void	IRC::Server::createChannel(const string channel_name, Client* client)
 	if (it != this->_channels.end())
         logManager->logMsg(RED, ("Channel " + channel_name + " already exist").c_str(), strerror(errno));
 	else
+	{
 		this->_channels[channel_name] = new Channel(channel_name, *client);
+		this->_channels[channel_name]->joinNumericReplies(client);
+	}
 }
 
 
@@ -39,7 +42,10 @@ void	IRC::Server::joinChannel(const string& channel_name, Client* client)
 	if (channel_it->second->isClientExist(client->getClientFd()))
 		logManager->logMsg(RED, ("Client " + client->getNickname() + " already exist in channel " + channel_name).c_str(), strerror(errno));
 	else
+	{
 		channel_it->second->attach(client);
+		channel_it->second->joinNumericReplies(client);
+	}
 }
 
 void	IRC::Server::leaveChannel(const string& channel_name, Client* client)
@@ -59,5 +65,5 @@ void	IRC::Server::notifyAll(const string& message)
 	std::map<string, Channel*>::iterator channel_it;
 
 	for (channel_it = this->_channels.begin(); channel_it != this->_channels.end(); ++channel_it)
-		channel_it->second->notify(message);
+		channel_it->second->notifyAll(message);
 }

@@ -31,6 +31,7 @@ namespace IRC
 			IRC::Client*				_channel_operator;
 			std::map<int, IRC::Client*>	_clients; /**<client_fd, Client*> */
 			string						_topic;
+			string						_prefix; // channel membership prefix
         public:
             Channel();
             ~Channel();
@@ -40,8 +41,8 @@ namespace IRC
 
             void				attach(IRC::Client* client);
 			void				detach(IRC::Client* client);
-			void				notify(const std::string& message);
-			void				sendMessage(const Client* sender, const string& msg);
+			void				notifyAll(const std::string& message);
+			void				joinNumericReplies(IRC::Client* new_client);
 
 			//Setter(s)
 			void				setChannelName(const string& channel_name);
@@ -53,5 +54,6 @@ namespace IRC
             bool				isClientExist(const int client_fd);
 			string				getTopic() const;
 			IRC::Client*		getChannelOperator() const;
+			string				getClientsList();
     };
 }
