@@ -1,8 +1,8 @@
 # include "Client.hpp"
 
-IRC::Client::Client() : _fd(-1), _nickname("*"), _autheticated(false) {}
+IRC::Client::Client() : _fd(-1), _nickname("*"), _autheticated(false), _registered(false) {}
 
-IRC::Client::Client(int fd, struct sockaddr_in address) : _fd(fd), _address(address), _nickname("*"), _autheticated(false) {}
+IRC::Client::Client(int fd, struct sockaddr_in address) : _fd(fd), _address(address), _nickname("*"), _autheticated(false), _registered(false) {}
 
 IRC::Client::~Client() {}
 
@@ -39,6 +39,8 @@ void	IRC::Client::sendResponse(string response) const
 
 
 //Setters
+void	IRC::Client::setRegistered(bool registered) {this->_registered = registered;}
+
 void    IRC::Client::setFd(int fd) { this->_fd = fd; }
 
 void    IRC::Client::setAddress(struct sockaddr_in address) { this->_address = address; }
@@ -50,6 +52,8 @@ void    IRC::Client::setUsername(string& username) { this->_username = username;
 void    IRC::Client::setAuthenticated(bool auth) { this->_autheticated = auth; }
 
 //Getters
+bool	IRC::Client::getRegistered() const {return this->_registered;}
+
 string	&IRC::Client::getBuffer() { return this->_buffer; }
 
 int		IRC::Client::getClientFd() const { return this->_fd; }
@@ -58,7 +62,7 @@ string	IRC::Client::getUsername() const { return this->_username; }
 
 string	IRC::Client::getNickname() const { return this->_nickname; }
 
-bool	IRC::Client::isAuthenticated() const { return this->_autheticated; }
+bool	IRC::Client::getAuthenticated() const { return this->_autheticated; }
 
 void	IRC::Client::update(const string& message)
 {

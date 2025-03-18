@@ -41,7 +41,7 @@ namespace IRC
 			int				_nickIsInUse(string nickname);
 			void			handleNewConnection();
 			void			handleClientPacket(struct epoll_event &event);
-			void			parseExec(int fd);
+			void			parseExec(Client &client);
 
 			// Commands Helper functions
 			void			_parseJoinCommand(std::stringstream &args, std::map<string, string>& chan_keys_map);

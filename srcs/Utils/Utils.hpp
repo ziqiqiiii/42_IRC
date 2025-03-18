@@ -11,5 +11,6 @@ namespace IRC
 			string				stringToUpper(const string& str);
 			string				intToString(int num);
             std::vector<string>	splitString(const string& s, const string& del);
+            bool                containsChar(string str, string find);
     };
 }

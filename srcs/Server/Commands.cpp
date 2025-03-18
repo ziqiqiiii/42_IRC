@@ -4,7 +4,7 @@ void	IRC::Server::pass(std::stringstream &args, Client &client)
 {
 	string	password;
 	args >> password;
-	if (client.isAuthenticated())
+	if (client.getAuthenticated())
 		client.sendResponse(ERR_ALREADYREGISTERED(client.getNickname()));
 	else if(password.empty())
 		client.sendResponse(ERR_NEEDMOREPARAMS(client.getNickname(), "PASS"));
@@ -20,9 +20,9 @@ void	IRC::Server::nick(std::stringstream &args, Client &client)
 	args >> nickname;
 	if (nickname.empty())
 		client.sendResponse(ERR_NONICKNAMEGIVEN(client.getNickname()));
-	else if (strchr("$#:", nickname[0] || isdigit(nickname[0] || nickname.find(" ,*?!@."))))
+	else if (strchr("$#:", nickname[0]) || isdigit(nickname[0]) || IRC::Utils::containsChar(nickname, " ,*?!@."))
 		client.sendResponse(ERR_ERRONEUSNICKNAME(client.getNickname(), nickname));
-	if (this->_nickIsInUse(nickname))
+	else if (this->_nickIsInUse(nickname))
 		client.sendResponse(ERR_NICKNAMEINUSE(client.getNickname(), nickname));
 	else
 		client.setNickname(nickname);
@@ -30,17 +30,19 @@ void	IRC::Server::nick(std::stringstream &args, Client &client)
 
 void	IRC::Server::user(std::stringstream &args, Client &client)
 {
-	string	user;
-	args >> user;
+	string	username;
+	string	params;
+	args >> username;
+	for (int i = 0; args >> params; i++)
+	{
+		
+	}
 	if (!client.getUsername().empty())
 		client.sendResponse(ERR_ALREADYREGISTERED(client.getNickname()));
-	if (user.empty())
+	if (username.empty())
 		client.sendResponse(ERR_NEEDMOREPARAMS(client.getNickname(), "USER"));
 	else
-	{
-		client.sendResponse(RPL_WELCOME(client.getNickname()));
-		client.setUsername(user);
-	}
+		client.setUsername(username);
 }
 
 void	IRC::Server::join(std::stringstream &args, Client &client)

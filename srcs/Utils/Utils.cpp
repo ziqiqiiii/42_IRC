@@ -1,5 +1,13 @@
 # include "Utils.hpp"
 
+bool IRC::Utils::containsChar(string str, string find)
+{
+    for (int i = 0; find[i]; i++)
+        if (strchr(str.c_str(), find[i]))
+            return (true);
+    return (false);
+}
+
 void IRC::Utils::checker(int argc)
 {
     if (argc != 3)

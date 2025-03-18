@@ -39,7 +39,7 @@
 // Error replies
 # define ERR_UNKNOWNCOMMAND(client, command)			(": 421 " + client + " " + command + " :Unknown command")
 # define ERR_NONICKNAMEGIVEN(client)					(": 431 " + client + " :No nickname given")
-# define ERR_ERRONEUSNICKNAME(client, nick) 			(": 432 " + client + nick + ":Erroneus nickname")
+# define ERR_ERRONEUSNICKNAME(client, nick) 			(": 432 " + client + " " + nick + " :Erroneus nickname")
 # define ERR_NICKNAMEINUSE(client, nick)				(": 433 " + client + " " + nick + " :Nickname is already in use")
 # define ERR_NOTREGISTERED(client) 						(": 451 " + client + " :You have not registered")
 # define ERR_NEEDMOREPARAMS(client, command)			(": 461 " + client + " " + command + " :Not enough paramaters")
