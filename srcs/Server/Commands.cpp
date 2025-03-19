@@ -31,18 +31,26 @@ void	IRC::Server::nick(std::stringstream &args, Client &client)
 void	IRC::Server::user(std::stringstream &args, Client &client)
 {
 	string	username;
-	string	params;
+
 	args >> username;
-	for (int i = 0; args >> params; i++)
-	{
-		
-	}
 	if (!client.getUsername().empty())
+	{
 		client.sendResponse(ERR_ALREADYREGISTERED(client.getNickname()));
-	if (username.empty())
-		client.sendResponse(ERR_NEEDMOREPARAMS(client.getNickname(), "USER"));
-	else
-		client.setUsername(username);
+		return ;
+	}
+	for (int i = 1; true; i++)
+	{
+		string	param;
+		args >> param;
+		if (i != 4 && param.empty())
+		{
+			client.sendResponse(ERR_NEEDMOREPARAMS(client.getNickname(), "USER"));
+			return ;
+		}
+		else if (i == 4 && param.empty())
+			break ;
+	}
+	client.setUsername(username);
 }
 
 void	IRC::Server::join(std::stringstream &args, Client &client)
