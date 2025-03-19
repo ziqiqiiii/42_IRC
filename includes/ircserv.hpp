@@ -24,6 +24,9 @@
 # include <stdexcept>
 # include <algorithm> //-> for tranform()
 
+# define OPER_USER "oper"
+# define OPER_PASS "pass"
+
 # define CRLF "\r\n"
 # define MAX_CLIENTS 50
 # define BUFFER_SIZE 512
@@ -35,6 +38,7 @@
 # define RPL_NAMREPLY(client, symbol, channel, prefix_nick_pairs) \
 														(": 353 " + client + " " + symbol + " " + channel + " :" + prefix_nick_pairs)
 # define RPL_ENDOFNAMES(client, channel)				(": 366 " + client + " " + channel + " :End of /NAMES list")
+# define RPL_YOUREOPER(client)							(": 381 " + client + " :You are now an IRC operator")
 
 // Error replies
 # define ERR_UNKNOWNCOMMAND(client, command)			(": 421 " + client + " " + command + " :Unknown command")

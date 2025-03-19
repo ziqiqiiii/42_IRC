@@ -19,6 +19,7 @@ static void	commandsInit(std::map<string, void (IRC::Server::*)(std::stringstrea
 	commands["PRIVMSG"] = &IRC::Server::privmsg;
 	commands["INVITE"] = &IRC::Server::invite;
 	commands["MODE"] = &IRC::Server::mode;
+	commands["OPER"] = &IRC::Server::oper;
 }
 
 void	IRC::Server::serverInit(int port, string password)

@@ -75,6 +75,7 @@ namespace IRC
 
 			// Commands
 			void			pass(std::stringstream &args, Client &client);
+			void			oper(std::stringstream &args, Client &client);
 			void			join(std::stringstream &args, Client &client);
 			void			part(std::stringstream &args, Client &client);
 			void			nick(std::stringstream &args, Client &client);
