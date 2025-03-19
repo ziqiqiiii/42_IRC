@@ -85,10 +85,54 @@ void	IRC::Server::signalHandler(int signum)
 	IRC::Server::_signal = true;
 }
 
-IRC::Client	&IRC::Server::getClient(int fd)
+
+t_irc_cmd	IRC::Server::getCommand(string name)
 {
-	Client	*cli = static_cast<Client *>(_server_clients.at(fd));
-	return (*cli);
+	try
+	{
+		return (this->_commands.at(name));
+	}
+	catch (std::exception &e)
+	{
+		return (NULL);
+	}
+}
+
+IRC::Client	*IRC::Server::getClient(int fd)
+{
+	try
+	{
+		return (this->_server_clients.at(fd));
+	}
+	catch (std::exception &e)
+	{
+		return (NULL);
+	}
+}
+
+IRC::Client	*IRC::Server::getClient(string name)
+{
+	std::map<int, Client *>::iterator it = this->_server_clients.begin();
+	std::map<int, Client *>::iterator end = this->_server_clients.end();
+
+	while (it != end)
+	{
+		if (it->second->getNickname() == name)
+			return (it->second);
+	}
+	return (NULL);
+}
+
+IRC::Channel	*IRC::Server::getChannel(string name)
+{
+	try
+	{
+		return (this->_channels.at(name));
+	}
+	catch (std::exception &e)
+	{
+		return (NULL);
+	}
 }
 
 void	IRC::Server::closeConnection(int fd)
@@ -143,7 +187,7 @@ void	IRC::Server::epollDel(int fd)
 
 int		IRC::Server::getSocketFd() const {return this->_socketFd;}
 
-void	IRC::Server::handleNewConnection()
+void	IRC::Server::_handleNewConnection()
 {
 	Client				*client;
 	int					client_fd;
@@ -159,10 +203,11 @@ void	IRC::Server::handleNewConnection()
 	logManager->logMsg(LIGHT_BLUE, ("Client " + IRC::Utils::intToString(client_fd) + " connected ").c_str());
 }
 
-void	IRC::Server::handleClientPacket(struct epoll_event &event)
+void	IRC::Server::_handleClientPacket(struct epoll_event &event)
 {
-	char	buffer[BUFFER_SIZE + 1];
-	IRC::Logger* logManager = IRC::Logger::getInstance();
+	char			buffer[BUFFER_SIZE + 1];
+	IRC::Logger*	logManager = IRC::Logger::getInstance();
+	Client			&client = *this->getClient(event.data.fd);
 
 	bzero(buffer, BUFFER_SIZE);
 	if (event.events & (EPOLLERR | EPOLLHUP) || !recv(event.data.fd, buffer, BUFFER_SIZE, 0))
@@ -171,13 +216,13 @@ void	IRC::Server::handleClientPacket(struct epoll_event &event)
 		closeConnection(event.data.fd);
 		return ;
 	}
-	this->getClient(event.data.fd).addToBuffer(buffer);
-	parseExec(this->getClient(event.data.fd));
+	client.addToBuffer(buffer);
+	_parseExec(client);
 }
 
-void	IRC::Server::parseExec(Client &client)
+void	IRC::Server::_parseExec(Client &client)
 {
-	void				(IRC::Server::*f)(std::stringstream &, IRC::Client &);
+	t_irc_cmd			f;
 	string				&buffer = client.getBuffer();
 	string 				command;
 	size_t				delim = 0;
@@ -192,14 +237,7 @@ void	IRC::Server::parseExec(Client &client)
 			command.clear();
 		}
 		std::transform(command.begin(), command.end(), command.begin(), toupper);
-		try
-		{	
-			f = this->_commands.at(command);
-		}
-		catch(const std::exception& e)
-		{
-			f = NULL;
-		}
+		f = this->getCommand(command);
 		if (!client.getRegistered() && string("PASS NICK USER").find(command) == string::npos && f)
 			client.sendResponse(ERR_NOTREGISTERED(client.getNickname()));
 		else if (client.getRegistered() && !f)
@@ -229,9 +267,9 @@ void	IRC::Server::run()
 		for (int i = 0; i < event_count; i++)
 		{
 			if (queue[i].data.fd == this->_socketFd)
-				this->handleNewConnection();
+				this->_handleNewConnection();
 			else
-				this->handleClientPacket(queue[i]);
+				this->_handleClientPacket(queue[i]);
 		}
 	}
 }

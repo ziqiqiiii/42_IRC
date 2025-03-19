@@ -27,11 +27,19 @@
 # define OPER_USER "oper"
 # define OPER_PASS "pass"
 
+# define USER_MODES "iow"
+# define CHANNEL_MODES "iow"
 # define CRLF "\r\n"
 # define MAX_CLIENTS 50
 # define BUFFER_SIZE 512
+
+// Message replies
+# define MODE(client, mode)								(":" + client + " MODE " + modes)
+# define NICK(client, nick)								(":" + client + " NICK " + nick)
+
 // Numeric replies
 # define RPL_WELCOME(client)							(": 001 " + client + " :Welcome to the lala mui zai network " + client)
+# define RPL_UMODEIS(client, modes)					(": 221 " + client + " " + modes)
 # define RPL_NOTOPIC(client, channel)					(": 331 " + client + " " + channel + " :No topic is set")
 # define RPL_TOPIC(client, channel, topic)				(": 332 " + client + " " + channel + " :" + topic)
 # define RPL_TOPICWHOTIME(client, channel, nick, setat)	(": 333 " + client + " " + channel + " " + nick + " " + setat)
@@ -41,6 +49,8 @@
 # define RPL_YOUREOPER(client)							(": 381 " + client + " :You are now an IRC operator")
 
 // Error replies
+# define ERR_NOSUCHNICK(client, nick)					(": 403 " + client + " " + nick + " :No such nick")
+# define ERR_NOSUCHCHANNEL(client, channel)				(": 403 " + client + " " + channel + " :No such channel")
 # define ERR_UNKNOWNCOMMAND(client, command)			(": 421 " + client + " " + command + " :Unknown command")
 # define ERR_NONICKNAMEGIVEN(client)					(": 431 " + client + " :No nickname given")
 # define ERR_ERRONEUSNICKNAME(client, nick) 			(": 432 " + client + " " + nick + " :Erroneus nickname")
@@ -49,11 +59,20 @@
 # define ERR_NEEDMOREPARAMS(client, command)			(": 461 " + client + " " + command + " :Not enough paramaters")
 # define ERR_ALREADYREGISTERED(client)					(": 462 " + client +  " :You may not reregister")
 # define ERR_PASSWDMISMATCH(client)						(": 464 " + client + " :Password incorrect")
+# define ERR_UMODEUNKNOWNFLAG(client)					(": 501 " + client + " :Uknown MODE flag")
+# define ERR_USERSDONTMATCH(client)						(": 502 " + client + " :Cant change mode for other users")
 //--------------------namespace-------------------------//
 using std::cout;
 using std::endl;
 using std::cerr;
 using std::string;
+
+namespace IRC {
+	class Server;
+	class Client;
+};
+
+typedef void (IRC::Server::*t_irc_cmd)(std::stringstream &, IRC::Client &);
 
 # include "Utils.hpp"
 # include "Client.hpp"

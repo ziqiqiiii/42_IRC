@@ -26,7 +26,7 @@ void	IRC::Server::nick(std::stringstream &args, Client &client)
 		client.sendResponse(ERR_NICKNAMEINUSE(client.getNickname(), nickname));
 	else
 	{
-		client.sendResponse(":" + client.getNickname() + " NICK " + nickname);
+		client.sendResponse(NICK(client.getNickname(), nickname));
 		client.setNickname(nickname);
 	}
 }
@@ -71,13 +71,14 @@ void	IRC::Server::oper(std::stringstream &args, Client &client)
 	string	pass;
 
 	args >> user;
+	args >> pass;
 	if (user.empty() || pass.empty())
-		ERR_NEEDMOREPARAMS(client.getNickname(), "OPER");
+		client.sendResponse(ERR_NEEDMOREPARAMS(client.getNickname(), "OPER"));
 	else if (user != OPER_USER || pass != OPER_PASS)
-		ERR_PASSWDMISMATCH(client.getNickname());
+		client.sendResponse(ERR_PASSWDMISMATCH(client.getNickname()));
 	else
 	{
-		RPL_YOUREOPER(client.getNickname());
+		client.sendResponse(RPL_YOUREOPER(client.getNickname()));
 	}
 }
 
@@ -104,9 +105,37 @@ void	IRC::Server::invite(std::stringstream &args, Client &client)
 
 void	IRC::Server::mode(std::stringstream &args, Client &client)
 {
-	(void)client;
-	(void)args;
-	cout << "mode command\n";
+	string	target;
+	string	modes;
+	string	mode_args;
+
+	args >> target;
+	args >> modes;
+	args >> mode_args;
+	cout << "hi" << '\n';
+	if (target.empty())
+		client.sendResponse(ERR_NEEDMOREPARAMS(client.getNickname(), "MODE"));
+	else if (strchr("#&", target[0]))
+	{
+		Channel	*channel = this->getChannel(target);
+		if (!channel)
+			client.sendResponse(ERR_NOSUCHCHANNEL(client.getNickname(), target));
+	}
+	else
+	{
+		cout << (this->getClient(target) ? "Target found" : "No such target") << '\n';
+		if (!this->getClient(target))
+			client.sendResponse(ERR_NOSUCHNICK(client.getNickname(), target));
+		else if (client.getNickname() != target)
+			client.sendResponse(ERR_USERSDONTMATCH(client.getNickname()));
+		if (modes.empty())
+			client.sendResponse(RPL_UMODEIS(client.getNickname(), client.getModes()));
+		else
+		{
+			this->_parseMode(modes, client);
+			client.sendResponse(MODE(client.getNickname(), client.getModes()));
+		}
+	}
 }
 
 void	IRC::Server::part(std::stringstream &args, Client &client)

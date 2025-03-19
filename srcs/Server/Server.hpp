@@ -25,7 +25,7 @@ namespace IRC
 
 			std::map<int, Client*> _server_clients; /**<client_fd, Client* client>*/
 			std::map<string, Channel*> _channels; /**<channel_name, ISubject* channel>*/
-			std::map<string, void(IRC::Server::*)(std::stringstream &, Client &)> _commands;
+			std::map<string, t_irc_cmd> _commands;
 			
 			Server();
 			~Server();
@@ -39,11 +39,12 @@ namespace IRC
 			void			_deleteSocket();
 			
 			int				_nickIsInUse(string nickname);
-			void			handleNewConnection();
-			void			handleClientPacket(struct epoll_event &event);
-			void			parseExec(Client &client);
+			void			_handleNewConnection();
+			void			_handleClientPacket(struct epoll_event &event);
+			void			_parseExec(Client &client);
 
 			// Commands Helper functions
+			void			_parseMode(string &modes, Client &client);
 			void			_parseJoinCommand(std::stringstream &args, std::map<string, string>& chan_keys_map);
 			void			_validateJoinCommand();
 			void			_operateJoinCommand(std::map<string, string>& chan_keys_map, Client& client);
@@ -55,8 +56,10 @@ namespace IRC
 			void			run();
 			
 			// Getter(s)
-			Client			&getClient(int fd);
-			Channel			&getChannel(string name);
+			t_irc_cmd		getCommand(string name);
+			Client			*getClient(int fd);
+			Client			*getClient(string name);
+			Channel			*getChannel(string name);
 			int				getSocketFd() const;
 
 			// Epoll functions

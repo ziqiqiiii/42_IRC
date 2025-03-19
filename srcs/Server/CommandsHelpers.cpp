@@ -50,3 +50,26 @@ void	IRC::Server::_operateJoinCommand(std::map<string, string>& chan_keys_map, C
 			this->createChannel(channel, &client); // Channel does not exist, create and join the channel
 	}
 }
+
+void	IRC::Server::_parseMode(string &mode, Client &client)
+{
+	bool	unknown_mode = false;
+	char	action;
+
+	for (int i = 0; mode[i]; i++)
+	{
+		if (strchr("+-", mode[i]))
+		{
+			action = mode[i];
+			while (!strchr("+-", mode[++i]))
+			{
+				if (!strchr(USER_MODES, mode[i]))
+					unknown_mode = true;
+				else
+					client.setMode(mode[i], action);
+			}
+		}
+	}
+	if (unknown_mode)
+		client.sendResponse(ERR_UMODEUNKNOWNFLAG(client.getNickname()));
+}

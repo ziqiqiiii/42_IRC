@@ -27,6 +27,7 @@ namespace IRC
 			void	addToBuffer(string str);
 			//Setters
 			void	setFd(int fd);
+			void	setModes(string mode);
 			void	setRegistered(bool registered);
 			void	setAddress(struct sockaddr_in ipAddr);
 			void	setNickname(string& nickname);
@@ -35,12 +36,14 @@ namespace IRC
 
 			//Getters
 			string	&getBuffer() ;
+			string	getModes() const;
 			bool	getRegistered() const;
 			int		getClientFd() const;
 			string	getUsername() const;
 			string	getNickname() const;
 			bool	getAuthenticated() const;
 
+			void	setMode(char mode, char action);
 			void	sendResponse(string response) const;
 			// Observer Update Method
 			void	update(const string& message);

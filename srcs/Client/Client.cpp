@@ -37,8 +37,19 @@ void	IRC::Client::sendResponse(string response) const
 	}
 }
 
+void	IRC::Client::setMode(char mode, char action)
+{
+	size_t	pos = this->_modes.find(mode);
+
+	if (action == '+' && pos == string::npos)
+		this->_modes += mode;
+	else if (action == '-' && pos != string::npos)
+		this->_modes.erase(pos);
+}
 
 //Setters
+void	IRC::Client::setModes(string modes) {this->_modes = modes;}
+
 void	IRC::Client::setRegistered(bool registered) {this->_registered = registered;}
 
 void    IRC::Client::setFd(int fd) { this->_fd = fd; }
@@ -52,6 +63,8 @@ void    IRC::Client::setUsername(string& username) { this->_username = username;
 void    IRC::Client::setAuthenticated(bool auth) { this->_autheticated = auth; }
 
 //Getters
+string	IRC::Client::getModes() const {return this->_modes;}
+
 bool	IRC::Client::getRegistered() const {return this->_registered;}
 
 string	&IRC::Client::getBuffer() { return this->_buffer; }
