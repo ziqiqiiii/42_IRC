@@ -51,25 +51,32 @@ void	IRC::Server::_operateJoinCommand(std::map<string, string>& chan_keys_map, C
 	}
 }
 
-void	IRC::Server::_parseMode(string &mode, Client &client)
+bool	IRC::Server::_parseClientMode(string &mode, Client &client)
 {
 	bool	unknown_mode = false;
 	char	action;
+	size_t	i = 0;
 
-	for (int i = 0; mode[i]; i++)
+	while (i < mode.size() && strchr("+-", mode[i]))
 	{
-		if (strchr("+-", mode[i]))
-		{
-			action = mode[i];
-			while (!strchr("+-", mode[++i]))
-			{
-				if (!strchr(USER_MODES, mode[i]))
-					unknown_mode = true;
-				else
-					client.setMode(mode[i], action);
-			}
-		}
+		action = mode[i];
+		while (++i < mode.size() && isalpha(mode[i]))
+			unknown_mode = client.setMode(mode[i], action);
 	}
-	if (unknown_mode)
-		client.sendResponse(ERR_UMODEUNKNOWNFLAG(client.getNickname()));
+	return (unknown_mode);
+}
+
+bool	IRC::Server::_parseChannelMode(string &mode, Channel &channel)
+{
+	bool	unknown_mode = false;
+	char	action;
+	size_t	i = 0;
+
+	while (i < mode.size() && strchr("+-", mode[i]))
+	{
+		action = mode[i];
+		while (++i < mode.size() && isalpha(mode[i]))
+			unknown_mode = channel.setChannelMode(mode[i], action);
+	}
+	return (unknown_mode);
 }

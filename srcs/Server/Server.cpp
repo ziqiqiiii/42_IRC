@@ -119,6 +119,7 @@ IRC::Client	*IRC::Server::getClient(string name)
 	{
 		if (it->second->getNickname() == name)
 			return (it->second);
+		it++;
 	}
 	return (NULL);
 }

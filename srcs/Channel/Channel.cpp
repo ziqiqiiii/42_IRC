@@ -80,25 +80,22 @@ void	IRC::Channel::setChannelName(const string& channel_name) { this->_channel_n
 
 void	IRC::Channel::setTopic(const string& new_topic) { this->_topic = new_topic; }
 
-void	IRC::Channel::setChannelMode(int channel_mode)
+int		IRC::Channel::setChannelMode(char channel_mode, char action)
 {
-	bool	mode_exist = false;
+	size_t	pos = this->_channel_modes.find(channel_mode);
 
-	for (int mode = ChannelMode::Ban_Channel_Mode; mode != ChannelMode::No_Mode; ++mode)
-	{
-		ChannelMode::ChannelModes current_mode = static_cast<ChannelMode::ChannelModes>(mode);
-		if (current_mode == channel_mode)
-		{
-			mode_exist = true;
-			this->_channel_mode = channel_mode;
-			break ;
-		}
-	}
-	if (!mode_exist)
-		throw std::runtime_error("Mode is not valid"); //Handle by mode command 
+	if (strchr(CHANNEL_MODES, channel_mode))
+		return (1);
+	if (action == '+' && pos == string::npos)
+		this->_channel_modes += channel_mode;
+	else if (action == '-' && pos != string::npos)
+		this->_channel_modes.erase(pos);
+	return (0);
 }
 
 //Getter(s)
+string	IRC::Channel::getChannelModes() const {return this->_channel_modes;}
+
 string	IRC::Channel::getName() const { return this->_channel_name; }
 
 bool	IRC::Channel::isClientExist(const int client_fd)

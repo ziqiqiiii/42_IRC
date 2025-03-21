@@ -27,7 +27,7 @@ namespace IRC
     {
         private:
 			string						_channel_name;
-            int							_channel_mode;
+            string						_channel_modes;
 			IRC::Client*				_channel_operator;
 			std::map<int, IRC::Client*>	_clients; /**<client_fd, Client*> */
 			string						_topic;
@@ -47,9 +47,10 @@ namespace IRC
 			//Setter(s)
 			void				setChannelName(const string& channel_name);
 			void				setTopic(const string& new_topic);
-			void				setChannelMode(int channel_mode);
+			int					setChannelMode(char mode, char action);
 
             //Getter(s)
+            string				getChannelModes() const;
             string				getName() const;
             bool				isClientExist(const int client_fd);
 			string				getTopic() const;

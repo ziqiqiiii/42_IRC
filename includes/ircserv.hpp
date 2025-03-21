@@ -34,12 +34,14 @@
 # define BUFFER_SIZE 512
 
 // Message replies
-# define MODE(client, mode)								(":" + client + " MODE " + modes)
+# define MODE(client, mode)								(": MODE " + modes)
 # define NICK(client, nick)								(":" + client + " NICK " + nick)
 
 // Numeric replies
 # define RPL_WELCOME(client)							(": 001 " + client + " :Welcome to the lala mui zai network " + client)
 # define RPL_UMODEIS(client, modes)					(": 221 " + client + " " + modes)
+# define RPL_CHANNELMODEIS(client, channel, modestring, mode_arguments) \
+														(": 324 " + client + channel + modestring + mode_arguments)
 # define RPL_NOTOPIC(client, channel)					(": 331 " + client + " " + channel + " :No topic is set")
 # define RPL_TOPIC(client, channel, topic)				(": 332 " + client + " " + channel + " :" + topic)
 # define RPL_TOPICWHOTIME(client, channel, nick, setat)	(": 333 " + client + " " + channel + " " + nick + " " + setat)
@@ -59,7 +61,7 @@
 # define ERR_NEEDMOREPARAMS(client, command)			(": 461 " + client + " " + command + " :Not enough paramaters")
 # define ERR_ALREADYREGISTERED(client)					(": 462 " + client +  " :You may not reregister")
 # define ERR_PASSWDMISMATCH(client)						(": 464 " + client + " :Password incorrect")
-# define ERR_UMODEUNKNOWNFLAG(client)					(": 501 " + client + " :Uknown MODE flag")
+# define ERR_UMODEUNKNOWNFLAG(client)					(": 501 " + client + " :Unknown MODE flag")
 # define ERR_USERSDONTMATCH(client)						(": 502 " + client + " :Cant change mode for other users")
 //--------------------namespace-------------------------//
 using std::cout;

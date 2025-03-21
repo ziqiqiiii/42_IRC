@@ -112,7 +112,6 @@ void	IRC::Server::mode(std::stringstream &args, Client &client)
 	args >> target;
 	args >> modes;
 	args >> mode_args;
-	cout << "hi" << '\n';
 	if (target.empty())
 		client.sendResponse(ERR_NEEDMOREPARAMS(client.getNickname(), "MODE"));
 	else if (strchr("#&", target[0]))
@@ -120,19 +119,20 @@ void	IRC::Server::mode(std::stringstream &args, Client &client)
 		Channel	*channel = this->getChannel(target);
 		if (!channel)
 			client.sendResponse(ERR_NOSUCHCHANNEL(client.getNickname(), target));
+		else if (modes.empty())
+			client.sendResponse(RPL_CHANNELMODEIS(client.getNickname(), target, channel->getChannelModes(), ""));
 	}
 	else
 	{
-		cout << (this->getClient(target) ? "Target found" : "No such target") << '\n';
 		if (!this->getClient(target))
 			client.sendResponse(ERR_NOSUCHNICK(client.getNickname(), target));
 		else if (client.getNickname() != target)
 			client.sendResponse(ERR_USERSDONTMATCH(client.getNickname()));
-		if (modes.empty())
+		else if (modes.empty())
 			client.sendResponse(RPL_UMODEIS(client.getNickname(), client.getModes()));
 		else
 		{
-			this->_parseMode(modes, client);
+			this->_parseClientMode(modes, client);
 			client.sendResponse(MODE(client.getNickname(), client.getModes()));
 		}
 	}
