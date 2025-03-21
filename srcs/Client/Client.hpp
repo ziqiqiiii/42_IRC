@@ -2,6 +2,8 @@
 
 # include "ircserv.hpp"
 
+# define USER_MODES "io"
+
 namespace IRC
 {
     class Client
@@ -43,7 +45,7 @@ namespace IRC
 			string	getNickname() const;
 			bool	getAuthenticated() const;
 
-			int		setMode(char mode, char action);
+			int		setMode(string mode);
 			void	sendResponse(string response) const;
 			// Observer Update Method
 			void	update(const string& message);

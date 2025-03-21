@@ -27,8 +27,6 @@
 # define OPER_USER "oper"
 # define OPER_PASS "pass"
 
-# define USER_MODES "iow"
-# define CHANNEL_MODES "iow"
 # define CRLF "\r\n"
 # define MAX_CLIENTS 50
 # define BUFFER_SIZE 512
@@ -39,18 +37,25 @@
 
 // Numeric replies
 # define RPL_WELCOME(client)							(": 001 " + client + " :Welcome to the lala mui zai network " + client)
-# define RPL_UMODEIS(client, modes)					(": 221 " + client + " " + modes)
+# define RPL_UMODEIS(client, modes)						(": 221 " + client + " " + modes)
 # define RPL_CHANNELMODEIS(client, channel, modestring, mode_arguments) \
 														(": 324 " + client + channel + modestring + mode_arguments)
 # define RPL_NOTOPIC(client, channel)					(": 331 " + client + " " + channel + " :No topic is set")
 # define RPL_TOPIC(client, channel, topic)				(": 332 " + client + " " + channel + " :" + topic)
 # define RPL_TOPICWHOTIME(client, channel, nick, setat)	(": 333 " + client + " " + channel + " " + nick + " " + setat)
+# define RPL_INVITELIST(client, channel)				(": 336 " + client + )
+# define RPL_INVEXLIST(client, channel, mask)			(": 346 " + client + " " + channel + " " + mask)
+# define RPL_ENDOFINVEXLIST(client, channel)			(": 347 " + client + " " + channel + " :End of channel exception list")
+# define RPL_EXCEPTLIST(client, channel, mask)			(": 348 " + client + " " + channel +  " " + mask)
+# define RPL_ENDOFEXCEPLIST(client, channel)			(": 349 " + client + " " + channel + " :End of channel exception list")
 # define RPL_NAMREPLY(client, symbol, channel, prefix_nick_pairs) \
 														(": 353 " + client + " " + symbol + " " + channel + " :" + prefix_nick_pairs)
 # define RPL_ENDOFNAMES(client, channel)				(": 366 " + client + " " + channel + " :End of /NAMES list")
+# define RPL_BANLIST(client, channel, mask)				(": 367 " + client + " " + channel +  " " + mask)
+# define RPL_ENDOFBANLIST(client, channel)				(": 368 " + client + " " + channel + " :End of channel ban list")
 # define RPL_YOUREOPER(client)							(": 381 " + client + " :You are now an IRC operator")
-
 // Error replies
+
 # define ERR_NOSUCHNICK(client, nick)					(": 403 " + client + " " + nick + " :No such nick")
 # define ERR_NOSUCHCHANNEL(client, channel)				(": 403 " + client + " " + channel + " :No such channel")
 # define ERR_UNKNOWNCOMMAND(client, command)			(": 421 " + client + " " + command + " :Unknown command")
@@ -63,6 +68,8 @@
 # define ERR_PASSWDMISMATCH(client)						(": 464 " + client + " :Password incorrect")
 # define ERR_UMODEUNKNOWNFLAG(client)					(": 501 " + client + " :Unknown MODE flag")
 # define ERR_USERSDONTMATCH(client)						(": 502 " + client + " :Cant change mode for other users")
+# define ERR_INVALIDMODEPARAM(client, target, mode, paramater, description) \
+														(": 696 " + client + " "  + target + " " + mode + " " + paramater + " " + description)
 //--------------------namespace-------------------------//
 using std::cout;
 using std::endl;

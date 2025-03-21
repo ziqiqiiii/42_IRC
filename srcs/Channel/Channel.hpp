@@ -2,23 +2,8 @@
 
 # include "ircserv.hpp"
 
-namespace ChannelMode
-{
-	enum ChannelModes
-	{
-		Ban_Channel_Mode,
-		Exception_Channel_Mode,
-		Client_Limit_Channel_Mode,
-		Invite_only_Channel_Mode,
-		Invite_Exception_Channel_Mode,
-		Key_Channel_Mode,
-		Moderated_Channel_Mode,
-		Secret_Channel_Mode,
-		Protected_Topic_Mode,
-		No_External_Messages_Mode,
-		No_Mode,
-	};
-}
+# define MAX_KEY_LEN	10
+# define CHANNEL_MODES	"beliIkmst"
 
 namespace IRC
 {
@@ -26,12 +11,20 @@ namespace IRC
     class Channel
     {
         private:
-			string						_channel_name;
-            string						_channel_modes;
-			IRC::Client*				_channel_operator;
-			std::map<int, IRC::Client*>	_clients; /**<client_fd, Client*> */
-			string						_topic;
-			string						_prefix; // channel membership prefix
+		string						_channel_name;
+		string						_channel_modes;
+		IRC::Client*				_channel_operator;
+		std::map<int, IRC::Client*>	_clients; /**<client_fd, Client*> */
+		string						_ban_list;
+		string						_exception_list;
+		string						_invite_exception_list;
+		string						_topic;
+		string						_key;
+
+		void					_handleBanMode(char action, const string &args, IRC::Client &client);
+		void					_handleKeyMode(char action, const string &args, IRC::Client &client);
+		void					_handleExceptionMode(char action, const string &args, IRC::Client &client);
+		void					_handleInviteExceptionMode(char action, const string &args, IRC::Client &client);
         public:
             Channel();
             ~Channel();
@@ -47,9 +40,12 @@ namespace IRC
 			//Setter(s)
 			void				setChannelName(const string& channel_name);
 			void				setTopic(const string& new_topic);
-			int					setChannelMode(char mode, char action);
+			int					setChannelMode(string mode, string args, IRC::Client &client);
 
             //Getter(s)
+			string				getInviteExceptionList() const;
+			string				getExceptionList() const;
+			string				getBanList() const;
             string				getChannelModes() const;
             string				getName() const;
             bool				isClientExist(const int client_fd);

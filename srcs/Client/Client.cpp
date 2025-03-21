@@ -37,17 +37,19 @@ void	IRC::Client::sendResponse(string response) const
 	}
 }
 
-int	IRC::Client::setMode(char mode, char action)
+int	IRC::Client::setMode(string mode)
 {
-	size_t	pos = this->_modes.find(mode);
+	if (mode.size() < 2)
+		return (0);	
+	size_t	pos = this->_modes.find(mode[1]);
 
-	if (strchr(USER_MODES, mode))
+	if (strchr(USER_MODES, mode[1]))
 		return (1);
-	if (action == '+' && pos == string::npos)
-		this->_modes += mode;
-	else if (action == '-' && pos != string::npos)
+	if (mode[0] == '+' && pos == string::npos)
+		this->_modes += mode[1];
+	else if (mode[0] == '-' && pos != string::npos)
 		this->_modes.erase(pos);
-	return 0;
+	return (0);
 }
 
 //Setters

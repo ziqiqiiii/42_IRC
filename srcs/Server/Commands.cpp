@@ -78,6 +78,7 @@ void	IRC::Server::oper(std::stringstream &args, Client &client)
 		client.sendResponse(ERR_PASSWDMISMATCH(client.getNickname()));
 	else
 	{
+		client.setMode("+o");
 		client.sendResponse(RPL_YOUREOPER(client.getNickname()));
 	}
 }
@@ -121,6 +122,11 @@ void	IRC::Server::mode(std::stringstream &args, Client &client)
 			client.sendResponse(ERR_NOSUCHCHANNEL(client.getNickname(), target));
 		else if (modes.empty())
 			client.sendResponse(RPL_CHANNELMODEIS(client.getNickname(), target, channel->getChannelModes(), ""));
+		else
+		{
+			if (channel->setChannelMode(modes, mode_args, client))
+				client.sendResponse(ERR_UMODEUNKNOWNFLAG(client.getNickname()));
+		}
 	}
 	else
 	{
@@ -132,7 +138,8 @@ void	IRC::Server::mode(std::stringstream &args, Client &client)
 			client.sendResponse(RPL_UMODEIS(client.getNickname(), client.getModes()));
 		else
 		{
-			this->_parseClientMode(modes, client);
+			if (client.setMode(modes))
+				client.sendResponse(ERR_UMODEUNKNOWNFLAG(client.getNickname()));
 			client.sendResponse(MODE(client.getNickname(), client.getModes()));
 		}
 	}

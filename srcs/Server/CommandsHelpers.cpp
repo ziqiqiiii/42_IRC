@@ -51,32 +51,35 @@ void	IRC::Server::_operateJoinCommand(std::map<string, string>& chan_keys_map, C
 	}
 }
 
-bool	IRC::Server::_parseClientMode(string &mode, Client &client)
-{
-	bool	unknown_mode = false;
-	char	action;
-	size_t	i = 0;
 
-	while (i < mode.size() && strchr("+-", mode[i]))
-	{
-		action = mode[i];
-		while (++i < mode.size() && isalpha(mode[i]))
-			unknown_mode = client.setMode(mode[i], action);
-	}
-	return (unknown_mode);
-}
+// Complex Methods of parsing mode
 
-bool	IRC::Server::_parseChannelMode(string &mode, Channel &channel)
-{
-	bool	unknown_mode = false;
-	char	action;
-	size_t	i = 0;
+// bool	IRC::Server::_parseClientMode(string &mode, Client &client)
+// {
+// 	bool	unknown_mode = false;
+// 	char	action;
+// 	size_t	i = 0;
 
-	while (i < mode.size() && strchr("+-", mode[i]))
-	{
-		action = mode[i];
-		while (++i < mode.size() && isalpha(mode[i]))
-			unknown_mode = channel.setChannelMode(mode[i], action);
-	}
-	return (unknown_mode);
-}
+// 	while (i < mode.size() && strchr("+-", mode[i]))
+// 	{
+// 		action = mode[i];
+// 		while (++i < mode.size() && isalpha(mode[i]))
+// 			unknown_mode = client.setMode(mode[i], action);
+// 	}
+// 	return (unknown_mode);
+// }
+
+// bool	IRC::Server::_parseChannelMode(string &mode, Channel &channel)
+// {
+// 	bool	unknown_mode = false;
+// 	char	action;
+// 	size_t	i = 0;
+
+// 	while (i < mode.size() && strchr("+-", mode[i]))
+// 	{
+// 		action = mode[i];
+// 		while (++i < mode.size() && isalpha(mode[i]))
+// 			unknown_mode = channel.setChannelMode(mode[i], action);
+// 	}
+// 	return (unknown_mode);
+// }
