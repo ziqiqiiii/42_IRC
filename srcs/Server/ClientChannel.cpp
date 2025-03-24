@@ -39,7 +39,7 @@ void	IRC::Server::joinChannel(const string& channel_name, Client* client)
 	IRC::Logger* 							logManager  = IRC::Logger::getInstance();
 
 	// std::map<int, Client*>	client_it  = this->_clients.find(client->)
-	if (channel_it->second->isClientExist(client->getClientFd()))
+	if (channel_it->second->clientExists(client->getNickname()))
 		logManager->logMsg(RED, ("Client " + client->getNickname() + " already exist in channel " + channel_name).c_str(), strerror(errno));
 	else
 	{
@@ -53,7 +53,7 @@ void	IRC::Server::leaveChannel(const string& channel_name, Client* client)
 	std::map<string, Channel*>::iterator channel_it	= this->_channels.find(IRC::Utils::stringToUpper(channel_name));
 	IRC::Logger* logManager								= IRC::Logger::getInstance();
 
-	if (!channel_it->second->isClientExist(client->getClientFd()))
+	if (!channel_it->second->clientExists(client->getNickname()))
 		logManager->logMsg(RED, ("Client " + client->getNickname() + " doesn't exist in channel " + channel_name).c_str(), strerror(errno));
 	else
 		channel_it->second->detach(client);

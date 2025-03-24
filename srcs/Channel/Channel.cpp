@@ -8,7 +8,7 @@ IRC::Channel::Channel(const string channel_name, IRC::Client& client)
 {
 	this->setChannelName(channel_name);
 	this->_channel_operator = &client;
-	this->_clients[client.getClientFd()] = &client;
+	this->_clients[client.getNickname()] = &client;
 	this->_topic = "";
 }
 
@@ -29,21 +29,21 @@ IRC::Channel& IRC::Channel::operator=(const Channel &other)
 //ISubject Functions
 void	IRC::Channel::attach(IRC::Client* client)
 {
-	int client_fd = client->getClientFd();
+	string client_nick = client->getNickname();
 	IRC::Logger* logManager = IRC::Logger::getInstance();
 
-	if (this->_clients.find(client_fd) != this->_clients.end())
+	if (this->_clients.find(client_nick) != this->_clients.end())
 		logManager->logMsg(RED, (client->getNickname() + " already exist in channel " + this->_channel_name).c_str(), strerror(errno));
 	else
-		this->_clients[client_fd] = client;
+		this->_clients[client_nick] = client;
 }
 
 void	IRC::Channel::detach(IRC::Client* client)
 {
-	int	client_fd = client->getClientFd();
+	string	client_nick = client->getNickname();
 	IRC::Logger* logManager = IRC::Logger::getInstance();
 
-	std::map<int, IRC::Client*>::iterator it = this->_clients.find(client_fd);
+	std::map<string, IRC::Client*>::iterator it = this->_clients.find(client_nick);
 	if (it != this->_clients.end())
 		this->_clients.erase(it);
 	else
@@ -52,7 +52,7 @@ void	IRC::Channel::detach(IRC::Client* client)
 
 void	IRC::Channel::notifyAll(const std::string& message)
 {
-	std::map<int, IRC::Client*>::iterator	it;
+	std::map<string, IRC::Client*>::iterator	it;
 
 	for (it = this->_clients.begin(); it != this->_clients.end(); ++it)
 		it->second->sendResponse(message);
@@ -187,9 +187,9 @@ string	IRC::Channel::getChannelModes() const {return this->_channel_modes;}
 
 string	IRC::Channel::getName() const { return this->_channel_name; }
 
-bool	IRC::Channel::isClientExist(const int client_fd)
+bool	IRC::Channel::clientExists(const string client_nick)
 {
-	std::map<int, IRC::Client*>::iterator it = this->_clients.find(client_fd);
+	std::map<string, IRC::Client*>::iterator it = this->_clients.find(client_nick);
 
 	if (it != this->_clients.end())
 		return true;
@@ -202,7 +202,7 @@ IRC::Client*	IRC::Channel::getChannelOperator() const { return this->_channel_op
 
 string	IRC::Channel::getClientsList()
 {
-	std::map<int, IRC::Client*>::iterator	it;
+	std::map<string, IRC::Client*>::iterator	it;
 	string	name_list;
 
 	for (it = this->_clients.begin(); it != this->_clients.end(); ++it)

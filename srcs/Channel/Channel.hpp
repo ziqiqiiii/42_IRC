@@ -14,7 +14,7 @@ namespace IRC
 		string						_channel_name;
 		string						_channel_modes;
 		IRC::Client*				_channel_operator;
-		std::map<int, IRC::Client*>	_clients; /**<client_fd, Client*> */
+		std::map<string, IRC::Client*>	_clients; /**<client_fd, Client*> */
 		string						_ban_list;
 		string						_exception_list;
 		string						_invite_exception_list;
@@ -48,7 +48,7 @@ namespace IRC
 			string				getBanList() const;
             string				getChannelModes() const;
             string				getName() const;
-            bool				isClientExist(const int client_fd);
+            bool				clientExists(const string client_nick);
 			string				getTopic() const;
 			IRC::Client*		getChannelOperator() const;
 			string				getClientsList();

@@ -32,8 +32,9 @@
 # define BUFFER_SIZE 512
 
 // Message replies
-# define MODE(client, modes)								(": MODE " + modes)
+# define MODE(client, modes)							(": MODE " + modes)
 # define NICK(client, nick)								(":" + client + " NICK " + nick)
+# define PART(client, channel, reason)					(":" + client + " PART " + channel + " " + reason)
 
 // Numeric replies
 # define RPL_WELCOME(client)							(": 001 " + client + " :Welcome to the lala mui zai network " + client)
@@ -62,6 +63,7 @@
 # define ERR_NONICKNAMEGIVEN(client)					(": 431 " + client + " :No nickname given")
 # define ERR_ERRONEUSNICKNAME(client, nick) 			(": 432 " + client + " " + nick + " :Erroneus nickname")
 # define ERR_NICKNAMEINUSE(client, nick)				(": 433 " + client + " " + nick + " :Nickname is already in use")
+# define ERR_NOTONCHANNEL(client, channel)				(": 442 " + client + " " + channel + ":You're not on that channel")
 # define ERR_NOTREGISTERED(client) 						(": 451 " + client + " :You have not registered")
 # define ERR_NEEDMOREPARAMS(client, command)			(": 461 " + client + " " + command + " :Not enough paramaters")
 # define ERR_ALREADYREGISTERED(client)					(": 462 " + client +  " :You may not reregister")

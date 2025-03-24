@@ -123,7 +123,24 @@ void	IRC::Server::mode(std::stringstream &args, Client &client)
 
 void	IRC::Server::part(std::stringstream &args, Client &client)
 {
-	(void)client;
-	(void)args;
-	cout << "part command\n";
+	string targets;
+	string reason;
+	args >> targets;
+	args >> reason;
+	if (targets.empty())
+		client.sendResponse(ERR_NEEDMOREPARAMS(client.getNickname(), "PART"));
+	std::vector<string>	channels = Utils::splitString(targets, ",");
+	for (std::vector<string>::iterator it = channels.begin(); it != channels.end(); it++)
+	{
+		Channel	*channel = this->getChannel(*it);
+		if (!channel)
+			client.sendResponse(ERR_NOSUCHCHANNEL(client.getNickname(), *it));
+		else if (!channel->clientExists(client.getNickname()))
+			client.sendResponse(ERR_NOTONCHANNEL(client.getNickname(), *it));
+		else
+		{
+			channel->detach(&client);
+			channel->notifyAll(PART(client.getNickname(), *it, reason));
+		}
+	}
 }
