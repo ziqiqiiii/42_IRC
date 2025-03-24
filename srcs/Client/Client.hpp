@@ -39,6 +39,8 @@ namespace IRC
 			//Getters
 			string	&getBuffer() ;
 			string	getModes() const;
+			string	getTopicSetter() const;
+			string	getTopicSetTime() const;
 			bool	getRegistered() const;
 			int		getClientFd() const;
 			string	getUsername() const;

@@ -91,17 +91,28 @@ void	IRC::Server::privmsg(std::stringstream &args, Client &client)
 }
 
 void	IRC::Server::topic(std::stringstream &args, Client &client)
-{
-	(void)client;
-	(void)args;
-	cout << "topic command\n";
-}
-
-void	IRC::Server::invite(std::stringstream &args, Client &client)
-{
-	(void)client;
-	(void)args;
-	cout << "invite command\n";
+{	
+	Channel	*channel;
+	string	channel_name;
+	string	topic;
+	args >> channel_name;
+	args >> topic;
+	channel = this->getChannel(channel_name);
+	if (!channel)
+		client.sendResponse(ERR_NEEDMOREPARAMS(client.getNickname(), "TOPIC"));
+	else if (!channel->clientExists(client.getNickname()))
+		client.sendResponse(ERR_NOTONCHANNEL(client.getNickname(), channel_name));
+	else if (topic.empty())
+		this->_handleEmptyTopic(client, *channel);
+	else if (channel->getChannelModes().find('t') != string::npos)
+	{	
+		if (channel->isOperator(&client))
+			channel->setTopic(topic, client);
+		else
+			client.sendResponse(ERR_CHANOPRIVSNEEDED(client.getNickname(), channel_name));
+	}
+	else
+		channel->setTopic(topic, client);
 }
 
 void	IRC::Server::mode(std::stringstream &args, Client &client)

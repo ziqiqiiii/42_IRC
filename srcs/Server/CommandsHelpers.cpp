@@ -81,6 +81,17 @@ void	IRC::Server::_handleClientMode(Client &client, string &target, string &mode
 	}
 }
 
+void	IRC::Server::_handleEmptyTopic(Client &client, Channel	&channel)
+{
+	if (channel.getTopic().empty())
+		client.sendResponse(RPL_NOTOPIC(client.getNickname(), channel.getName()));
+	else
+	{
+		client.sendResponse(RPL_TOPIC(client.getNickname(), channel.getName(), channel.getTopic()));
+		client.sendResponse(RPL_TOPICWHOTIME(client.getNickname(), channel.getName(), channel.getTopicSetter(), channel.getTopicSetTime()));
+	}
+}
+
 // Complex Methods of parsing mode
 
 // bool	IRC::Server::_parseClientMode(string &mode, Client &client)

@@ -17,7 +17,6 @@ static void	commandsInit(std::map<string, t_irc_cmd> &commands)
 	commands["TOPIC"] = &IRC::Server::topic;
 	commands["PART"] = &IRC::Server::part;
 	commands["PRIVMSG"] = &IRC::Server::privmsg;
-	commands["INVITE"] = &IRC::Server::invite;
 	commands["MODE"] = &IRC::Server::mode;
 	commands["OPER"] = &IRC::Server::oper;
 }

@@ -68,6 +68,7 @@
 # define ERR_NEEDMOREPARAMS(client, command)			(": 461 " + client + " " + command + " :Not enough paramaters")
 # define ERR_ALREADYREGISTERED(client)					(": 462 " + client +  " :You may not reregister")
 # define ERR_PASSWDMISMATCH(client)						(": 464 " + client + " :Password incorrect")
+# define ERR_CHANOPRIVSNEEDED(client, channel)			(": 482 " + client + " " + channel + " :You're not channel operator")
 # define ERR_UMODEUNKNOWNFLAG(client)					(": 501 " + client + " :Unknown MODE flag")
 # define ERR_USERSDONTMATCH(client)						(": 502 " + client + " :Cant change mode for other users")
 # define ERR_INVALIDMODEPARAM(client, target, mode, paramater, description) \

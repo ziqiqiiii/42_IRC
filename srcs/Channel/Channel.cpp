@@ -7,7 +7,7 @@ IRC::Channel::~Channel() {}
 IRC::Channel::Channel(const string channel_name, IRC::Client& client)
 {
 	this->setChannelName(channel_name);
-	this->_channel_operator = &client;
+	this->_operators.push_back(&client);
 	this->_clients[client.getNickname()] = &client;
 	this->_topic = "";
 }
@@ -20,7 +20,7 @@ IRC::Channel& IRC::Channel::operator=(const Channel &other)
         this->_channel_name = other._channel_name;
         this->_clients = other._clients;
 		this->_channel_modes = other._channel_modes;
-		this->_channel_operator = other._channel_operator;
+		this->_operators = other._operators;
 		this->_topic = other._topic;
 	}
     return *this;
@@ -140,11 +140,26 @@ void	IRC::Channel::_handleInviteExceptionMode(char action, const string &args, C
 	}
 }
 
+bool	IRC::Channel::isOperator(Client *client)
+{
+	if (std::find(this->_operators.begin(), this->_operators.end(), client) == this->_operators.end())
+		return (false);
+	return (true);
+}
+
 //Setter(s)
 
 void	IRC::Channel::setChannelName(const string& channel_name) { this->_channel_name = channel_name; }
 
-void	IRC::Channel::setTopic(const string& new_topic) { this->_topic = new_topic; }
+void	IRC::Channel::setTopic(const string& new_topic, Client &client) 
+{
+	if (new_topic.size() == 1)
+		this->_topic.clear();
+	else
+		this->_topic = new_topic.substr(1, new_topic.size());
+	this->_topicSetter = client.getNickname();
+	time(&this->_topicSetTime);
+}
 
 int IRC::Channel::setChannelMode(string mode, string args, Client &client)
 {
@@ -202,7 +217,9 @@ bool	IRC::Channel::clientExists(const string client_nick)
 
 string	IRC::Channel::getTopic() const { return this->_topic; }
 
-IRC::Client*	IRC::Channel::getChannelOperator() const { return this->_channel_operator; }
+string	IRC::Channel::getTopicSetter() const {return this->_topicSetter;}
+
+std::vector<IRC::Client *>	IRC::Channel::getChannelOperators() const { return this->_operators; }
 
 string	IRC::Channel::getClientsList()
 {
@@ -213,4 +230,11 @@ string	IRC::Channel::getClientsList()
 		name_list += it->second->getNickname() + " ";
 
 	return name_list;
+}
+
+string	IRC::Channel::getTopicSetTime() const
+{
+	std::stringstream ss;
+	ss << this->_topicSetTime;
+	return (ss.str());
 }
