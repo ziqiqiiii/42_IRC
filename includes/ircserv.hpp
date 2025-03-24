@@ -32,7 +32,7 @@
 # define BUFFER_SIZE 512
 
 // Message replies
-# define MODE(client, mode)								(": MODE " + modes)
+# define MODE(client, modes)								(": MODE " + modes)
 # define NICK(client, nick)								(":" + client + " NICK " + nick)
 
 // Numeric replies

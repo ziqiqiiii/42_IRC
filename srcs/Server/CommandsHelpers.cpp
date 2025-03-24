@@ -51,6 +51,35 @@ void	IRC::Server::_operateJoinCommand(std::map<string, string>& chan_keys_map, C
 	}
 }
 
+void	IRC::Server::_handleChannelMode(Client &client, string &target,string &mode, string &mode_args)
+{
+	Channel	*channel = this->getChannel(target);
+	if (!channel)
+		client.sendResponse(ERR_NOSUCHCHANNEL(client.getNickname(), target));
+	else if (mode.empty())
+		client.sendResponse(RPL_CHANNELMODEIS(client.getNickname(), target, channel->getChannelModes(), ""));
+	else
+	{
+		if (channel->setChannelMode(mode, mode_args, client))
+			client.sendResponse(ERR_UMODEUNKNOWNFLAG(client.getNickname()));
+	}
+}
+
+void	IRC::Server::_handleClientMode(Client &client, string &target, string &mode)
+{
+	if (!this->getClient(target))
+		client.sendResponse(ERR_NOSUCHNICK(client.getNickname(), target));
+	else if (client.getNickname() != target)
+		client.sendResponse(ERR_USERSDONTMATCH(client.getNickname()));
+	else if (mode.empty())
+		client.sendResponse(RPL_UMODEIS(client.getNickname(), client.getModes()));
+	else
+	{
+		if (client.setMode(mode))
+			client.sendResponse(ERR_UMODEUNKNOWNFLAG(client.getNickname()));
+		client.sendResponse(MODE(client.getNickname(), client.getModes()));
+	}
+}
 
 // Complex Methods of parsing mode
 

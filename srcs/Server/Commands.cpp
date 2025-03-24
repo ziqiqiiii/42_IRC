@@ -107,42 +107,18 @@ void	IRC::Server::invite(std::stringstream &args, Client &client)
 void	IRC::Server::mode(std::stringstream &args, Client &client)
 {
 	string	target;
-	string	modes;
+	string	mode;
 	string	mode_args;
 
 	args >> target;
-	args >> modes;
+	args >> mode;
 	args >> mode_args;
 	if (target.empty())
 		client.sendResponse(ERR_NEEDMOREPARAMS(client.getNickname(), "MODE"));
 	else if (strchr("#&", target[0]))
-	{
-		Channel	*channel = this->getChannel(target);
-		if (!channel)
-			client.sendResponse(ERR_NOSUCHCHANNEL(client.getNickname(), target));
-		else if (modes.empty())
-			client.sendResponse(RPL_CHANNELMODEIS(client.getNickname(), target, channel->getChannelModes(), ""));
-		else
-		{
-			if (channel->setChannelMode(modes, mode_args, client))
-				client.sendResponse(ERR_UMODEUNKNOWNFLAG(client.getNickname()));
-		}
-	}
+		this->_handleChannelMode(client, target, mode, mode_args);
 	else
-	{
-		if (!this->getClient(target))
-			client.sendResponse(ERR_NOSUCHNICK(client.getNickname(), target));
-		else if (client.getNickname() != target)
-			client.sendResponse(ERR_USERSDONTMATCH(client.getNickname()));
-		else if (modes.empty())
-			client.sendResponse(RPL_UMODEIS(client.getNickname(), client.getModes()));
-		else
-		{
-			if (client.setMode(modes))
-				client.sendResponse(ERR_UMODEUNKNOWNFLAG(client.getNickname()));
-			client.sendResponse(MODE(client.getNickname(), client.getModes()));
-		}
-	}
+		this->_handleClientMode(client, target, mode);
 }
 
 void	IRC::Server::part(std::stringstream &args, Client &client)

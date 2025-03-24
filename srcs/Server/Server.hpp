@@ -44,8 +44,8 @@ namespace IRC
 			void			_parseExec(Client &client);
 
 			// Commands Helper functions
-			bool			_parseClientMode(string &modes, Client &client);
-			bool			_parseChannelMode(string &modes, Channel &client);
+			void			_handleChannelMode(Client &client, string &target,string &mode, string &mode_args);
+			void			_handleClientMode(Client &client, string &target, string &mode);
 			void			_parseJoinCommand(std::stringstream &args, std::map<string, string>& chan_keys_map);
 			void			_validateJoinCommand();
 			void			_operateJoinCommand(std::map<string, string>& chan_keys_map, Client& client);
