@@ -33,7 +33,7 @@ namespace IRC
             Channel(const string channel_name, IRC::Client& client);
 
             void				attach(IRC::Client* client);
-			void				detach(IRC::Client* client);
+			int					detach(IRC::Client* client);
 			void				notifyAll(const std::string& message);
 			void				joinNumericReplies(IRC::Client* new_client);
 

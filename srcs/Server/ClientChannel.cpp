@@ -48,17 +48,17 @@ void	IRC::Server::joinChannel(const string& channel_name, Client* client)
 	}
 }
 
-void	IRC::Server::leaveChannel(const string& channel_name, Client* client)
+int	IRC::Server::leaveChannel(const string& channel_name, Client* client)
 {
-	std::map<string, Channel*>::iterator channel_it	= this->_channels.find(IRC::Utils::stringToUpper(channel_name));
-	IRC::Logger* logManager								= IRC::Logger::getInstance();
+	std::map<string, Channel*>::iterator	channel_it	= this->_channels.find(IRC::Utils::stringToUpper(channel_name));
 
-	if (!channel_it->second->clientExists(client->getNickname()))
-		logManager->logMsg(RED, ("Client " + client->getNickname() + " doesn't exist in channel " + channel_name).c_str(), strerror(errno));
-	else
-		channel_it->second->detach(client);
+	if (channel_it != this->_channels.end())
+	{
+		client->sendResponse(ERR_NOSUCHCHANNEL(client->getNickname(), channel_name));
+		return (0);
+	}
+	return (channel_it->second->detach(client));
 }
-
 
 void	IRC::Server::notifyAll(const string& message)
 {

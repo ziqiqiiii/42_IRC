@@ -38,16 +38,20 @@ void	IRC::Channel::attach(IRC::Client* client)
 		this->_clients[client_nick] = client;
 }
 
-void	IRC::Channel::detach(IRC::Client* client)
+int	IRC::Channel::detach(IRC::Client* client)
 {
-	string	client_nick = client->getNickname();
-	IRC::Logger* logManager = IRC::Logger::getInstance();
+	string			client_nick = client->getNickname();
+	IRC::Logger*	logManager = IRC::Logger::getInstance();
 
 	std::map<string, IRC::Client*>::iterator it = this->_clients.find(client_nick);
-	if (it != this->_clients.end())
-		this->_clients.erase(it);
-	else
-		logManager->logMsg(RED, (client->getNickname() + " deosn't exist in channel " + this->_channel_name).c_str(), strerror(errno));
+	if (it == this->_clients.end())
+	{
+		client->sendResponse(ERR_NOTONCHANNEL(client->getNickname(), this->_channel_name));
+		logManager->logMsg(RED, (client->getNickname() + " doesn't exist in channel " + this->_channel_name).c_str(), strerror(errno));
+		return (0);
+	}
+	this->_clients.erase(it);
+	return (1);
 }
 
 void	IRC::Channel::notifyAll(const std::string& message)
