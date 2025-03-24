@@ -85,9 +85,20 @@ void	IRC::Server::oper(std::stringstream &args, Client &client)
 
 void	IRC::Server::privmsg(std::stringstream &args, Client &client)
 {
-	(void)client;
-	(void)args;
-	cout << "privmsg command\n";
+	string	targ;
+	string	text;
+	args << targ;
+	args << text;
+	if (targ.empty() || text.empty())
+		client.sendResponse(ERR_NEEDMOREPARAMS(client.getNickname(), "PRIVMSG"));
+	std::vector<string>	targets = Utils::splitString(targ, ",");
+	for (std::vector<string>::iterator it = targets.begin(); it != targets.end(); it++)
+	{
+		if ((*it).find("#&"))
+			this->_handleChannelTarget(*it, client);
+		else
+			this->_handleClientTarget(*it, client);
+	}
 }
 
 void	IRC::Server::topic(std::stringstream &args, Client &client)

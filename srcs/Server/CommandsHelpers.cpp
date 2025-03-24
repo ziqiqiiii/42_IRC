@@ -92,6 +92,18 @@ void	IRC::Server::_handleEmptyTopic(Client &client, Channel	&channel)
 	}
 }
 
+void	IRC::Server::_handleChannelTarget(Client &client, string &target, string &message)
+{
+	Channel	*channel = this->getChannel(target);
+
+	if (!channel)
+		client.sendResponse(ERR_NOSUCHCHANNEL(client.getNickname(), target));
+	else
+	{
+		channel->notifyAll(message);
+	}
+}
+
 // Complex Methods of parsing mode
 
 // bool	IRC::Server::_parseClientMode(string &mode, Client &client)

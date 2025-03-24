@@ -12,5 +12,6 @@ namespace IRC
 			string				intToString(int num);
             std::vector<string>	splitString(const string& s, const string& del);
             bool                containsChar(string str, string find);
+			bool				isInMask(Client &client, string mask);
     };
 }
