@@ -95,9 +95,9 @@ void	IRC::Server::privmsg(std::stringstream &args, Client &client)
 	for (std::vector<string>::iterator it = targets.begin(); it != targets.end(); it++)
 	{
 		if ((*it).find("#&"))
-			this->_handleChannelTarget(*it, client);
+			this->_handleChannelTarget(client, *it, text);
 		else
-			this->_handleClientTarget(*it, client);
+			this->_handleClientTarget(client, *it, text);
 	}
 }
 

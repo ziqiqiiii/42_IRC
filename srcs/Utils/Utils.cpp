@@ -71,3 +71,43 @@ std::vector<string> IRC::Utils::splitString(const string& s, const string& del)
 
     return tokens;
 }
+
+bool	IRC::Utils::isInMask(const IRC::Client& client, const string& mask)
+{
+	string	ip = IRC::Utils::sockaddrIpToString(client.getAddress());
+	string	key;
+	int		result = 0;
+	size_t	start = 0;
+	size_t	end = 0;
+
+	end = mask.find('!');
+	if (end != string::npos)
+	{
+		key = mask.substr(start, end);
+		if (key == client.getNickname() || key == "*")
+		{
+			result++;
+			start = end + 1;
+		}
+	}
+	end = mask.find('@');
+	if (end != string::npos)
+	{
+		key = mask.substr(start, end);
+		if (key == client.getNickname() || key == "*")
+		{
+			result++;
+			start = end + 1;
+		}
+	}
+	if (mask.substr(start, mask.size()) == ip || key == "*")
+		result++;
+	if (result == 3)
+		return (true);
+	return (false);
+}
+
+string	IRC::Utils::sockaddrIpToString(const struct sockaddr_in &address)
+{
+	return (inet_ntoa(address.sin_addr));
+}

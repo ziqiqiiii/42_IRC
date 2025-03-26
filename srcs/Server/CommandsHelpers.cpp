@@ -92,17 +92,33 @@ void	IRC::Server::_handleEmptyTopic(Client &client, Channel	&channel)
 	}
 }
 
-void	IRC::Server::_handleChannelTarget(Client &client, string &target, string &message)
+void	IRC::Server::_handleChannelTarget(Client &client, string &target, string &text)
 {
 	Channel	*channel = this->getChannel(target);
+	string	nick	= client.getNickname();
+	string	channel_modes = channel->getChannelModes();
 
 	if (!channel)
-		client.sendResponse(ERR_NOSUCHCHANNEL(client.getNickname(), target));
+		client.sendResponse(ERR_NOSUCHCHANNEL(nick, target));
+	else if (channel_modes.find('e') && IRC::Utils::isInMask(client, channel->getExceptionList()))
+		channel->notifyAll(PRIVMSG(nick, target, text));
+	else if (channel_modes.find('b') && IRC::Utils::isInMask(client, channel->getBanList()))
+		client.sendResponse(ERR_BANNEDFROMCHAN(nick, target));
 	else
-	{
-		channel->notifyAll(message);
-	}
+		channel->notifyAll(PRIVMSG(nick, target, text));
 }
+
+void	IRC::Server::_handleClientTarget(Client &client, string &target, string &text)
+{
+	Client	*reciever = this->getClient(target);
+	string	nick = 	client.getNickname();
+
+	if (!reciever)
+		client.sendResponse(ERR_NOSUCHNICK(nick, target));
+	else
+		reciever->sendResponse(PRIVMSG(nick, target, text));
+}
+
 
 // Complex Methods of parsing mode
 

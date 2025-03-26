@@ -32,6 +32,7 @@
 # define BUFFER_SIZE 512
 
 // Message replies
+# define PRIVMSG(client, target, text)					(":" + client + " PRIVMSG " + target + ":" + text)
 # define MODE(client, modes)							(":" + client + " +" +  modes + " modes")
 # define NICK(client, nick)								(":" + client + " NICK " + nick)
 # define PART(client, channel, reason)					(":" + client + " PART " + channel + " " + reason)
@@ -57,6 +58,7 @@
 # define RPL_YOUREOPER(client)							(": 381 " + client + " :You are now an IRC operator")
 // Error replies
 
+# define ERR_BANNEDFROMCHAN(client, channel)			(": 474 " + client + " " + channel + " :Cannot join channel (+b)")
 # define ERR_NOSUCHNICK(client, nick)					(": 403 " + client + " " + nick + " :No such nick")
 # define ERR_NOSUCHCHANNEL(client, channel)				(": 403 " + client + " " + channel + " :No such channel")
 # define ERR_UNKNOWNCOMMAND(client, command)			(": 421 " + client + " " + command + " :Unknown command")

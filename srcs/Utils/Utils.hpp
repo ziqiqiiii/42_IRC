@@ -11,7 +11,8 @@ namespace IRC
 			string				stringToUpper(const string& str);
 			string				intToString(int num);
             std::vector<string>	splitString(const string& s, const string& del);
+			string				sockaddrIpToString(const struct sockaddr_in &address);
             bool                containsChar(string str, string find);
-			bool				isInMask(Client &client, string mask);
+			bool				isInMask(const IRC::Client& client, const string& mask);
     };
 }

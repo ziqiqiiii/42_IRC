@@ -44,8 +44,8 @@ namespace IRC
 			void			_parseExec(Client &client);
 
 			// Commands Helper functions
-			void			_handleChannelTarget(Client &client, string &target, string &message);
-			void			_handleClientTarget(Client &client, string &target, string &message);
+			void			_handleChannelTarget(Client &client, string &target, string &text);
+			void			_handleClientTarget(Client &client, string &target, string &text);
 			void			_handleEmptyTopic(Client &client, Channel &channel);
 			void			_handleChannelMode(Client &client, string &target,string &mode, string &mode_args);
 			void			_handleClientMode(Client &client, string &target, string &mode);
