@@ -25,6 +25,22 @@ make nc
 
 ## Descripton
 
+This a minimal implementation of an IRC server, following the rules of the 42 ft_IRC project.
+
+## Features
+### Commands
+- PASS
+- USER
+- NICK
+- PART
+- PRIVMSG
+- TOPIC
+- MODE 
+- JOIN
+### Modes
+User modes: +o
+Channel modes: +bet
+
 ## Reference
 
 ## Contribution
