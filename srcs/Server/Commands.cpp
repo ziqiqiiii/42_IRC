@@ -94,6 +94,8 @@ void	IRC::Server::privmsg(std::stringstream &args, Client &client)
 		client.sendResponse(ERR_NEEDMOREPARAMS(client.getNickname(), "PRIVMSG"));
 		return ;
 	}
+	if (text[0] == ':')
+		text.erase(0, 1);
 	std::vector<string>	targets = Utils::splitString(target_names, ",");
 	for (std::vector<string>::iterator it = targets.begin(); it != targets.end(); it++)
 	{
