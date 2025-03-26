@@ -88,26 +88,20 @@ void	IRC::Server::signalHandler(int signum)
 
 t_irc_cmd	IRC::Server::getCommand(string name)
 {
-	try
-	{
-		return (this->_commands.at(name));
-	}
-	catch (std::exception &e)
-	{
+	std::map<string, t_irc_cmd>::iterator it = this->_commands.find(name);
+
+	if (it == this->_commands.end())
 		return (NULL);
-	}
+	return (it->second);
 }
 
 IRC::Client	*IRC::Server::getClient(int fd)
 {
-	try
-	{
-		return (this->_server_clients.at(fd));
-	}
-	catch (std::exception &e)
-	{
+	std::map<int, IRC::Client*>::iterator it = this->_server_clients.find(fd);
+
+	if (it == this->_server_clients.end())
 		return (NULL);
-	}
+	return (it->second);
 }
 
 IRC::Client	*IRC::Server::getClient(string name)
@@ -126,14 +120,11 @@ IRC::Client	*IRC::Server::getClient(string name)
 
 IRC::Channel	*IRC::Server::getChannel(string name)
 {
-	try
-	{
-		return (this->_channels.at(name));
-	}
-	catch (std::exception &e)
-	{
+	std::map<string, IRC::Channel*>::iterator it = this->_channels.find(name);
+
+	if (it == this->_channels.end())
 		return (NULL);
-	}
+	return (it->second);
 }
 
 void	IRC::Server::closeConnection(int fd)
