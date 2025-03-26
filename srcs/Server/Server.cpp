@@ -224,7 +224,7 @@ void	IRC::Server::_handleClientPacket(struct epoll_event &event)
 void	IRC::Server::_parseExec(Client &client)
 {
 	t_irc_cmd			f;
-	string				&buffer = client.getBuffer();
+	string				buffer = client.getBuffer();
 	string 				command;
 	size_t				delim = 0;
 
@@ -253,6 +253,7 @@ void	IRC::Server::_parseExec(Client &client)
 		buffer.erase(0, delim + 1);
 		command.clear();
 	}
+	client.setBuffer(buffer);
 }
 
 void	IRC::Server::run()
