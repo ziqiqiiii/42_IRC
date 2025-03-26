@@ -53,6 +53,8 @@ int	IRC::Client::setMode(string mode)
 }
 
 //Setters
+void	IRC::Client::setBuffer(const string &buffer) {this->_buffer = buffer;}
+
 void	IRC::Client::setModes(string modes) {this->_modes = modes;}
 
 void	IRC::Client::setRegistered(bool registered) {this->_registered = registered;}
@@ -68,19 +70,21 @@ void    IRC::Client::setUsername(string& username) { this->_username = username;
 void    IRC::Client::setAuthenticated(bool auth) { this->_autheticated = auth; }
 
 //Getters
-string	IRC::Client::getModes() const {return this->_modes;}
+struct sockaddr_in	IRC::Client::getAddress() const {return (this->_address);}
 
-bool	IRC::Client::getRegistered() const {return this->_registered;}
+const string&	IRC::Client::getModes() const {return this->_modes;}
 
-string	&IRC::Client::getBuffer() { return this->_buffer; }
+bool			IRC::Client::getRegistered() const {return this->_registered;}
 
-int		IRC::Client::getClientFd() const { return this->_fd; }
+const string&	IRC::Client::getBuffer() const { return this->_buffer; }
 
-string	IRC::Client::getUsername() const { return this->_username; }
+int				IRC::Client::getClientFd() const { return this->_fd; }
 
-string	IRC::Client::getNickname() const { return this->_nickname; }
+const string&	IRC::Client::getUsername() const { return this->_username; }
 
-bool	IRC::Client::getAuthenticated() const { return this->_autheticated; }
+const string&	IRC::Client::getNickname() const { return this->_nickname; }
+
+bool			IRC::Client::getAuthenticated() const { return this->_autheticated; }
 
 void	IRC::Client::update(const string& message)
 {

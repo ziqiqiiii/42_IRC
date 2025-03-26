@@ -202,9 +202,16 @@ int IRC::Channel::setChannelMode(string mode, string args, Client &client)
 }
 
 //Getter(s)
-string	IRC::Channel::getChannelModes() const {return this->_channel_modes;}
 
-string	IRC::Channel::getName() const { return this->_channel_name; }
+const string&	IRC::Channel::getBanList() const {return this->_ban_list;}
+
+const string&	IRC::Channel::getExceptionList() const {return this->_exception_list;}
+
+const string&	IRC::Channel::getInviteExceptionList() const {return this->_invite_exception_list;}
+
+const string&	IRC::Channel::getChannelModes() const {return this->_channel_modes;}
+
+const string&	IRC::Channel::getName() const { return this->_channel_name; }
 
 bool	IRC::Channel::clientExists(const string client_nick)
 {
@@ -215,11 +222,11 @@ bool	IRC::Channel::clientExists(const string client_nick)
 	return false;
 }
 
-string	IRC::Channel::getTopic() const { return this->_topic; }
+const string&	IRC::Channel::getTopic() const { return this->_topic; }
 
-string	IRC::Channel::getTopicSetter() const {return this->_topicSetter;}
+const string&	IRC::Channel::getTopicSetter() const {return this->_topicSetter;}
 
-std::vector<IRC::Client *>	IRC::Channel::getChannelOperators() const { return this->_operators; }
+const std::vector<IRC::Client *>&	IRC::Channel::getChannelOperators() const { return this->_operators; }
 
 string	IRC::Channel::getClientsList()
 {

@@ -47,16 +47,16 @@ namespace IRC
 			int								setChannelMode(string mode, string args, IRC::Client &client);
 
             //Getter(s)
-			string							getInviteExceptionList() const;
-			string							getExceptionList() const;
-			string							getBanList() const;
-            string							getChannelModes() const;
-            string							getName() const;
-            bool							clientExists(const string client_nick);
-			string							getTopic() const;
-			string							getTopicSetter() const;
-			string							getTopicSetTime() const;
-			std::vector<IRC::Client*>		getChannelOperators() const;
-			string							getClientsList();
+			const string&						getInviteExceptionList() const;
+			const string&						getExceptionList() const;
+			const string&						getBanList() const;
+            const string&						getChannelModes() const;
+            const string&						getName() const;
+            bool								clientExists(const string client_nick);
+			const string&						getTopic() const;
+			const string&						getTopicSetter() const;
+			string								getTopicSetTime() const;
+			const std::vector<IRC::Client*>&	getChannelOperators() const;
+			string								getClientsList();
     };
 }

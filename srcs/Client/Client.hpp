@@ -25,31 +25,33 @@ namespace IRC
             Client(const Client &other);
             Client &operator=(const Client &other);
 
-			void	parse();
-			void	addToBuffer(string str);
+			void				parse();
+			void				addToBuffer(string str);
 			//Setters
-			void	setFd(int fd);
-			void	setModes(string mode);
-			void	setRegistered(bool registered);
-			void	setAddress(struct sockaddr_in ipAddr);
-			void	setNickname(string& nickname);
-			void	setUsername(string& username);
-			void	setAuthenticated(bool auth);
+			void				setBuffer(const string &buffer);
+			void				setFd(int fd);
+			void				setModes(string mode);
+			void				setRegistered(bool registered);
+			void				setAddress(struct sockaddr_in ipAddr);
+			void				setNickname(string& nickname);
+			void				setUsername(string& username);
+			void				setAuthenticated(bool auth);
 
 			//Getters
-			string	&getBuffer() ;
-			string	getModes() const;
-			string	getTopicSetter() const;
-			string	getTopicSetTime() const;
-			bool	getRegistered() const;
-			int		getClientFd() const;
-			string	getUsername() const;
-			string	getNickname() const;
-			bool	getAuthenticated() const;
+			struct sockaddr_in	getAddress() const;
+			const string&		getBuffer() const;
+			const string&		getModes() const;
+			const string&		getTopicSetter() const;
+			const string&		getTopicSetTime() const;
+			bool				getRegistered() const;
+			int					getClientFd() const;
+			const string&		getUsername() const;
+			const string&		getNickname() const;
+			bool				getAuthenticated() const;
 
-			int		setMode(string mode);
-			void	sendResponse(string response) const;
+			int					setMode(string mode);
+			void				sendResponse(string response) const;
 			// Observer Update Method
-			void	update(const string& message);
+			void				update(const string& message);
     };
 }
