@@ -85,16 +85,19 @@ void	IRC::Server::oper(std::stringstream &args, Client &client)
 
 void	IRC::Server::privmsg(std::stringstream &args, Client &client)
 {
-	string	targ;
+	string	target_names;
 	string	text;
-	args << targ;
-	args << text;
-	if (targ.empty() || text.empty())
+	args >> target_names;
+	args >> text;
+	if (target_names.empty() || text.empty())
+	{
 		client.sendResponse(ERR_NEEDMOREPARAMS(client.getNickname(), "PRIVMSG"));
-	std::vector<string>	targets = Utils::splitString(targ, ",");
+		return ;
+	}
+	std::vector<string>	targets = Utils::splitString(target_names, ",");
 	for (std::vector<string>::iterator it = targets.begin(); it != targets.end(); it++)
 	{
-		if ((*it).find("#&"))
+		if ((*it).find("#&") != string::npos)
 			this->_handleChannelTarget(client, *it, text);
 		else
 			this->_handleClientTarget(client, *it, text);
