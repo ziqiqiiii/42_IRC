@@ -75,9 +75,9 @@ void	IRC::Server::_handleClientMode(Client &client, string &target, string &mode
 		client.sendResponse(RPL_UMODEIS(client.getNickname(), client.getModes()));
 	else
 	{
-		if (client.setMode(mode))
+		if (!client.setMode(mode))
 			client.sendResponse(ERR_UMODEUNKNOWNFLAG(client.getNickname()));
-		client.sendResponse(MODE(client.getNickname(), client.getModes()));
+		client.sendResponse(MODE(client.getModes()));
 	}
 }
 
