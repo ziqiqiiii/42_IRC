@@ -41,24 +41,30 @@ void	IRC::Client::sendResponse(string response) const
  * @brief Function that adds or removes the given mode to the user
  * 
  * This method takes the user mode as a string, then checks if it is a valid user mode
- * and either sets or removes it accordingly.
- * A mode string is defined as a '+' or '-' followed by an alphabetical character such as: +i
- * Any extra characters are ignored, and function fails if no '+' or '-'
- * Returns 0 on falure, and 1 if mode was succesfully add or removed
+ * and either sets or removes it.
  * 
- * @param mode The given mode
+ * A mode string is defined as a '+' or '-' followed by an alphabetical character such as: "+i"
+ * 
+ * Any extra characters are ignored, and function fails if no '+' or '-'
+ * Returns 0 on falure and 1 if mode was succesfully add or removed
+ * 
+ * @param mode The given mode string
  * @return int 1 on success, 0 on failure
  */
-int	IRC::Client::setMode(string mode)
+int	IRC::Client::setMode(string modestring)
 {
-	if (mode.size() < 2)
+	if (modestring.size() < 2)
 		return (0);	
-	size_t	pos = this->_modes.find(mode[1]);
-	if (!strchr(USER_MODES, mode[1]) || !strchr("+-", mode[0]))
+
+	char	action = modestring[0];
+	char	mode = modestring[1];
+	size_t	pos = this->_modes.find(mode);
+
+	if (!strchr(USER_MODES, mode) || !strchr("+-", action))
 		return (0);
-	if (mode[0] == '+' && pos == string::npos)
-		this->_modes += mode[1];
-	else if (mode[0] == '-' && pos != string::npos)
+	if (action == '+' && pos == string::npos)
+		this->_modes += mode;
+	else if (action == '-' && pos != string::npos)
 		this->_modes.erase(pos);
 	return (1);
 }
