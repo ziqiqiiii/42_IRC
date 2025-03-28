@@ -33,7 +33,7 @@
 
 // Message replies
 # define PRIVMSG(client, target, text)					(":" + client + " PRIVMSG " + target + " :" + text)
-# define MODE(client, modes)							(":" + client + " +" +  modes + " modes")
+# define MODE(modes)									(": MODE +" +  modes)
 # define NICK(client, nick)								(":" + client + " NICK " + nick)
 # define PART(client, channel, reason)					(":" + client + " PART " + channel + " " + reason)
 
