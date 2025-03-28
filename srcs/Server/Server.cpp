@@ -214,35 +214,35 @@ void	IRC::Server::_handleClientPacket(struct epoll_event &event)
 
 void	IRC::Server::_parseExec(Client &client)
 {
-	t_irc_cmd			f;
+	t_irc_cmd			command;
 	string				buffer = client.getBuffer();
-	string 				command;
+	string 				command_name;
 	size_t				delim = 0;
 
 	while ((delim = IRC::Utils::find_crlf(buffer)))
 	{
 		std::stringstream message(buffer.substr(0, delim));
-		while (message >> command)
+		while (message >> command_name)
 		{
-			if (!strchr("@:", command[0]) && !isdigit(command[0]))
+			if (!strchr("@:", command_name[0]) && !isdigit(command_name[0]))
 				break ;
-			command.clear();
+			command_name.clear();
 		}
-		std::transform(command.begin(), command.end(), command.begin(), toupper);
-		f = this->getCommand(command);
-		if (!client.getRegistered() && string("PASS NICK USER").find(command) == string::npos && f)
+		command_name = IRC::Utils::stringToUpper(command_name);
+		command = this->getCommand(command_name);
+		if (!client.getRegistered() && string("PASS NICK USER").find(command_name) == string::npos && command)
 			client.sendResponse(ERR_NOTREGISTERED(client.getNickname()));
-		else if (client.getRegistered() && !f)
-			client.sendResponse(ERR_UNKNOWNCOMMAND(client.getNickname(), command));
-		else if (f)
-			(this->*f)(message, client);
+		else if (client.getRegistered() && !command)
+			client.sendResponse(ERR_UNKNOWNCOMMAND(client.getNickname(), command_name));
+		else if (command)
+			(this->*command)(message, client);
 		if (!client.getRegistered() && !client.getUsername().empty() && client.getAuthenticated() && client.getNickname() != "*")
 		{
 			client.setRegistered(true);
 			client.sendResponse(RPL_WELCOME(client.getNickname()));
 		}
 		buffer.erase(0, delim + 1);
-		command.clear();
+		command_name.clear();
 	}
 	client.setBuffer(buffer);
 }
