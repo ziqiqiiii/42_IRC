@@ -13,6 +13,7 @@ namespace IRC
         private:
 		string							_channel_name;
 		string							_channel_modes;
+		std::vector<string>				_invite_list;
 		std::vector<IRC::Client *>		_operators;
 		std::map<string, IRC::Client*>	_clients; /**<client_fd, Client*> */
 		string							_ban_list;

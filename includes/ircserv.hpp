@@ -33,6 +33,7 @@
 # define DEFAULT_KICK_MSG "No reason giver"
 
 // Message replies
+# define INVITE(client, nick, channel)							(":" + client + " INVITE " + nick + " " + channel)
 # define KICK(client, channel, user, comment)			(":" + client + " KICK " + channel + " " + user + " :" + comment)
 # define PRIVMSG(client, target, text)					(":" + client + " PRIVMSG " + target + " :" + text)
 # define MODE(modes)									(": MODE +" +  modes)
@@ -40,6 +41,7 @@
 # define PART(client, channel, reason)					(":" + client + " PART " + channel + " " + reason)
 
 // Numeric replies
+# define RPL_INVITING(client, nick, channel)			(": 341 " + client + " " + nick + " " + channel)
 # define RPL_WELCOME(client)							(": 001 " + client + " :Welcome to the lala mui zai network " + client)
 # define RPL_UMODEIS(client, modes)						(": 221 " + client + " " + modes)
 # define RPL_CHANNELMODEIS(client, channel, modestring, mode_arguments) \
@@ -68,6 +70,7 @@
 # define ERR_NICKNAMEINUSE(client, nick)				(": 433 " + client + " " + nick + " :Nickname is already in use")
 # define ERR_USERNOTINCHANNEL(client, nick, channel)	(": 441 " + client + " " + nick + " " + channel + " :They aren't on channel")
 # define ERR_NOTONCHANNEL(client, channel)				(": 442 " + client + " " + channel + ":You're not on that channel")
+# define ERR_USERONCHANNEL(client, nick, channel)		(": 443 " + client + " " + nick + " " + channel + " :is already on channel")
 # define ERR_NOTREGISTERED(client) 						(": 451 " + client + " :You have not registered")
 # define ERR_NEEDMOREPARAMS(client, command)			(": 461 " + client + " " + command + " :Not enough paramaters")
 # define ERR_ALREADYREGISTERED(client)					(": 462 " + client +  " :You may not reregister")

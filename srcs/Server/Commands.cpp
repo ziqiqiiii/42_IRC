@@ -186,3 +186,33 @@ void	IRC::Server::kick(std::stringstream &args, Client &client)
 	else
 		channel->kickUsers(client, user_names, comment);
 }
+
+void	IRC::Server::invite(std::stringstream &args, Client &client)
+{
+	Channel	*channel;
+	Client	*target;
+	string	nickname;
+	string	channel_name;
+
+	args >> nickname;
+	args >> channel_name;
+	target = this->getClient(nickname);
+	channel = this->getChannel(channel_name);
+	if (nickname.empty() || channel_name.empty())
+		client.sendResponse(ERR_NEEDMOREPARAMS(client.getNickname(), "INVITE"));
+	else if (!channel)
+		client.sendResponse(ERR_NOSUCHCHANNEL(client.getNickname(), channel_name));
+	else if (!channel->clientExists(client.getNickname()))
+		client.sendResponse(ERR_NOTONCHANNEL(client.getNickname(), channel_name));
+	else if (!target)
+		client.sendResponse(ERR_NOSUCHNICK(client.getNickname(), nickname));
+	else if (channel->clientExists(nickname))
+		client.sendResponse(ERR_USERONCHANNEL(client.getNickname(), nickname, channel_name));
+	else if (channel->getChannelModes().find('i') != string::npos && !channel->isOperator(&client))
+		client.sendResponse(ERR_CHANOPRIVSNEEDED(client.getNickname(), channel_name));
+	else
+	{
+		client.sendResponse(RPL_INVITING(client.getNickname(), nickname, channel_name));
+		target->sendResponse(INVITE(client.getNickname(), nickname, channel_name));
+	}
+}
