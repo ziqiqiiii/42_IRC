@@ -72,6 +72,16 @@ std::vector<string> IRC::Utils::splitString(const string& s, const string& del)
     return tokens;
 }
 
+/**
+ * @brief Checks whether client is in the given nickmask
+ *
+ * This function takes a reference to a Client object and a nickmask stored in a string.
+ * If the client's nick, user and ip is included in the mask, true is returned, false otherwise.
+ * 
+ * @param client The client, who's nick, user an ip is checked
+ * @param mask The IRC nickmask containing a nick, user and ip combination.
+ * @return bool True 
+ */
 bool	IRC::Utils::isInMask(const IRC::Client& client, const string& mask)
 {
 	string	ip = IRC::Utils::sockaddrIpToString(client.getAddress());
@@ -94,7 +104,7 @@ bool	IRC::Utils::isInMask(const IRC::Client& client, const string& mask)
 	if (end != string::npos)
 	{
 		key = mask.substr(start, end);
-		if (key == client.getNickname() || key == "*")
+		if (key == client.getUsername() || key == "*")
 		{
 			result++;
 			start = end + 1;
