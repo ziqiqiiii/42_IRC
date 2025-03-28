@@ -37,6 +37,7 @@ namespace IRC
 
             void							attach(IRC::Client* client);
 			int								detach(IRC::Client* client);
+			void							kickUsers(IRC::Client& client, const string &users, const string &comment);
 			void							notifyAll(const std::string& message);
 			void							joinNumericReplies(IRC::Client* new_client);
 			bool							isOperator(Client *client);
@@ -53,6 +54,7 @@ namespace IRC
             const string&						getChannelModes() const;
             const string&						getName() const;
             bool								clientExists(const string client_nick);
+			IRC::Client*						getClient(const string& client_nick);
 			const string&						getTopic() const;
 			const string&						getTopicSetter() const;
 			string								getTopicSetTime() const;

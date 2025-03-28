@@ -11,6 +11,7 @@ static void	socketInit(Socket *&socket, int &port, int &socketFd)
 static void	commandsInit(std::map<string, t_irc_cmd> &commands)
 {
 	commands["PASS"] = &IRC::Server::pass;
+	commands["KICK"] = &IRC::Server::kick;
 	commands["JOIN"] = &IRC::Server::join;
 	commands["NICK"] = &IRC::Server::nick;
 	commands["USER"] = &IRC::Server::user;

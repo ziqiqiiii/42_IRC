@@ -30,8 +30,10 @@
 # define CRLF "\r\n"
 # define MAX_CLIENTS 50
 # define BUFFER_SIZE 512
+# define DEFAULT_KICK_MSG "No reason giver"
 
 // Message replies
+# define KICK(client, channel, user, comment)			(":" + client + " KICK " + channel + " " + user + " :" + comment)
 # define PRIVMSG(client, target, text)					(":" + client + " PRIVMSG " + target + " :" + text)
 # define MODE(modes)									(": MODE +" +  modes)
 # define NICK(client, nick)								(":" + client + " NICK " + nick)
@@ -58,18 +60,19 @@
 # define RPL_YOUREOPER(client)							(": 381 " + client + " :You are now an IRC operator")
 // Error replies
 
-# define ERR_BANNEDFROMCHAN(client, channel)			(": 474 " + client + " " + channel + " :Cannot join channel (+b)")
 # define ERR_NOSUCHNICK(client, nick)					(": 403 " + client + " " + nick + " :No such nick")
 # define ERR_NOSUCHCHANNEL(client, channel)				(": 403 " + client + " " + channel + " :No such channel")
 # define ERR_UNKNOWNCOMMAND(client, command)			(": 421 " + client + " " + command + " :Unknown command")
 # define ERR_NONICKNAMEGIVEN(client)					(": 431 " + client + " :No nickname given")
 # define ERR_ERRONEUSNICKNAME(client, nick) 			(": 432 " + client + " " + nick + " :Erroneus nickname")
 # define ERR_NICKNAMEINUSE(client, nick)				(": 433 " + client + " " + nick + " :Nickname is already in use")
+# define ERR_USERNOTINCHANNEL(client, nick, channel)	(": 441 " + client + " " + nick + " " + channel + " :They aren't on channel")
 # define ERR_NOTONCHANNEL(client, channel)				(": 442 " + client + " " + channel + ":You're not on that channel")
 # define ERR_NOTREGISTERED(client) 						(": 451 " + client + " :You have not registered")
 # define ERR_NEEDMOREPARAMS(client, command)			(": 461 " + client + " " + command + " :Not enough paramaters")
 # define ERR_ALREADYREGISTERED(client)					(": 462 " + client +  " :You may not reregister")
 # define ERR_PASSWDMISMATCH(client)						(": 464 " + client + " :Password incorrect")
+# define ERR_BANNEDFROMCHAN(client, channel)			(": 474 " + client + " " + channel + " :Cannot join channel (+b)")
 # define ERR_CHANOPRIVSNEEDED(client, channel)			(": 482 " + client + " " + channel + " :You're not channel operator")
 # define ERR_UMODEUNKNOWNFLAG(client)					(": 501 " + client + " :Unknown MODE flag")
 # define ERR_USERSDONTMATCH(client)						(": 502 " + client + " :Cant change mode for other users")

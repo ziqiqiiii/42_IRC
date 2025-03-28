@@ -201,6 +201,24 @@ int IRC::Channel::setChannelMode(string mode, string args, Client &client)
     return (0);
 }
 
+void	IRC::Channel::kickUsers(IRC::Client &client, const string& users, const string& comment)
+{
+	std::vector<string> list = IRC::Utils::splitString(users, ",");
+	IRC::Client*		user;
+
+	for (std::vector<string>::iterator it = list.begin(); it != list.end(); it++)
+	{
+		user = this->getClient(*it);
+		if (!user)
+		{
+			client.sendResponse(ERR_USERNOTINCHANNEL(client.getNickname(), *it, this->_channel_name));
+			continue;
+		}
+		this->detach(user);
+		this->notifyAll(KICK(client.getNickname(), this->_channel_name, *it, comment));
+	}
+}
+
 //Getter(s)
 
 const string&	IRC::Channel::getBanList() const {return this->_ban_list;}
@@ -212,6 +230,15 @@ const string&	IRC::Channel::getInviteExceptionList() const {return this->_invite
 const string&	IRC::Channel::getChannelModes() const {return this->_channel_modes;}
 
 const string&	IRC::Channel::getName() const { return this->_channel_name; }
+
+IRC::Client*	IRC::Channel::getClient(const string& client_nick)
+{
+	std::map<string, IRC::Client*>::iterator it = this->_clients.find(client_nick);
+
+	if (it == this->_clients.end())
+		return (NULL);
+	return (it->second);
+}
 
 bool	IRC::Channel::clientExists(const string client_nick)
 {

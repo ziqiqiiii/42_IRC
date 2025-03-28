@@ -89,6 +89,7 @@ namespace IRC
 			void			user(std::stringstream &args, Client &client);
 			void			topic(std::stringstream &args, Client &client);
 			void			invite(std::stringstream &args, Client &client);
+			void			kick(std::stringstream &args, Client &client);
 			void			mode(std::stringstream &args, Client &client);
 			void			privmsg(std::stringstream &args, Client &client);
     };

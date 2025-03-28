@@ -163,3 +163,26 @@ void	IRC::Server::part(std::stringstream &args, Client &client)
 			this->getChannel(*it)->notifyAll(PART(client.getNickname(), *it, reason));
 	}
 }
+
+void	IRC::Server::kick(std::stringstream &args, Client &client)
+{
+	Channel	*channel;
+	string	channel_name;
+	string	user_names;
+	string	comment;
+
+	args >> channel_name;
+	args >> user_names;
+	args >> comment;
+	channel = this->getChannel(channel_name);
+	if (comment.empty())
+		comment = DEFAULT_KICK_MSG;
+	if (channel_name.empty() || user_names.empty())
+		client.sendResponse(ERR_NEEDMOREPARAMS(client.getNickname(), "KICK"));
+	else if (!channel)
+		client.sendResponse(ERR_NOSUCHCHANNEL(client.getNickname(), channel_name));
+	else if (!channel->isOperator(&client))
+		client.sendResponse(ERR_CHANOPRIVSNEEDED(client.getNickname(), channel_name));
+	else
+		channel->kickUsers(client, user_names, comment);
+}
