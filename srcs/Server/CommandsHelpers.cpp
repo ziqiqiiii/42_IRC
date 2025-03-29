@@ -53,6 +53,7 @@ void	IRC::Server::_operateJoinCommand(std::map<string, string>& chan_keys_map, C
 
 void	IRC::Server::_handleChannelMode(Client &client, string &target,string &mode, string &mode_args)
 {
+	IRC::Utils::removeCharacters(target, "#&");
 	Channel	*channel = this->getChannel(target);
 	if (!channel)
 		client.sendResponse(ERR_NOSUCHCHANNEL(client.getNickname(), target));
@@ -60,6 +61,9 @@ void	IRC::Server::_handleChannelMode(Client &client, string &target,string &mode
 		client.sendResponse(RPL_CHANNELMODEIS(client.getNickname(), target, channel->getChannelModes(), ""));
 	else
 	{
+		cout << "HELLO" << endl;
+		if (!channel->isOperator(&client))
+			return client.sendResponse(ERR_CHANOPRIVSNEEDED(client.getNickname(), channel->getName()));
 		if (channel->setChannelMode(mode, mode_args, client, *channel))
 			client.sendResponse(ERR_UMODEUNKNOWNFLAG(client.getNickname()));
 	}
