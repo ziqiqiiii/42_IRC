@@ -120,6 +120,7 @@ IRC::Client	*IRC::Server::getClient(string name)
 
 IRC::Channel	*IRC::Server::getChannel(string name)
 {
+	name = IRC::Utils::stringToUpper(name);
 	std::map<string, IRC::Channel*>::iterator it = this->_channels.find(name);
 
 	if (it == this->_channels.end())
