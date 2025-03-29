@@ -61,8 +61,8 @@
 # define RPL_BANLIST(client, channel, mask)				(": 367 " + client + " " + channel +  " " + mask)
 # define RPL_ENDOFBANLIST(client, channel)				(": 368 " + client + " " + channel + " :End of channel ban list")
 # define RPL_YOUREOPER(client)							(": 381 " + client + " :You are now an IRC operator")
-// Error replies
 
+// Error replies
 # define ERR_NOSUCHNICK(client, nick)					(": 403 " + client + " " + nick + " :No such nick")
 # define ERR_NOSUCHCHANNEL(client, channel)				(": 403 " + client + " " + channel + " :No such channel")
 # define ERR_UNKNOWNCOMMAND(client, command)			(": 421 " + client + " " + command + " :Unknown command")
