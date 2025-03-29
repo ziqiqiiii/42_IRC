@@ -54,12 +54,15 @@ int	IRC::Channel::detach(IRC::Client* client)
 	return (1);
 }
 
-void	IRC::Channel::notifyAll(const std::string& message)
+void	IRC::Channel::notifyAll(const std::string& message, IRC::Client *sender)
 {
 	std::map<string, IRC::Client*>::iterator	it;
 
 	for (it = this->_clients.begin(); it != this->_clients.end(); ++it)
-		it->second->sendResponse(message);
+	{
+		if (sender != it->second)
+			it->second->sendResponse(message);
+	}
 }
 
 void	IRC::Channel::joinNumericReplies(Client* new_client)
@@ -68,13 +71,13 @@ void	IRC::Channel::joinNumericReplies(Client* new_client)
 	string	nick = new_client->getNickname();
 
 	if (this->_topic.empty())
-		message += RPL_NOTOPIC(nick, this->_channel_name) + "\n";
+		message = RPL_NOTOPIC(nick, this->_channel_name) + CRLF;
 	else
-		message += RPL_TOPIC(nick, this->_channel_name, this->_topic) + "\n";
-	message += RPL_NAMREPLY(nick, "=", this->_channel_name, this->getClientsList()) + "\n";
-	message += RPL_ENDOFNAMES(nick, this->_channel_name) + "\n";
-
-	this->notifyAll(message);
+		message = RPL_TOPIC(nick, this->_channel_name, this->_topic) + CRLF;
+	message += (JOIN(nick, this->_channel_name) + CRLF);
+	message += (RPL_NAMREPLY(nick, "=", this->_channel_name, this->getClientsList()) + CRLF);
+	message += (RPL_ENDOFNAMES(nick, this->_channel_name));
+	this->notifyAll(message, NULL);
 }
 
 void	IRC::Channel::_handleKeyMode(char action, const string &args, Client &client)
@@ -179,7 +182,7 @@ int IRC::Channel::setChannelMode(string mode, string args, Client &client)
             break;
 
         case 'k': 
-				this->_handleKeyMode(mode[0], args, client);
+			this->_handleKeyMode(mode[0], args, client);
             break;
 
         case 'e': 
@@ -215,7 +218,7 @@ void	IRC::Channel::kickUsers(IRC::Client &client, const string& users, const str
 			continue;
 		}
 		this->detach(user);
-		this->notifyAll(KICK(client.getNickname(), this->_channel_name, *it, comment));
+		this->notifyAll(KICK(client.getNickname(), this->_channel_name, *it, comment), &client);
 	}
 }
 
