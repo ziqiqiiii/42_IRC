@@ -23,11 +23,12 @@ namespace IRC
 			string								_topicSetter;
 			time_t								_topicSetTime;
 			string								_key;
+			int									_client_limit;
 
 			void								_handleBanMode(char action, const string &args, IRC::Client &client);
-			void								_handleKeyMode(char action, const string &args, IRC::Client &client);
 			void								_handleExceptionMode(char action, const string &args, IRC::Client &client);
-			void								_handleInviteExceptionMode(char action, const string &args, IRC::Client &client);
+			void								_handleClientLimitMode(Channel &channel, const string &args);
+			void								_handleProtectedTopicMode(char action, const string &args, Client &client, Channel &channel);
 
         public:
             Channel();

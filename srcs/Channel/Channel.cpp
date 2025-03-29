@@ -10,6 +10,7 @@ IRC::Channel::Channel(const string channel_name, IRC::Client& client)
 	this->_operators.push_back(&client);
 	this->_clients[client.getNickname()] = &client;
 	this->_topic = "";
+	this->_client_limit = 0;
 }
 
 IRC::Channel::Channel(const Channel &other) { *this = other; }
@@ -22,6 +23,7 @@ IRC::Channel& IRC::Channel::operator=(const Channel &other)
 		this->_channel_modes = other._channel_modes;
 		this->_operators = other._operators;
 		this->_topic = other._topic;
+		this->_client_limit = other._client_limit;
 	}
     return *this;
 }
@@ -80,18 +82,6 @@ void	IRC::Channel::joinNumericReplies(Client* new_client)
 	this->notifyAll(message, NULL);
 }
 
-void	IRC::Channel::_handleKeyMode(char action, const string &args, Client &client)
-{
-	if (args.empty())
-		client.sendResponse(ERR_INVALIDMODEPARAM(client.getNickname(), this->_channel_name, "+k", args, ":Key missing"));
-	else if (args.size() < MAX_KEY_LEN)
-		client.sendResponse(ERR_INVALIDMODEPARAM(client.getNickname(), this->_channel_name, "+k", args, ":Key too long"));
-    else if (action == '+')
-		this->_key = args;
-    else if (action == '-')
-        this->_key.clear();
-}
-
 void	IRC::Channel::_handleBanMode(char action, const string &args, Client &client)
 {	
 	if (args.empty())
@@ -126,31 +116,27 @@ void	IRC::Channel::_handleExceptionMode(char action, const string &args, Client 
 	}
 }
 
-void	IRC::Channel::_handleInviteExceptionMode(char action, const string &args, Client &client)
+void	IRC::Channel::_handleClientLimitMode(Channel &channel, const string &args)
 {
-	if (args.empty())
-	{
-		client.sendResponse(RPL_INVEXLIST(client.getNickname(), this->_channel_name, this->_invite_exception_list));
-		client.sendResponse(RPL_ENDOFINVEXLIST(client.getNickname(), this->_channel_name));
-	}
-	if (action == '+')
-		this->_exception_list += args + " ";
-	else if (action == '-')
-	{
-		size_t	pos = this->_exception_list.find(args);
-		if (pos != string::npos)
-			this->_exception_list.erase(pos);
-	}
+	cout << "dasdasdsa" << endl;
+	channel._client_limit = IRC::Utils::stringToInt(args);
 }
 
+void	IRC::Channel::_handleProtectedTopicMode(char action, const string &args, Client &client, Channel &channel)
+{
+	(void)action;
+	(void)args;
+	(void)client;
+	(void)channel;
+}
+
+//Setter(s)
 bool	IRC::Channel::isOperator(Client *client)
 {
 	if (std::find(this->_operators.begin(), this->_operators.end(), client) == this->_operators.end())
 		return (false);
 	return (true);
 }
-
-//Setter(s)
 
 void	IRC::Channel::setChannelName(const string& channel_name) { this->_channel_name = channel_name; }
 
@@ -164,8 +150,9 @@ void	IRC::Channel::setTopic(const string& new_topic, Client &client)
 	time(&this->_topicSetTime);
 }
 
-int IRC::Channel::setChannelMode(string mode, string args, Client &client)
+int IRC::Channel::	setChannelMode(string mode, string args, Client &client, Channel &channel)
 {
+	cout << mode << " " << args << " " << endl;
     if (mode.size() < 2) // Ensure mode string is valid
         return 0;
 
@@ -180,19 +167,15 @@ int IRC::Channel::setChannelMode(string mode, string args, Client &client)
         case 'b': 
 			this->_handleBanMode(mode[0], args, client);
             break;
-
-        case 'k': 
-			this->_handleKeyMode(mode[0], args, client);
-            break;
-
         case 'e': 
 			this->_handleExceptionMode(mode[0], args, client);
             break;
-
-        case 'I':
-			this->_handleInviteExceptionMode(mode[0], args, client);
-            break;
-
+		case 'l':
+			this->_handleClientLimitMode(channel, args);
+			break;
+		case 't':
+			this->_handleProtectedTopicMode(mode[0], args, client, channel);
+			break;
         default:
             if (mode[0] == '+' && pos == string::npos)
                 this->_channel_modes += mode[1];
