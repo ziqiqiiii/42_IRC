@@ -21,6 +21,14 @@ string IRC::Utils::intToString(int num)
     return string(buffer);
 }
 
+int	IRC::Utils::stringToInt(const std::string &str) {
+	std::istringstream iss(str);
+	int num;
+	if (!(iss >> num))
+		throw std::invalid_argument("Invalid integer string: " + str);
+	return num;
+}
+
 string	IRC::Utils::stringToUpper(const string& str)
 {
     string tmp;
@@ -120,6 +128,18 @@ bool	IRC::Utils::isInMask(const IRC::Client& client, const string& mask)
 string	IRC::Utils::sockaddrIpToString(const struct sockaddr_in &address)
 {
 	return (inet_ntoa(address.sin_addr));
+}
+
+void	IRC::Utils::removeCharacters(std::string &str, const std::string &charsToRemove) {
+	std::string result;
+	for (std::string::iterator it = str.begin(); it != str.end(); ++it) {
+		if (charsToRemove.find(*it) == std::string::npos) {
+			// Keep the character if it's not in charsToRemove
+			result += *it;
+		}
+	}
+	// Replace the original string with the filtered result
+	str = result;
 }
 
 /**
