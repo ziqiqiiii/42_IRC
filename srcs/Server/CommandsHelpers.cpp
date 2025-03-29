@@ -60,7 +60,7 @@ void	IRC::Server::_handleChannelMode(Client &client, string &target,string &mode
 		client.sendResponse(RPL_CHANNELMODEIS(client.getNickname(), target, channel->getChannelModes(), ""));
 	else
 	{
-		if (channel->setChannelMode(mode, mode_args, client, *channel))
+		if (channel->setChannelMode(mode, mode_args, client))
 			client.sendResponse(ERR_UMODEUNKNOWNFLAG(client.getNickname()));
 	}
 }
