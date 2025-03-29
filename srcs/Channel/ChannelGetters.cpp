@@ -28,6 +28,13 @@ bool	IRC::Channel::clientExists(const string client_nick)
 	return false;
 }
 
+bool	IRC::Channel::isOperator(Client *client)
+{
+	if (std::find(this->_operators.begin(), this->_operators.end(), client) == this->_operators.end())
+		return (false);
+	return (true);
+}
+
 const string&	IRC::Channel::getTopic() const { return this->_topic; }
 
 const string&	IRC::Channel::getTopicSetter() const {return this->_topicSetter;}

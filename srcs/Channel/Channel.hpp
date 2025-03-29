@@ -42,19 +42,19 @@ namespace IRC
 			void								kickUsers(IRC::Client& client, const string &users, const string &comment);
 			void								notifyAll(const std::string& message, IRC::Client *sender);
 			void								joinNumericReplies(IRC::Client* new_client);
-			bool								isOperator(Client *client);
-
+			
 			//Setter(s)
 			void								setChannelName(const string& channel_name);
 			void								setTopic(const string& new_topic, Client &setter);
 			int									setChannelMode(string mode, string args, Client &client, Channel &channel);
-
+			
             //Getter(s)
 			const string&						getInviteExceptionList() const;
 			const string&						getExceptionList() const;
 			const string&						getBanList() const;
             const string&						getChannelModes() const;
             const string&						getName() const;
+			bool								isOperator(Client *client);
             bool								clientExists(const string client_nick);
 			IRC::Client*						getClient(const string& client_nick);
 			const string&						getTopic() const;

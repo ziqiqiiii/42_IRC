@@ -12,8 +12,9 @@ void	IRC::Channel::setTopic(const string& new_topic, Client &client)
 	time(&this->_topicSetTime);
 }
 
-int IRC::Channel::setChannelMode(string mode, string args, Client &client, Channel &channel)
+int IRC::Channel::	setChannelMode(string mode, string args, Client &client, Channel &channel)
 {
+	cout << mode << " " << args << " " << endl;
     if (mode.size() < 2) // Ensure mode string is valid
         return 0;
 
@@ -28,17 +29,14 @@ int IRC::Channel::setChannelMode(string mode, string args, Client &client, Chann
         case 'b': 
 			this->_handleBanMode(mode[0], args, client);
             break;
-        case 'k': 
-			this->_handleKeyMode(mode[0], args, client);
-            break;
         case 'e': 
 			this->_handleExceptionMode(mode[0], args, client);
             break;
-        case 'I':
-			this->_handleInviteExceptionMode(mode[0], args, client);
-            break;
 		case 'l':
 			this->_handleClientLimitMode(channel, args);
+			break;
+		case 't':
+			this->_handleProtectedTopicMode(mode[0], args, client, channel);
 			break;
         default:
             if (mode[0] == '+' && pos == string::npos)

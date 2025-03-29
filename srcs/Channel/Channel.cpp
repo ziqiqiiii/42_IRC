@@ -28,7 +28,6 @@ IRC::Channel& IRC::Channel::operator=(const Channel &other)
     return *this;
 }
 
-//ISubject Functions
 void	IRC::Channel::attach(IRC::Client* client)
 {
 	string client_nick = client->getNickname();
@@ -54,6 +53,24 @@ int	IRC::Channel::detach(IRC::Client* client)
 	}
 	this->_clients.erase(it);
 	return (1);
+}
+
+void	IRC::Channel::kickUsers(IRC::Client &client, const string& users, const string& comment)
+{
+	std::vector<string> list = IRC::Utils::splitString(users, ",");
+	IRC::Client*		user;
+
+	for (std::vector<string>::iterator it = list.begin(); it != list.end(); it++)
+	{
+		user = this->getClient(*it);
+		if (!user)
+		{
+			client.sendResponse(ERR_USERNOTINCHANNEL(client.getNickname(), *it, this->_channel_name));
+			continue;
+		}
+		this->detach(user);
+		this->notifyAll(KICK(client.getNickname(), this->_channel_name, *it, comment), &client);
+	}
 }
 
 void	IRC::Channel::notifyAll(const std::string& message, IRC::Client *sender)
@@ -128,133 +145,4 @@ void	IRC::Channel::_handleProtectedTopicMode(char action, const string &args, Cl
 	(void)args;
 	(void)client;
 	(void)channel;
-}
-
-//Setter(s)
-bool	IRC::Channel::isOperator(Client *client)
-{
-	if (std::find(this->_operators.begin(), this->_operators.end(), client) == this->_operators.end())
-		return (false);
-	return (true);
-}
-
-void	IRC::Channel::setChannelName(const string& channel_name) { this->_channel_name = channel_name; }
-
-void	IRC::Channel::setTopic(const string& new_topic, Client &client) 
-{
-	if (new_topic.size() == 1)
-		this->_topic.clear();
-	else
-		this->_topic = new_topic.substr(1, new_topic.size());
-	this->_topicSetter = client.getNickname();
-	time(&this->_topicSetTime);
-}
-
-int IRC::Channel::	setChannelMode(string mode, string args, Client &client, Channel &channel)
-{
-	cout << mode << " " << args << " " << endl;
-    if (mode.size() < 2) // Ensure mode string is valid
-        return 0;
-
-    size_t pos = this->_channel_modes.find(mode[1]);
-
-    // Check if the mode is valid
-    if (!strchr(CHANNEL_MODES, mode[1]))
-        return (1);
-    // Handle the mode based on the action
-    switch (mode[1])
-    {
-        case 'b': 
-			this->_handleBanMode(mode[0], args, client);
-            break;
-        case 'e': 
-			this->_handleExceptionMode(mode[0], args, client);
-            break;
-		case 'l':
-			this->_handleClientLimitMode(channel, args);
-			break;
-		case 't':
-			this->_handleProtectedTopicMode(mode[0], args, client, channel);
-			break;
-        default:
-            if (mode[0] == '+' && pos == string::npos)
-                this->_channel_modes += mode[1];
-            else if (mode[0] == '-' && pos != string::npos)
-                this->_channel_modes.erase(pos, 1);
-            break;
-    }
-
-    return (0);
-}
-
-void	IRC::Channel::kickUsers(IRC::Client &client, const string& users, const string& comment)
-{
-	std::vector<string> list = IRC::Utils::splitString(users, ",");
-	IRC::Client*		user;
-
-	for (std::vector<string>::iterator it = list.begin(); it != list.end(); it++)
-	{
-		user = this->getClient(*it);
-		if (!user)
-		{
-			client.sendResponse(ERR_USERNOTINCHANNEL(client.getNickname(), *it, this->_channel_name));
-			continue;
-		}
-		this->detach(user);
-		this->notifyAll(KICK(client.getNickname(), this->_channel_name, *it, comment), &client);
-	}
-}
-
-//Getter(s)
-
-const string&	IRC::Channel::getBanList() const {return this->_ban_list;}
-
-const string&	IRC::Channel::getExceptionList() const {return this->_exception_list;}
-
-const string&	IRC::Channel::getInviteExceptionList() const {return this->_invite_exception_list;}
-
-const string&	IRC::Channel::getChannelModes() const {return this->_channel_modes;}
-
-const string&	IRC::Channel::getName() const { return this->_channel_name; }
-
-IRC::Client*	IRC::Channel::getClient(const string& client_nick)
-{
-	std::map<string, IRC::Client*>::iterator it = this->_clients.find(client_nick);
-
-	if (it == this->_clients.end())
-		return (NULL);
-	return (it->second);
-}
-
-bool	IRC::Channel::clientExists(const string client_nick)
-{
-	std::map<string, IRC::Client*>::iterator it = this->_clients.find(client_nick);
-
-	if (it != this->_clients.end())
-		return true;
-	return false;
-}
-
-const string&	IRC::Channel::getTopic() const { return this->_topic; }
-
-const string&	IRC::Channel::getTopicSetter() const {return this->_topicSetter;}
-
-const std::vector<IRC::Client *>&	IRC::Channel::getChannelOperators() const { return this->_operators; }
-
-string	IRC::Channel::getClientsList()
-{
-	std::map<string, IRC::Client*>::iterator	it;
-	string	name_list;
-
-	for (it = this->_clients.begin(); it != this->_clients.end(); ++it)
-		name_list += it->second->getNickname() + " ";
-
-	return name_list;
-}
-
-string	IRC::Channel::getTopicSetTime() const
-{
-	std::stringstream ss;
-	ss << this->_topicSetTime;
-	return (ss.str());
 }
