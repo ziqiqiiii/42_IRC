@@ -121,3 +121,22 @@ string	IRC::Utils::sockaddrIpToString(const struct sockaddr_in &address)
 {
 	return (inet_ntoa(address.sin_addr));
 }
+
+/**
+ * @brief Gets the rest of the stringstream including the next token
+ *
+ * This function takes the given stringstream, skips to the next token and returns the entirety of the stream, including that token
+ * 
+ * @param ss The input stream 
+ * @return string The rest of the stream
+ */
+string	IRC::Utils::getRestOfStream(std::stringstream &ss)
+{
+	string 	ret;
+	string	tmp;
+
+	ss >> ret;
+	getline(ss, tmp);
+	ret += tmp;
+	return (ret);
+}

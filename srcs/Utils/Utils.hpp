@@ -14,5 +14,6 @@ namespace IRC
 			string				sockaddrIpToString(const struct sockaddr_in &address);
             bool                containsChar(string str, string find);
 			bool				isInMask(const IRC::Client& client, const string& mask);
+            string              getRestOfStream(std::stringstream &ss);
     };
 }
