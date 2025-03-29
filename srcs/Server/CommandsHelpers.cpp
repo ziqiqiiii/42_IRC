@@ -96,16 +96,18 @@ void	IRC::Server::_handleChannelTarget(Client &client, string &target, string &t
 {
 	Channel	*channel = this->getChannel(target);
 	string	nick	= client.getNickname();
-	string	channel_modes = channel->getChannelModes();
-
 	if (!channel)
+	{
 		client.sendResponse(ERR_NOSUCHCHANNEL(nick, target));
-	else if (channel_modes.find('e') && IRC::Utils::isInMask(client, channel->getExceptionList()))
-		channel->notifyAll(PRIVMSG(nick, target, text));
+		return;
+	}
+	string	channel_modes = channel->getChannelModes();
+	if (channel_modes.find('e') && IRC::Utils::isInMask(client, channel->getExceptionList()))
+		channel->notifyAll(PRIVMSG(nick, target, text), &client);
 	else if (channel_modes.find('b') && IRC::Utils::isInMask(client, channel->getBanList()))
 		client.sendResponse(ERR_BANNEDFROMCHAN(nick, target));
 	else
-		channel->notifyAll(PRIVMSG(nick, target, text));
+		channel->notifyAll(PRIVMSG(nick, target, text), &client);
 }
 
 void	IRC::Server::_handleClientTarget(Client &client, string &target, string &text)

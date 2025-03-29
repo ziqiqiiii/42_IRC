@@ -52,7 +52,7 @@ int	IRC::Server::leaveChannel(const string& channel_name, Client* client)
 {
 	std::map<string, Channel*>::iterator	channel_it	= this->_channels.find(IRC::Utils::stringToUpper(channel_name));
 
-	if (channel_it != this->_channels.end())
+	if (channel_it == this->_channels.end())
 	{
 		client->sendResponse(ERR_NOSUCHCHANNEL(client->getNickname(), channel_name));
 		return (0);
@@ -65,5 +65,5 @@ void	IRC::Server::notifyAll(const string& message)
 	std::map<string, Channel*>::iterator channel_it;
 
 	for (channel_it = this->_channels.begin(); channel_it != this->_channels.end(); ++channel_it)
-		channel_it->second->notifyAll(message);
+		channel_it->second->notifyAll(message, NULL);
 }

@@ -88,7 +88,7 @@ void	IRC::Server::privmsg(std::stringstream &args, Client &client)
 	string	target_names;
 	string	text;
 	args >> target_names;
-	args >> text;
+	text = Utils::getRestOfStream(args);
 	if (target_names.empty() || text.empty())
 	{
 		client.sendResponse(ERR_NEEDMOREPARAMS(client.getNickname(), "PRIVMSG"));
@@ -99,7 +99,7 @@ void	IRC::Server::privmsg(std::stringstream &args, Client &client)
 	std::vector<string>	targets = Utils::splitString(target_names, ",");
 	for (std::vector<string>::iterator it = targets.begin(); it != targets.end(); it++)
 	{
-		if ((*it).find("#&") != string::npos)
+		if ((*it).find('#') != string::npos)
 			this->_handleChannelTarget(client, *it, text);
 		else
 			this->_handleClientTarget(client, *it, text);
@@ -160,7 +160,7 @@ void	IRC::Server::part(std::stringstream &args, Client &client)
 	for (std::vector<string>::iterator it = channels.begin(); it != channels.end(); it++)
 	{
 		if (this->leaveChannel(*it, &client))
-			this->getChannel(*it)->notifyAll(PART(client.getNickname(), *it, reason));
+			this->getChannel(*it)->notifyAll(PART(client.getNickname(), *it, reason), &client);	
 	}
 }
 
