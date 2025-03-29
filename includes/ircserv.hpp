@@ -33,7 +33,8 @@
 # define DEFAULT_KICK_MSG "No reason giver"
 
 // Message replies
-# define INVITE(client, nick, channel)							(":" + client + " INVITE " + nick + " " + channel)
+# define JOIN(client, channel)							(":" + client + " JOIN " + channel)
+# define INVITE(client, nick, channel)					(":" + client + " INVITE " + nick + " " + channel)
 # define KICK(client, channel, user, comment)			(":" + client + " KICK " + channel + " " + user + " :" + comment)
 # define PRIVMSG(client, target, text)					(":" + client + " PRIVMSG " + target + " :" + text)
 # define MODE(modes)									(": MODE +" +  modes)
@@ -45,7 +46,7 @@
 # define RPL_WELCOME(client)							(": 001 " + client + " :Welcome to the lala mui zai network " + client)
 # define RPL_UMODEIS(client, modes)						(": 221 " + client + " " + modes)
 # define RPL_CHANNELMODEIS(client, channel, modestring, mode_arguments) \
-														(": 324 " + client + channel + modestring + mode_arguments)
+														(": 324 " + client + " " + channel + " " + modestring + " " + mode_arguments)
 # define RPL_NOTOPIC(client, channel)					(": 331 " + client + " " + channel + " :No topic is set")
 # define RPL_TOPIC(client, channel, topic)				(": 332 " + client + " " + channel + " :" + topic)
 # define RPL_TOPICWHOTIME(client, channel, nick, setat)	(": 333 " + client + " " + channel + " " + nick + " " + setat)
