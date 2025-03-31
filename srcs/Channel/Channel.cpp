@@ -137,16 +137,16 @@ void	IRC::Channel::_handleClientLimitMode(const string &args, Client &client)
 {
 	//Client Limit Mode is Type-B mode, so it must always contain a parameter
 	IRC::Logger* logManager = IRC::Logger::getInstance();
+	int		clientLimit = 0;
+	string	str_clt_lmt;
 
 	// ───── Check for missing parameters ─────
 	if (args.empty())
-		return client.sendResponse(ERR_NEEDMOREPARAMS(client.getNickname(), "MODE"));
+		return ;
 	// ───── Permission check ─────
 	if (!this->isOperator(&client))
 		return client.sendResponse(ERR_CHANOPRIVSNEEDED(client.getNickname(), this->getName()));
 	// ───── Try parsing and validating the client limit ─────
-	int		clientLimit = 0;
-	string	str_clt_lmt;
 	try {
 		clientLimit = IRC::Utils::stringToInt(args);
 		str_clt_lmt = IRC::Utils::intToString(clientLimit);
@@ -154,7 +154,6 @@ void	IRC::Channel::_handleClientLimitMode(const string &args, Client &client)
 			throw std::invalid_argument("Client limit must be greater than 0.");
 	} catch (const std::exception &e) {
 		logManager->logMsg(RED, ("Invalid client limit parameter " + str_clt_lmt + " provided by " + client.getNickname() + " in channel " + this->getName()).c_str(), strerror(errno));
-		return client.sendResponse(ERR_INVALIDMODEPARAM(client.getNickname(), this->getName(), "+l", str_clt_lmt, " "));
 	}
 	// ───── Set the new client limit ─────
 	this->_client_limit = clientLimit;
