@@ -27,8 +27,9 @@ namespace IRC
 
 			void								_handleBanMode(char action, const string &args, IRC::Client &client);
 			void								_handleExceptionMode(char action, const string &args, IRC::Client &client);
-			void								_handleClientLimitMode(const string &args, Client &client);
-			void								_handleProtectedTopicMode(char action, const string &args, Client &client);
+			void								_handleClientLimitMode(string mode, const string &args, Client &client);
+			void								_handleProtectedTopicMode(string mode, Client &client);
+			void								_setChannelMode(string mode);
         public:
             Channel();
             ~Channel();

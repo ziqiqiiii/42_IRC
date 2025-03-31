@@ -14,9 +14,8 @@ void	IRC::Channel::setTopic(const string& new_topic, Client &client)
 
 int IRC::Channel::setChannelMode(string mode, string args, Client &client)
 {
-	size_t pos = this->_channel_modes.find(mode[1]);
-
-    if (mode.size() < 2) // Ensure mode string is valid
+	// Ensure mode string is valid
+    if (mode.size() < 2) 
         return 0;
     // Check if the mode is valid
     if (!strchr(CHANNEL_MODES, mode[1]))
@@ -31,19 +30,26 @@ int IRC::Channel::setChannelMode(string mode, string args, Client &client)
 			this->_handleExceptionMode(mode[0], args, client);
             break;
 		case 'l':
-			this->_handleClientLimitMode(args, client);
+			this->_handleClientLimitMode(mode, args, client);
 			break;
 		case 't':
-			this->_handleProtectedTopicMode(mode[0], args, client);
+			this->_handleProtectedTopicMode(mode, client);
 			break;
         default:
             return (1);
     }
-	// Update the this->channel_modes
+	cout << "Setter" << endl;
+	cout << this->_channel_modes << endl;
+    return (0);
+}
+
+void	IRC::Channel::_setChannelMode(string mode)
+{
+	size_t pos = this->_channel_modes.find(mode[1]);
+
 	if (mode[0] == '+' && pos == std::string::npos) {
         this->_channel_modes += mode[1]; // Add the mode if it doesn't already exist
     } else if (mode[0] == '-' && pos != std::string::npos) {
         this->_channel_modes.erase(pos, 1); // Remove the mode if it exists
     }
-    return (0);
 }

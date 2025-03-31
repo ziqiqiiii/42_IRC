@@ -133,14 +133,14 @@ void	IRC::Channel::_handleExceptionMode(char action, const string &args, Client 
 	}
 }
 
-void	IRC::Channel::_handleClientLimitMode(const string &args, Client &client)
+void	IRC::Channel::_handleClientLimitMode(string mode, const string &args, Client &client)
 {
 	//Client Limit Mode is Type-B mode, so it must always contain a parameter
 	IRC::Logger* logManager = IRC::Logger::getInstance();
 	int		clientLimit = 0;
 	string	str_clt_lmt;
 
-	// ───── Check for missing parameters ─────
+	// ───── Check for empty parameters ─────
 	if (args.empty())
 		return ;
 	// ───── Permission check ─────
@@ -160,11 +160,17 @@ void	IRC::Channel::_handleClientLimitMode(const string &args, Client &client)
 	logManager->logMsg(CYAN, ("Client limit set to " + str_clt_lmt + " by " + client.getNickname() + " in channel " + this->getName()).c_str(), NULL);
 	// ───── Notify all clients about the mode change ─────
 	this->notifyAll(MODE(this->getName() + " +l " + str_clt_lmt), NULL);
+	// ───── Update the _channel_modes ─────
+	this->_setChannelMode(mode);
 }
 
-void	IRC::Channel::_handleProtectedTopicMode(char action, const string &args, Client &client)
+void	IRC::Channel::_handleProtectedTopicMode(string mode, Client &client)
 {
-	(void)action;
-	(void)args;
-	(void)client;
+	cout << "In Channel Protected Mode" << endl;
+	cout << this->_channel_modes << endl;
+	// ───── Permission check ─────
+	if (!this->isOperator(&client))
+		return client.sendResponse(ERR_CHANOPRIVSNEEDED(client.getNickname(), this->getName()));
+	// ───── Update the _channel_modes ─────
+	this->_setChannelMode(mode);
 }
