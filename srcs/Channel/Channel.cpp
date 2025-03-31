@@ -159,7 +159,7 @@ void	IRC::Channel::_handleClientLimitMode(string mode, const string &args, Clien
 	this->_client_limit = clientLimit;
 	logManager->logMsg(CYAN, ("Client limit set to " + str_clt_lmt + " by " + client.getNickname() + " in channel " + this->getName()).c_str(), NULL);
 	// ───── Notify all clients about the mode change ─────
-	this->notifyAll(MODE(this->getName() + " +l " + str_clt_lmt), NULL);
+	this->notifyAll(MODE(this->getName() + " " + mode + " " + str_clt_lmt), NULL);
 	// ───── Update the _channel_modes ─────
 	this->_setChannelMode(mode);
 }
