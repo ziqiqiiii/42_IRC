@@ -81,7 +81,8 @@
 # define ERR_UMODEUNKNOWNFLAG(client)					(": 501 " + client + " :Unknown MODE flag")
 # define ERR_USERSDONTMATCH(client)						(": 502 " + client + " :Cant change mode for other users")
 # define ERR_INVALIDMODEPARAM(client, target, mode, paramater, description) \
-														(": 696 " + client + " "  + target + " " + mode + " " + paramater + " " + description)
+														(": 696 " + client + " " + target + " " + mode + " " + paramater + " " + description)
+# define ERR_CHANNELISFULL(client, channel)				(": 471 " + client + " " + channel + " Cannot join channel (+l)")
 //--------------------namespace-------------------------//
 using std::cout;
 using std::endl;

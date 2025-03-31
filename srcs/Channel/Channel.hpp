@@ -27,9 +27,8 @@ namespace IRC
 
 			void								_handleBanMode(char action, const string &args, IRC::Client &client);
 			void								_handleExceptionMode(char action, const string &args, IRC::Client &client);
-			void								_handleClientLimitMode(Channel &channel, const string &args);
-			void								_handleProtectedTopicMode(char action, const string &args, Client &client, Channel &channel);
-
+			void								_handleClientLimitMode(const string &args, Client &client);
+			void								_handleProtectedTopicMode(char action, const string &args, Client &client);
         public:
             Channel();
             ~Channel();
@@ -46,7 +45,7 @@ namespace IRC
 			//Setter(s)
 			void								setChannelName(const string& channel_name);
 			void								setTopic(const string& new_topic, Client &setter);
-			int									setChannelMode(string mode, string args, Client &client, Channel &channel);
+			int									setChannelMode(string mode, string args, Client &client);
 			
             //Getter(s)
 			const string&						getInviteExceptionList() const;
@@ -62,5 +61,6 @@ namespace IRC
 			string								getTopicSetTime() const;
 			const std::vector<IRC::Client*>&	getChannelOperators() const;
 			string								getClientsList();
+			bool								isClientLimitExceed();
     };
 }

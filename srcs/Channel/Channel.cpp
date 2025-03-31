@@ -133,16 +133,39 @@ void	IRC::Channel::_handleExceptionMode(char action, const string &args, Client 
 	}
 }
 
-void	IRC::Channel::_handleClientLimitMode(Channel &channel, const string &args)
+void	IRC::Channel::_handleClientLimitMode(const string &args, Client &client)
 {
-	cout << "dasdasdsa" << endl;
-	channel._client_limit = IRC::Utils::stringToInt(args);
+	//Client Limit Mode is Type-B mode, so it must always contain a parameter
+	IRC::Logger* logManager = IRC::Logger::getInstance();
+
+	// ───── Check for missing parameters ─────
+	if (args.empty())
+		return client.sendResponse(ERR_NEEDMOREPARAMS(client.getNickname(), "MODE"));
+	// ───── Permission check ─────
+	if (!this->isOperator(&client))
+		return client.sendResponse(ERR_CHANOPRIVSNEEDED(client.getNickname(), this->getName()));
+	// ───── Try parsing and validating the client limit ─────
+	int		clientLimit = 0;
+	string	str_clt_lmt;
+	try {
+		clientLimit = IRC::Utils::stringToInt(args);
+		str_clt_lmt = IRC::Utils::intToString(clientLimit);
+		if (clientLimit <= 0)
+			throw std::invalid_argument("Client limit must be greater than 0.");
+	} catch (const std::exception &e) {
+		logManager->logMsg(RED, ("Invalid client limit parameter " + str_clt_lmt + " provided by " + client.getNickname() + " in channel " + this->getName()).c_str(), strerror(errno));
+		return client.sendResponse(ERR_INVALIDMODEPARAM(client.getNickname(), this->getName(), "+l", str_clt_lmt, " "));
+	}
+	// ───── Set the new client limit ─────
+	this->_client_limit = clientLimit;
+	logManager->logMsg(CYAN, ("Client limit set to " + str_clt_lmt + " by " + client.getNickname() + " in channel " + this->getName()).c_str(), NULL);
+	// ───── Notify all clients about the mode change ─────
+	this->notifyAll(MODE(this->getName() + " +l " + str_clt_lmt), NULL);
 }
 
-void	IRC::Channel::_handleProtectedTopicMode(char action, const string &args, Client &client, Channel &channel)
+void	IRC::Channel::_handleProtectedTopicMode(char action, const string &args, Client &client)
 {
 	(void)action;
 	(void)args;
 	(void)client;
-	(void)channel;
 }

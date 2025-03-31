@@ -26,10 +26,22 @@ void	IRC::Server::_parseJoinCommand(std::stringstream &args, std::map<string, st
 	}
 }
 
-void	IRC::Server::_validateJoinCommand()
-{
-	// validation of JOIN command depends on the channel mode
-	// now assume have no specific channel mode
+bool	IRC::Server::_validateJoinCommand(Channel &channel, Client &client)
+{	
+	const char* channel_mode = channel.getChannelModes().c_str();
+
+	// ───── Clients limit Mode ─────
+	if (strchr(channel_mode, 'l'))
+	{
+		if (channel.isClientLimitExceed())
+			return client.sendResponse(ERR_CHANNELISFULL(client.getNickname(), channel.getName())), (false);
+	}
+	// ───── Ban Mode ─────
+
+	// ───── Exception Mode ─────
+
+	// ───── Protected Topic Mode ─────
+	return (true);
 }
 
 void	IRC::Server::_operateJoinCommand(std::map<string, string>& chan_keys_map, Client& client)
@@ -44,8 +56,10 @@ void	IRC::Server::_operateJoinCommand(std::map<string, string>& chan_keys_map, C
 		(void)key;
 		channel_it = this->_channels.find(channel);
         // Check if the channel exists
-        if (channel_it != this->_channels.end())
-			this->joinChannel(channel, &client); // Channel exists, join the channel
+        if (channel_it != this->_channels.end()) {
+			if (this->_validateJoinCommand(*channel_it->second, client) == true)
+				this->joinChannel(channel, &client); // Channel exists, join the channel
+		}
         else
 			this->createChannel(channel, &client); // Channel does not exist, create and join the channel
 	}
@@ -61,10 +75,7 @@ void	IRC::Server::_handleChannelMode(Client &client, string &target,string &mode
 		client.sendResponse(RPL_CHANNELMODEIS(client.getNickname(), target, channel->getChannelModes(), ""));
 	else
 	{
-		cout << "HELLO" << endl;
-		if (!channel->isOperator(&client))
-			return client.sendResponse(ERR_CHANOPRIVSNEEDED(client.getNickname(), channel->getName()));
-		if (channel->setChannelMode(mode, mode_args, client, *channel))
+		if (channel->setChannelMode(mode, mode_args, client))
 			client.sendResponse(ERR_UMODEUNKNOWNFLAG(client.getNickname()));
 	}
 }

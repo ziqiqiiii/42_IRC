@@ -12,14 +12,12 @@ void	IRC::Channel::setTopic(const string& new_topic, Client &client)
 	time(&this->_topicSetTime);
 }
 
-int IRC::Channel::	setChannelMode(string mode, string args, Client &client, Channel &channel)
+int IRC::Channel::setChannelMode(string mode, string args, Client &client)
 {
-	cout << mode << " " << args << " " << endl;
+	size_t pos = this->_channel_modes.find(mode[1]);
+
     if (mode.size() < 2) // Ensure mode string is valid
         return 0;
-
-    size_t pos = this->_channel_modes.find(mode[1]);
-
     // Check if the mode is valid
     if (!strchr(CHANNEL_MODES, mode[1]))
         return (1);
@@ -33,18 +31,19 @@ int IRC::Channel::	setChannelMode(string mode, string args, Client &client, Chan
 			this->_handleExceptionMode(mode[0], args, client);
             break;
 		case 'l':
-			this->_handleClientLimitMode(channel, args);
+			this->_handleClientLimitMode(args, client);
 			break;
 		case 't':
-			this->_handleProtectedTopicMode(mode[0], args, client, channel);
+			this->_handleProtectedTopicMode(mode[0], args, client);
 			break;
         default:
-            if (mode[0] == '+' && pos == string::npos)
-                this->_channel_modes += mode[1];
-            else if (mode[0] == '-' && pos != string::npos)
-                this->_channel_modes.erase(pos, 1);
-            break;
+            return (1);
     }
-
+	// Update the this->channel_modes
+	if (mode[0] == '+' && pos == std::string::npos) {
+        this->_channel_modes += mode[1]; // Add the mode if it doesn't already exist
+    } else if (mode[0] == '-' && pos != std::string::npos) {
+        this->_channel_modes.erase(pos, 1); // Remove the mode if it exists
+    }
     return (0);
 }

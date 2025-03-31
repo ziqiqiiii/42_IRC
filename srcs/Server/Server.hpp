@@ -50,7 +50,7 @@ namespace IRC
 			void			_handleChannelMode(Client &client, string &target,string &mode, string &mode_args);
 			void			_handleClientMode(Client &client, string &target, string &mode);
 			void			_parseJoinCommand(std::stringstream &args, std::map<string, string>& chan_keys_map);
-			void			_validateJoinCommand();
+			bool			_validateJoinCommand(Channel &channel, Client &client);
 			void			_operateJoinCommand(std::map<string, string>& chan_keys_map, Client& client);
 		public:
 			static Server*	getInstance();

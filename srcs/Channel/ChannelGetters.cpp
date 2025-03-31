@@ -58,3 +58,11 @@ string	IRC::Channel::getTopicSetTime() const
 	ss << this->_topicSetTime;
 	return (ss.str());
 }
+
+// Return true if it exceee, else return false
+bool	IRC::Channel::isClientLimitExceed()
+{
+	if ((int)(this->_clients.size()) >= this->_client_limit)
+		return (true);
+	return (false);
+}
