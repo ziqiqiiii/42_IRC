@@ -38,8 +38,6 @@ int IRC::Channel::setChannelMode(string mode, string args, Client &client)
         default:
             return (1);
     }
-	cout << "Setter" << endl;
-	cout << this->_channel_modes << endl;
     return (0);
 }
 

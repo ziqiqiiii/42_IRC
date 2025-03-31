@@ -166,8 +166,6 @@ void	IRC::Channel::_handleClientLimitMode(string mode, const string &args, Clien
 
 void	IRC::Channel::_handleProtectedTopicMode(string mode, Client &client)
 {
-	cout << "In Channel Protected Mode" << endl;
-	cout << this->_channel_modes << endl;
 	// ───── Permission check ─────
 	if (!this->isOperator(&client))
 		return client.sendResponse(ERR_CHANOPRIVSNEEDED(client.getNickname(), this->getName()));
