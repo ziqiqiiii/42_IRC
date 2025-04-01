@@ -103,34 +103,26 @@ void	IRC::Channel::_handleBanMode(char action, const string &args, Client &clien
 {	
 	if (args.empty())
 	{
-		client.sendResponse(RPL_BANLIST(client.getNickname(), this->_channel_name, this->_ban_list));
+		client.sendResponse(RPL_BANLIST(client.getNickname(), this->_channel_name, this->getBanList()));
 		client.sendResponse(RPL_ENDOFBANLIST(client.getNickname(), this->_channel_name));
 	}
 	else if (action == '+')
-		this->_ban_list += args + " ";
+		this->_ban_list.push_back(args);
 	else if (action == '-')
-	{
-		size_t	pos = _ban_list.find(args);
-		if (pos != string::npos)
-			this->_ban_list.erase(pos);
-	}
+		this->_ban_list.erase(std::remove(this->_ban_list.begin(), this->_ban_list.end(), args), this->_ban_list.end());
 }
 
 void	IRC::Channel::_handleExceptionMode(char action, const string &args, Client &client)
 {
 	if (args.empty())
 	{
-		client.sendResponse(RPL_EXCEPTLIST(client.getNickname(), this->_channel_name, this->_exception_list));
+		client.sendResponse(RPL_EXCEPTLIST(client.getNickname(), this->_channel_name, this->getExceptionList()));
 		client.sendResponse(RPL_ENDOFEXCEPLIST(client.getNickname(), this->_channel_name));
 	}
 	if (action == '+')
-		this->_exception_list += args + " ";
+		this->_exception_list.push_back(args);
 	else if (action == '-')
-	{
-		size_t	pos = this->_exception_list.find(args);
-		if (pos != string::npos)
-			this->_exception_list.erase(pos);
-	}
+		this->_exception_list.erase(std::remove(this->_exception_list.begin(), this->_exception_list.end(), args), this->_exception_list.end());
 }
 
 void	IRC::Channel::_handleClientLimitMode(string mode, const string &args, Client &client)
