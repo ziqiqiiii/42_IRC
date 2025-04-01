@@ -79,6 +79,20 @@ JOIN #channelname
 JOIN #general
 ```
 
+
+### 📺 2. Leaving a Channel
+**Command:**
+```
+PART <channel>{,<channel>} [<reason>]
+```
+
+**Example:**
+```
+//Leaving the channel #csclub with reason "Goodbye!"
+PART #csclub :Goodbye!
+```
+
+
 ### 💬 3. Sending a Message
 **Public Message (to a channel):**
 ```
@@ -141,6 +155,38 @@ MODE #studygroup +e admin!*@*
 //Only the channel operators can change the topic
 MODE #studygroup +t
 ```
+### 🧑‍✈️6 . Set user as channel operator
+**Make an user as operator.**
+```
+MODE #channelname +o userNickname
+```
+
+**Remove operator status**
+```
+MODE #channelname -o userNickname
+```
+
+**Example:**
+```
+//Set alice as operator for csclub 
+MODE #csclub +o alice
+
+//Remove alice as operator for csclub 
+MODE #csclub -o alice
+```
+
+### Setting Topic
+**Command**
+```
+TOPIC <channel> [<topic>]
+```
+
+**Example**
+```
+//When the protected topic mode is set, only channel's operator can set the topic
+TOPIC #csclub :Weekly coding session at 6PM!
+```
+
 
 ## Reference
 * [Modern IRC Client Protocol](https://modern.ircdocs.horse/)
