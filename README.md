@@ -110,7 +110,7 @@ PRIVMSG #general :Hello everyone!
 PRIVMSG bob :Hey Bob, what's up?
 ```
 
-### 🎶4. Setting the channel mode
+### 🎶 4. Setting the channel mode
 **Client Limit Mode:**
 ```
 MODE #channelname +l num
@@ -155,7 +155,7 @@ MODE #studygroup +e admin!*@*
 //Only the channel operators can change the topic
 MODE #studygroup +t
 ```
-### 🧑‍✈️5 . Set user as channel operator
+### 🧑‍✈️ 5 . Set user as channel operator
 **Make an user as operator.**
 ```
 MODE #channelname +o userNickname
