@@ -80,7 +80,7 @@ JOIN #general
 ```
 
 
-### 🏃 2. Leaving a Channel
+### 🏃 3. Leaving a Channel
 **Command:**
 ```
 PART <channel>{,<channel>} [<reason>]
@@ -93,7 +93,7 @@ PART #csclub :Goodbye!
 ```
 
 
-### 💬 3. Sending a Message
+### 💬 4. Sending a Message
 **Public Message (to a channel):**
 ```
 PRIVMSG #channelname :message here
@@ -110,7 +110,7 @@ PRIVMSG #general :Hello everyone!
 PRIVMSG bob :Hey Bob, what's up?
 ```
 
-### 🎶 4. Setting the channel mode
+### 🎶 5. Setting the channel mode
 **Client Limit Mode:**
 ```
 MODE #channelname +l num
@@ -155,7 +155,7 @@ MODE #studygroup +e admin!*@*
 //Only the channel operators can change the topic
 MODE #studygroup +t
 ```
-### 🧑 5 . Set user as channel operator
+### 🧑 6 . Set user as channel operator
 **Make an user as operator.**
 ```
 MODE #channelname +o userNickname
@@ -175,7 +175,7 @@ MODE #csclub +o alice
 MODE #csclub -o alice
 ```
 
-### ✈️ 6. Setting Topic
+### ✈️ 7. Setting Topic
 **Command**
 ```
 TOPIC <channel> [<topic>]
