@@ -155,7 +155,7 @@ MODE #studygroup +e admin!*@*
 //Only the channel operators can change the topic
 MODE #studygroup +t
 ```
-### 🧑‍✈️6 . Set user as channel operator
+### 🧑‍✈️5 . Set user as channel operator
 **Make an user as operator.**
 ```
 MODE #channelname +o userNickname
@@ -175,7 +175,7 @@ MODE #csclub +o alice
 MODE #csclub -o alice
 ```
 
-### Setting Topic
+### ✈️ 6. Setting Topic
 **Command**
 ```
 TOPIC <channel> [<topic>]
