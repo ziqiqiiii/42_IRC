@@ -14,8 +14,8 @@ void	IRC::Server::_clearClients()
 	for (std::map<int, Client*>::iterator it = _server_clients.begin(); it != _server_clients.end(); ++it) {
 		((Client *)(it->second))->sendResponse("ERROR :Server shutting down");
 		logManager->logMsg(LIGHT_BLUE, ("Client " + IRC::Utils::intToString(it->first) + " disconnected ").c_str());
-		close(it->first);
 		delete it->second;
+		close(it->first);
 	}
 	_server_clients.clear();
 }
