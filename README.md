@@ -68,7 +68,7 @@ NICK alice
 USER alice 0 * :Alice Wonderland
 ```
 
-### 📺 2. Joining a Channel
+### 🏃 2. Joining a Channel
 **Command:**
 ```
 JOIN #channelname
@@ -155,7 +155,7 @@ MODE #studygroup +e admin!*@*
 //Only the channel operators can change the topic
 MODE #studygroup +t
 ```
-### 🧑‍✈️ 5 . Set user as channel operator
+### 🧑:trollface:  5 . Set user as channel operator
 **Make an user as operator.**
 ```
 MODE #channelname +o userNickname
