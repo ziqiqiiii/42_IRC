@@ -160,3 +160,8 @@ string	IRC::Utils::getRestOfStream(std::stringstream &ss)
 	ret += tmp;
 	return (ret);
 }
+
+bool	IRC::Utils::matchMask(const string& src, const string& dest)
+{
+    return fnmatch(src.c_str(), dest.c_str(), 0) == 0;
+}

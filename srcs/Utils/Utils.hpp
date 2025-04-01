@@ -17,5 +17,6 @@ namespace IRC
 			bool				isInMask(const IRC::Client& client, const string& mask);
             string              getRestOfStream(std::stringstream &ss);
 			int					stringToInt(const std::string &str);
+            bool                matchMask(const string& src, const string& dest);
     };
 }

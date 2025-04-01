@@ -2,7 +2,10 @@
 
 IRC::Client::Client() : _fd(-1), _nickname("*"), _autheticated(false), _registered(false) {}
 
-IRC::Client::Client(int fd, struct sockaddr_in address) : _fd(fd), _address(address), _nickname("*"), _autheticated(false), _registered(false) {}
+IRC::Client::Client(int fd, struct sockaddr_in address) : _fd(fd), _address(address), _nickname("*"), _host_name(""), _autheticated(false), _registered(false)
+{
+	this->_setHostName();
+}
 
 IRC::Client::~Client() {}
 
@@ -37,6 +40,7 @@ void	IRC::Client::sendResponse(string response) const
 	}
 }
 
+//Setters
 /**
  * @brief Function that adds or removes the given mode to the user
  * 
@@ -69,7 +73,6 @@ int	IRC::Client::setMode(string modestring)
 	return (1);
 }
 
-//Setters
 void	IRC::Client::setBuffer(const string &buffer) {this->_buffer = buffer;}
 
 void	IRC::Client::setModes(string modes) {this->_modes = modes;}
@@ -86,24 +89,37 @@ void    IRC::Client::setUsername(string& username) { this->_username = username;
 
 void    IRC::Client::setAuthenticated(bool auth) { this->_autheticated = auth; }
 
+void	IRC::Client::_setHostName()
+{
+	char host[NI_MAXHOST];
+
+	if (getnameinfo((struct sockaddr*)(&this->_address), sizeof(this->_address), host, sizeof(host), NULL, 0, NI_NAMEREQD) == 0)
+		this->_host_name = string(host);
+	else
+		this->_host_name = "localhost";
+}
 //Getters
 struct sockaddr_in	IRC::Client::getAddress() const {return (this->_address);}
 
-const string&	IRC::Client::getModes() const {return this->_modes;}
+const string&		IRC::Client::getModes() const {return this->_modes;}
 
-bool			IRC::Client::getRegistered() const {return this->_registered;}
+bool				IRC::Client::getRegistered() const {return this->_registered;}
 
-const string&	IRC::Client::getBuffer() const { return this->_buffer; }
+const string&		IRC::Client::getBuffer() const { return this->_buffer; }
 
-int				IRC::Client::getClientFd() const { return this->_fd; }
+int					IRC::Client::getClientFd() const { return this->_fd; }
 
-const string&	IRC::Client::getUsername() const { return this->_username; }
+const string&		IRC::Client::getUsername() const { return this->_username; }
 
-const string&	IRC::Client::getNickname() const { return this->_nickname; }
+const string&		IRC::Client::getNickname() const { return this->_nickname; }
 
-bool			IRC::Client::getAuthenticated() const { return this->_autheticated; }
+const string&		IRC::Client::getHostname() const { return this->_host_name; }
 
-void	IRC::Client::update(const string& message)
+string				IRC::Client::getNickMask() const { return this->getNickname() + "!" + this->getUsername() + "@" + this->getHostname(); }
+
+bool				IRC::Client::getAuthenticated() const { return this->_autheticated; }
+
+void				IRC::Client::update(const string& message)
 {
 	IRC::Logger* logManager = IRC::Logger::getInstance();
 

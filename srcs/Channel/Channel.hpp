@@ -54,14 +54,17 @@ namespace IRC
 			const string&						getBanList() const;
             const string&						getChannelModes() const;
             const string&						getName() const;
-			bool								isOperator(Client *client);
-            bool								clientExists(const string client_nick);
 			IRC::Client*						getClient(const string& client_nick);
 			const string&						getTopic() const;
 			const string&						getTopicSetter() const;
 			string								getTopicSetTime() const;
 			const std::vector<IRC::Client*>&	getChannelOperators() const;
 			string								getClientsList();
+
+			// Boolean(s)
+			bool								isOperator(Client *client);
+            bool								clientExists(const string client_nick);
 			bool								isClientLimitExceed();
+			bool								isClientBanned(const string& nickmask);
     };
 }

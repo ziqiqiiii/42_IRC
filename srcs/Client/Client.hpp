@@ -14,10 +14,13 @@ namespace IRC
 			string				_buffer;
 			string				_username;
 			string				_nickname;
+			string				_host_name;
 			string				_modes;
 			bool				_autheticated;
 			bool				_registered;
 			
+			// Private Setter(s) and Getter(s)
+			void				_setHostName();
         public:
             Client();
             Client(int fd, struct sockaddr_in address);
@@ -47,6 +50,8 @@ namespace IRC
 			int					getClientFd() const;
 			const string&		getUsername() const;
 			const string&		getNickname() const;
+			const string&		getHostname() const;
+			string				getNickMask() const;
 			bool				getAuthenticated() const;
 
 			int					setMode(string mode);

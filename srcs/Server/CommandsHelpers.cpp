@@ -28,7 +28,8 @@ void	IRC::Server::_parseJoinCommand(std::stringstream &args, std::map<string, st
 
 bool	IRC::Server::_validateJoinCommand(Channel &channel, Client &client)
 {	
-	const char* channel_mode = channel.getChannelModes().c_str();
+	const char* channel_mode	= channel.getChannelModes().c_str();
+	string		client_nickmask		= client.getNickMask();
 
 	// ───── Clients limit Mode ─────
 	if (strchr(channel_mode, 'l'))
@@ -37,7 +38,12 @@ bool	IRC::Server::_validateJoinCommand(Channel &channel, Client &client)
 			return client.sendResponse(ERR_CHANNELISFULL(client.getNickname(), channel.getName())), (false);
 	}
 	// ───── Ban Mode ─────
-
+	if (channel.isClientBanned(client_nickmask)) {
+        // // 2. Check if user is excepted from ban
+        // if (!channel.isBanException(client_nickmask)) {
+            return client.sendResponse(ERR_BANNEDFROMCHAN(client.getNickname(), channel.getName())), (false);
+    }
+	
 	// ───── Exception Mode ─────
 
 	// ───── Protected Topic Mode ─────

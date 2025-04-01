@@ -23,6 +23,9 @@
 # include <cstdarg>
 # include <stdexcept>
 # include <algorithm> //-> for tranform()
+# include <netdb.h>
+# include <arpa/inet.h>
+# include <fnmatch.h>
 
 # define OPER_USER "oper"
 # define OPER_PASS "pass"

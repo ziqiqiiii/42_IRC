@@ -19,6 +19,39 @@ IRC::Client*	IRC::Channel::getClient(const string& client_nick)
 	return (it->second);
 }
 
+const string&	IRC::Channel::getTopic() const { return this->_topic; }
+
+const string&	IRC::Channel::getTopicSetter() const {return this->_topicSetter;}
+
+const std::vector<IRC::Client *>&	IRC::Channel::getChannelOperators() const { return this->_operators; }
+
+string	IRC::Channel::getClientsList()
+{
+	std::map<string, IRC::Client*>::iterator	it;
+	string	name_list;
+
+	for (it = this->_clients.begin(); it != this->_clients.end(); ++it)
+	name_list += it->second->getNickname() + " ";
+
+	return name_list;
+}
+
+string	IRC::Channel::getTopicSetTime() const
+{
+	std::stringstream ss;
+	ss << this->_topicSetTime;
+	return (ss.str());
+}
+
+// Boolean(s)
+// Return true if it exceee, else return false
+bool	IRC::Channel::isClientLimitExceed()
+{
+	if ((int)(this->_clients.size()) >= this->_client_limit)
+		return (true);
+	return (false);
+}
+
 bool	IRC::Channel::clientExists(const string client_nick)
 {
 	std::map<string, IRC::Client*>::iterator it = this->_clients.find(client_nick);
@@ -35,34 +68,14 @@ bool	IRC::Channel::isOperator(Client *client)
 	return (true);
 }
 
-const string&	IRC::Channel::getTopic() const { return this->_topic; }
-
-const string&	IRC::Channel::getTopicSetter() const {return this->_topicSetter;}
-
-const std::vector<IRC::Client *>&	IRC::Channel::getChannelOperators() const { return this->_operators; }
-
-string	IRC::Channel::getClientsList()
+bool	IRC::Channel::isClientBanned(const string& nickmask)
 {
-	std::map<string, IRC::Client*>::iterator	it;
-	string	name_list;
+	std::vector<string> 			ban_list	= IRC::Utils::splitString(this->_ban_list, " ");
+	std::vector<string>::iterator	it;
 
-	for (it = this->_clients.begin(); it != this->_clients.end(); ++it)
-		name_list += it->second->getNickname() + " ";
-
-	return name_list;
-}
-
-string	IRC::Channel::getTopicSetTime() const
-{
-	std::stringstream ss;
-	ss << this->_topicSetTime;
-	return (ss.str());
-}
-
-// Return true if it exceee, else return false
-bool	IRC::Channel::isClientLimitExceed()
-{
-	if ((int)(this->_clients.size()) >= this->_client_limit)
-		return (true);
-	return (false);
+	for (it = ban_list.begin(); it != ban_list.end(); ++it){
+		if (IRC::Utils::matchMask(*it, nickmask))
+			return true;
+	}
+	return false;
 }
