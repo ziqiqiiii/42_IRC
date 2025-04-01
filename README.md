@@ -30,7 +30,7 @@ make test
    >``` make
    >make nc
    >```
-   >##### OR 
+   > OR 
    >- Connect using your favorite IRC client at 127.0.0.1/6667 (disable ssl)
 
 ## Descripton
