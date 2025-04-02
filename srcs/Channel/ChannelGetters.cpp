@@ -47,7 +47,7 @@ string	IRC::Channel::getClientsList()
 	string	name_list;
 
 	for (it = this->_clients.begin(); it != this->_clients.end(); ++it)
-	name_list += it->second->getNickname() + " ";
+		name_list += it->second->getNickname() + " ";
 
 	return name_list;
 }
