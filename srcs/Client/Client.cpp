@@ -7,7 +7,10 @@ IRC::Client::Client(int fd, struct sockaddr_in address) : _fd(fd), _address(addr
 	this->_setHostName();
 }
 
-IRC::Client::~Client() {}
+IRC::Client::~Client()
+{
+	this->_buffer.clear();
+}
 
 IRC::Client::Client(const Client &other) { *this = other; }
 

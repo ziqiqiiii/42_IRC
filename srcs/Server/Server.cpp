@@ -85,63 +85,32 @@ void	IRC::Server::signalHandler(int signum)
 	IRC::Server::_signal = true;
 }
 
-
-t_irc_cmd	IRC::Server::getCommand(string name)
+// Epoll functions
+void	IRC::Server::epollInit()
 {
-	std::map<string, t_irc_cmd>::iterator it = this->_commands.find(name);
-
-	if (it == this->_commands.end())
-		return (NULL);
-	return (it->second);
+	this->_epollFd = epoll_create1(0);
+	if (this->_epollFd < 0)
+	throw std::runtime_error("Failed to epoll_create()");
 }
 
-IRC::Client	*IRC::Server::getClient(int fd)
+void	IRC::Server::epollAdd(int fd, int flags)
 {
-	std::map<int, IRC::Client*>::iterator it = this->_server_clients.find(fd);
-
-	if (it == this->_server_clients.end())
-		return (NULL);
-	return (it->second);
+	struct epoll_event event;
+	
+	event.data.fd = fd;
+	event.events = flags;
+	if (epoll_ctl(this->_epollFd, EPOLL_CTL_ADD, fd, &event) == -1)
+	throw std::runtime_error("Failed to add fd to epoll");
 }
 
-IRC::Client	*IRC::Server::getClient(string name)
+void	IRC::Server::epollDel(int fd)
 {
-	std::map<int, Client *>::iterator it = this->_server_clients.begin();
-	std::map<int, Client *>::iterator end = this->_server_clients.end();
-
-	while (it != end)
-	{
-		if (it->second->getNickname() == name)
-			return (it->second);
-		it++;
-	}
-	return (NULL);
+	if (epoll_ctl(this->_epollFd, EPOLL_CTL_DEL, fd, NULL) == -1)
+	throw std::runtime_error("Failed to delete fd from epoll");
 }
 
-IRC::Channel	*IRC::Server::getChannel(string name)
-{
-	name = IRC::Utils::stringToUpper(name);
-	std::map<string, IRC::Channel*>::iterator it = this->_channels.find(name);
-
-	if (it == this->_channels.end())
-		return (NULL);
-	return (it->second);
-}
-
-void	IRC::Server::closeConnection(int fd)
-{
-	this->_server_clients.erase(fd);
-	shutdown(fd, SHUT_RDWR);
-	epollDel(fd);
-	close(fd);
-}
-
-void	IRC::Server::clearClient(int fd)
-{
-	this->_server_clients.erase(fd);
-}
-
-int	IRC::Server::_nickIsInUse(string nickname)
+// IRC::Server::run()'s helper functions
+int		IRC::Server::_nickIsInUse(string nickname)
 {
 	std::map<int, Client*>::iterator	it = this->_server_clients.begin();
 	std::map<int, Client*>::iterator	end = this->_server_clients.end();
@@ -154,31 +123,6 @@ int	IRC::Server::_nickIsInUse(string nickname)
 	}
 	return (0);
 }
-
-void	IRC::Server::epollInit()
-{
-	this->_epollFd = epoll_create1(0);
-	if (this->_epollFd < 0)
-		throw std::runtime_error("Failed to epoll_create()");
-}
-
-void	IRC::Server::epollAdd(int fd, int flags)
-{
-	struct epoll_event event;
-	
-	event.data.fd = fd;
-	event.events = flags;
-	if (epoll_ctl(this->_epollFd, EPOLL_CTL_ADD, fd, &event) == -1)
-		throw std::runtime_error("Failed to add fd to epoll");
-}
-
-void	IRC::Server::epollDel(int fd)
-{
-	if (epoll_ctl(this->_epollFd, EPOLL_CTL_DEL, fd, NULL) == -1)
-		throw std::runtime_error("Failed to delete fd from epoll");
-}
-
-int		IRC::Server::getSocketFd() const {return this->_socketFd;}
 
 void	IRC::Server::_handleNewConnection()
 {

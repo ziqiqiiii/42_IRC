@@ -38,6 +38,7 @@ namespace IRC
 			void			_clearChannels();
 			void			_deleteSocket();
 			
+			// IRC::Server::run()'s helper functions
 			int				_nickIsInUse(string nickname);
 			void			_handleNewConnection();
 			void			_handleClientPacket(struct epoll_event &event);

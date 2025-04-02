@@ -67,3 +67,16 @@ void	IRC::Server::notifyAll(const string& message)
 	for (channel_it = this->_channels.begin(); channel_it != this->_channels.end(); ++channel_it)
 		channel_it->second->notifyAll(message, NULL);
 }
+
+void	IRC::Server::closeConnection(int fd)
+{
+	this->_server_clients.erase(fd);
+	shutdown(fd, SHUT_RDWR);
+	epollDel(fd);
+	close(fd);
+}
+
+void	IRC::Server::clearClient(int fd)
+{
+	this->_server_clients.erase(fd);
+}

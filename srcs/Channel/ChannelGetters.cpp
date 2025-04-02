@@ -1,8 +1,24 @@
 # include "Channel.hpp"
 
-const string&	IRC::Channel::getBanList() const {return this->_ban_list;}
+string			IRC::Channel::getBanList()
+{
+	std::vector<string>::iterator	it;
+	string							tmp;
 
-const string&	IRC::Channel::getExceptionList() const {return this->_exception_list;}
+	for (it = this->_ban_list.begin(); it != this->_ban_list.end(); ++it)
+		tmp += *it + " ";
+	return tmp;
+}
+
+string			IRC::Channel::getExceptionList()
+{
+	std::vector<string>::iterator	it;
+	string							tmp;
+
+	for (it = this->_exception_list.begin(); it != this->_exception_list.end(); ++it)
+		tmp += *it + " ";
+	return tmp;
+}
 
 const string&	IRC::Channel::getInviteExceptionList() const {return this->_invite_exception_list;}
 
@@ -70,10 +86,20 @@ bool	IRC::Channel::isOperator(Client *client)
 
 bool	IRC::Channel::isClientBanned(const string& nickmask)
 {
-	std::vector<string> 			ban_list	= IRC::Utils::splitString(this->_ban_list, " ");
 	std::vector<string>::iterator	it;
 
-	for (it = ban_list.begin(); it != ban_list.end(); ++it){
+	for (it = this->_ban_list.begin(); it != this->_ban_list.end(); ++it){
+		if (IRC::Utils::matchMask(*it, nickmask))
+			return true;
+	}
+	return false;
+}
+
+bool	IRC::Channel::isClientException(const string& nickmask)
+{
+	std::vector<string>::iterator	it;
+
+	for (it = this->_exception_list.begin(); it != this->_exception_list.end(); ++it){
 		if (IRC::Utils::matchMask(*it, nickmask))
 			return true;
 	}

@@ -16,8 +16,8 @@ namespace IRC
 			std::vector<string>					_invite_list;
 			std::vector<IRC::Client *>			_operators;
 			std::map<string, IRC::Client*>		_clients; /**<client_fd, Client*> */
-			string								_ban_list;
-			string								_exception_list;
+			std::vector<string>					_ban_list;
+			std::vector<string>					_exception_list;
 			string								_invite_exception_list;
 			string								_topic;
 			string								_topicSetter;
@@ -50,8 +50,8 @@ namespace IRC
 			
             //Getter(s)
 			const string&						getInviteExceptionList() const;
-			const string&						getExceptionList() const;
-			const string&						getBanList() const;
+			string								getExceptionList();
+			string								getBanList();
             const string&						getChannelModes() const;
             const string&						getName() const;
 			IRC::Client*						getClient(const string& client_nick);
@@ -66,5 +66,6 @@ namespace IRC
             bool								clientExists(const string client_nick);
 			bool								isClientLimitExceed();
 			bool								isClientBanned(const string& nickmask);
+			bool								isClientException(const string& nickmask);
     };
 }
