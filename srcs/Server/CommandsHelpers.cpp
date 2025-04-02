@@ -1,29 +1,12 @@
 #include "Server.hpp"
 
 // JOIN commands helper functions
-void	IRC::Server::_parseJoinCommand(std::stringstream &args, std::map<string, string>& chan_keys_map)
+void	IRC::Server::_parseJoinCommand(std::stringstream &args, std::vector<string>& channel_names)
 {
 	string				msg;
-	std::vector<string>	channels;
-	std::vector<string>	keys;
-
-	// Extract the channels and keys from the args
-	// channels 
+	// Extract the channels
 	args >> msg;
-	channels = IRC::Utils::splitString(msg, ",");
-	msg.erase();
-	// keys
-	args >> msg;
-	keys = IRC::Utils::splitString(msg, ",");
-
-	// Map the channels and keys
-	for (size_t i = 0; i < channels.size(); ++i)
-	{
-		string channel	= IRC::Utils::stringToUpper(channels[i]);
-		string key 		= (i < keys.size()) ? keys[i] : "";
-
-		chan_keys_map[channel] = key;
-	}
+	channel_names = IRC::Utils::splitString(msg, ",");
 }
 
 bool	IRC::Server::_validateJoinCommand(Channel &channel, Client &client)
@@ -43,24 +26,21 @@ bool	IRC::Server::_validateJoinCommand(Channel &channel, Client &client)
 	return true;
 }
 
-void	IRC::Server::_operateJoinCommand(std::map<string, string>& chan_keys_map, Client& client)
+void	IRC::Server::_operateJoinCommand(std::vector<string>& channel_name, Client& client)
 {
-	for (std::map<string, string>::iterator it = chan_keys_map.begin(); it != chan_keys_map.end(); it++)
+	for (std::vector<string>::iterator it = channel_name.begin(); it != channel_name.end(); it++)
     {
-		const string&	channel = it->first;
-    	const string&	key = it->second;
-		string			topic;
-		std::map<string, Channel*>::iterator channel_it;
-
-		(void)key;
-		channel_it = this->_channels.find(channel);
+		Channel	*channel = this->getChannel(*it);
+		// Check if channel name is valid
+		if ((*it).find('#') == string::npos)
+			client.sendResponse(ERR_BADCHANMASK(*it));
         // Check if the channel exists
-        if (channel_it != this->_channels.end()) {
-			if (this->_validateJoinCommand(*channel_it->second, client) == true)
-				this->joinChannel(channel, &client); // Channel exists, join the channel
+        else if (channel){
+			if (this->_validateJoinCommand(*channel, client))
+				this->joinChannel(*it, &client); // Channel exists, join the channel
 		}
         else
-			this->createChannel(channel, &client); // Channel does not exist, create and join the channel
+			this->createChannel(*it, &client); // Channel does not exist, create and join the channel
 	}
 }
 

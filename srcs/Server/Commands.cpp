@@ -58,10 +58,10 @@ void	IRC::Server::user(std::stringstream &args, Client &client)
 
 void	IRC::Server::join(std::stringstream &args, Client &client)
 {
-	std::map<string, string> channels_keys_map;
+	std::vector<string> channels_names;
 
-	this->_parseJoinCommand(args, channels_keys_map);
-	this->_operateJoinCommand(channels_keys_map, client);
+	this->_parseJoinCommand(args, channels_names);
+	this->_operateJoinCommand(channels_names, client);
 }
 
 void	IRC::Server::oper(std::stringstream &args, Client &client)

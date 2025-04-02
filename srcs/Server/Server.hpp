@@ -50,9 +50,9 @@ namespace IRC
 			void			_handleEmptyTopic(Client &client, Channel &channel);
 			void			_handleChannelMode(Client &client, string &target,string &mode, string &mode_args);
 			void			_handleClientMode(Client &client, string &target, string &mode);
-			void			_parseJoinCommand(std::stringstream &args, std::map<string, string>& chan_keys_map);
+			void			_parseJoinCommand(std::stringstream &args, std::vector<string>& channel_names);
 			bool			_validateJoinCommand(Channel &channel, Client &client);
-			void			_operateJoinCommand(std::map<string, string>& chan_keys_map, Client& client);
+			void			_operateJoinCommand(std::vector<string>& channel_names, Client& client);
 		public:
 			static Server*	getInstance();
 			static void		destroyInstance();
@@ -75,7 +75,7 @@ namespace IRC
 			// Channel-Client functions
 			void			addClient(Client* client);
 			void			clearClient(int fd);
-			void			createChannel(const string channel_name, Client* client);
+			void			createChannel(string channel_name, Client* client);
 			void			joinChannel(const string& channel_name, Client* client);
 			int				leaveChannel(const string& channel_name, Client* client);
 			void			notifyAll(const string& message);

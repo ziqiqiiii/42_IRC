@@ -12,8 +12,9 @@ void    IRC::Server::addClient(Client* client)
         this->_server_clients[client_fd] = client;
 }
 
-void	IRC::Server::createChannel(const string channel_name, Client* client)
+void	IRC::Server::createChannel(string channel_name, Client* client)
 {
+	channel_name = IRC::Utils::stringToUpper(channel_name);
 	IRC::Logger* logManager = IRC::Logger::getInstance();
 	std::map<string, IRC::Channel*>::iterator it;
 
