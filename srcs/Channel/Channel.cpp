@@ -89,14 +89,14 @@ void	IRC::Channel::joinNumericReplies(Client* new_client)
 	string	message;
 	string	nick = new_client->getNickname();
 
+	notifyAll(JOIN(nick, this->_channel_name), NULL);
 	if (this->_topic.empty())
 		message = RPL_NOTOPIC(nick, this->_channel_name) + CRLF;
 	else
 		message = RPL_TOPIC(nick, this->_channel_name, this->_topic) + CRLF;
-	message += (JOIN(nick, this->_channel_name) + CRLF);
 	message += (RPL_NAMREPLY(nick, "=", this->_channel_name, this->getClientsList()) + CRLF);
 	message += (RPL_ENDOFNAMES(nick, this->_channel_name));
-	this->notifyAll(message, NULL);
+	new_client->sendResponse(message);
 }
 
 void	IRC::Channel::_handleBanMode(char action, const string &args, Client &client)
