@@ -73,7 +73,6 @@ void	IRC::Server::_operateJoinCommand(std::map<string, string>& chan_keys_map, C
 
 void	IRC::Server::_handleChannelMode(Client &client, string &target,string &mode, string &mode_args)
 {
-	IRC::Utils::removeCharacters(target, "#&");
 	Channel	*channel = this->getChannel(target);
 	if (!channel)
 		client.sendResponse(ERR_NOSUCHCHANNEL(client.getNickname(), target));
