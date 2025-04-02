@@ -152,7 +152,7 @@ void	IRC::Server::part(std::stringstream &args, Client &client)
 	string targets;
 	string reason;
 	args >> targets;
-	args >> reason;
+	reason = IRC::Utils::getRestOfStream(args);
 	if (targets.empty())
 		client.sendResponse(ERR_NEEDMOREPARAMS(client.getNickname(), "PART"));
 	std::vector<string>	channels = Utils::splitString(targets, ",");
