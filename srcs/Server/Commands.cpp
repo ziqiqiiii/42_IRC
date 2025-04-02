@@ -111,10 +111,12 @@ void	IRC::Server::topic(std::stringstream &args, Client &client)
 	string	channel_name;
 	string	topic;
 	args >> channel_name;
-	args >> topic;
+	topic = IRC::Utils::getRestOfStream(args);
 	channel = this->getChannel(channel_name);
-	if (!channel)
+	if (channel_name.empty())
 		client.sendResponse(ERR_NEEDMOREPARAMS(client.getNickname(), "TOPIC"));
+	else if (!channel)
+		client.sendResponse(ERR_NOSUCHCHANNEL(client.getNickname(), channel_name));
 	else if (!channel->clientExists(client.getNickname()))
 		client.sendResponse(ERR_NOTONCHANNEL(client.getNickname(), channel_name));
 	else if (topic.empty())
@@ -159,10 +161,8 @@ void	IRC::Server::part(std::stringstream &args, Client &client)
 	for (std::vector<string>::iterator it = channels.begin(); it != channels.end(); it++)
 	{
 		if (this->leaveChannel(*it, &client))
-		{
-			client.sendResponse(PART(client.getNickname(), *it, reason));
 			this->getChannel(*it)->notifyAll(PART(client.getNickname(), *it, reason), NULL);	
-		}
+		client.sendResponse(PART(client.getNickname(), *it, reason));
 	}
 }
 
