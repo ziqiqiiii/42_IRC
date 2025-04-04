@@ -58,12 +58,12 @@ int	IRC::Server::leaveChannel(const string& channel_name, Client* client)
 		client->sendResponse(ERR_NOSUCHCHANNEL(client->getNickname(), channel_name));
 		return (0);
 	}
-	channel_it->second->detach(client);
+	if (!channel_it->second->detach(client))
+		return (0);
 	if (channel_it->second->getClientsList().empty())
 	{
 		delete (channel_it->second);
 		this->_channels.erase(channel_it);
-		return (0);
 	}
 	return (1);
 }

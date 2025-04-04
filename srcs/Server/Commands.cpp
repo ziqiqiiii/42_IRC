@@ -161,8 +161,12 @@ void	IRC::Server::part(std::stringstream &args, Client &client)
 	for (std::vector<string>::iterator it = channels.begin(); it != channels.end(); it++)
 	{
 		if (this->leaveChannel(*it, &client))
-			this->getChannel(*it)->notifyAll(PART(client.getNickname(), *it, reason), NULL);	
-		client.sendResponse(PART(client.getNickname(), *it, reason));
+		{
+			Channel	*channel = this->getChannel(*it);
+			if (channel)
+				channel->notifyAll(PART(client.getNickname(), *it, reason), NULL);	
+			client.sendResponse(PART(client.getNickname(), *it, reason));
+		}
 	}
 }
 
