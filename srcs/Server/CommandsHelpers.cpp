@@ -50,7 +50,9 @@ void	IRC::Server::_handleChannelMode(Client &client, string &target,string &mode
 	if (!channel)
 		client.sendResponse(ERR_NOSUCHCHANNEL(client.getNickname(), target));
 	else if (mode.empty())
-		client.sendResponse(RPL_CHANNELMODEIS(client.getNickname(), target, channel->getChannelModes(), ""));
+		client.sendResponse(RPL_CHANNELMODEIS(client.getNickname(), channel->getName(), channel->getChannelModes(), ""));
+	else if (!channel->isOperator(&client))
+		client.sendResponse(ERR_CHANOPRIVSNEEDED(client.getNickname(), channel->getName()));
 	else
 		channel->setChannelMode(mode, mode_args, client);
 }
