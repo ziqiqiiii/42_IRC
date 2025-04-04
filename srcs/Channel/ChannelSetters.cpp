@@ -17,9 +17,6 @@ int IRC::Channel::setChannelMode(string mode, string args, Client &client)
 	// Ensure mode string is valid
     if (mode.size() < 2) 
         return 0;
-    // Check if the mode is valid
-    if (!strchr(CHANNEL_MODES, mode[1]))
-        return (1);
     // Handle the mode based on the action
     switch (mode[1])
     {
@@ -36,9 +33,10 @@ int IRC::Channel::setChannelMode(string mode, string args, Client &client)
 			this->_handleProtectedTopicMode(mode, client);
 			break;
         default:
-            return (1);
+			client.sendResponse(ERR_UMODEUNKNOWNFLAG(client.getNickname()));
+			return (0);
     }
-    return (0);
+    return (1);
 }
 
 void	IRC::Channel::_setChannelMode(string mode)

@@ -52,10 +52,7 @@ void	IRC::Server::_handleChannelMode(Client &client, string &target,string &mode
 	else if (mode.empty())
 		client.sendResponse(RPL_CHANNELMODEIS(client.getNickname(), target, channel->getChannelModes(), ""));
 	else
-	{
-		if (channel->setChannelMode(mode, mode_args, client))
-			client.sendResponse(ERR_UMODEUNKNOWNFLAG(client.getNickname()));
-	}
+		channel->setChannelMode(mode, mode_args, client);
 }
 
 void	IRC::Server::_handleClientMode(Client &client, string &target, string &mode)
@@ -91,9 +88,9 @@ void	IRC::Server::_handleChannelTarget(Client &client, string &target, string &t
 		return;
 	}
 	string	channel_modes = channel->getChannelModes();
-	if (channel_modes.find('e') && IRC::Utils::isInMask(client, channel->getExceptionList()))
+	if (channel_modes.find('e') && channel->isClientException(client.getNickMask()))
 		channel->notifyAll(PRIVMSG(nick, target, text), &client);
-	else if (channel_modes.find('b') && IRC::Utils::isInMask(client, channel->getBanList()))
+	else if (channel_modes.find('b') && channel->isClientBanned(client.getNickMask()))
 		client.sendResponse(ERR_BANNEDFROMCHAN(nick, target));
 	else
 		channel->notifyAll(PRIVMSG(nick, target, text), &client);
