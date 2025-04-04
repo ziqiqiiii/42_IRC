@@ -54,7 +54,7 @@ namespace IRC
 			string				getNickMask() const;
 			bool				getAuthenticated() const;
 
-			int					setMode(string mode);
+			void				setMode(string mode);
 			void				sendResponse(string response) const;
 			// Observer Update Method
 			void				update(const string& message);

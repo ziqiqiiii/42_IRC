@@ -58,22 +58,26 @@ void	IRC::Client::sendResponse(string response) const
  * @param mode The given mode string
  * @return int 1 on success, 0 on failure
  */
-int	IRC::Client::setMode(string modestring)
+void	IRC::Client::setMode(string modestring)
 {
 	if (modestring.size() < 2)
-		return (0);	
-
+		return ;	
 	char	action = modestring[0];
 	char	mode = modestring[1];
 	size_t	pos = this->_modes.find(mode);
 
-	if (!strchr(USER_MODES, mode) || !strchr("+-", action))
-		return (0);
+	if (!strchr(USER_MODES, mode))
+	{
+		this->sendResponse(ERR_UMODEUNKNOWNFLAG(this->_nickname));
+		return ;
+	}
+	if (!strchr("+-", action))
+		return ;
 	if (action == '+' && pos == string::npos)
 		this->_modes += mode;
 	else if (action == '-' && pos != string::npos)
 		this->_modes.erase(pos);
-	return (1);
+	this->sendResponse(MODE(this->_nickname, this->_nickname, modestring.substr(0, 2)));
 }
 
 void	IRC::Client::setBuffer(const string &buffer) {this->_buffer = buffer;}

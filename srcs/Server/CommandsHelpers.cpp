@@ -67,11 +67,7 @@ void	IRC::Server::_handleClientMode(Client &client, string &target, string &mode
 	else if (mode.empty())
 		client.sendResponse(RPL_UMODEIS(client.getNickname(), client.getModes()));
 	else
-	{
-		if (!client.setMode(mode))
-			client.sendResponse(ERR_UMODEUNKNOWNFLAG(client.getNickname()));
-		client.sendResponse(MODE(client.getModes()));
-	}
+		client.setMode(mode);
 }
 
 void	IRC::Server::_handleEmptyTopic(Client &client, Channel	&channel)
