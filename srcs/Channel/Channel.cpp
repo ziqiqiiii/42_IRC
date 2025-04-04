@@ -99,6 +99,20 @@ void	IRC::Channel::joinNumericReplies(Client* new_client)
 	new_client->sendResponse(message);
 }
 
+void	IRC::Channel::_handleNewMaskMode(const char& action, std::vector<string> &mask_list, const string new_masks)
+{
+	std::vector<string> masks = IRC::Utils::splitString(new_masks, ",");
+
+	for (std::vector<string>::iterator it = mask_list.begin(); it != mask_list.end(); it++)
+	{
+		if (action == '+')
+			mask_list.push_back(*it);
+		else if (action == '-')
+			mask_list.erase(std::remove(mask_list.begin(), mask_list.end(), *it), mask_list.end());
+	}
+}
+
+
 void	IRC::Channel::_handleBanMode(char action, const string &args, Client &client)
 {	
 	if (args.empty())
@@ -106,10 +120,7 @@ void	IRC::Channel::_handleBanMode(char action, const string &args, Client &clien
 		client.sendResponse(RPL_BANLIST(client.getNickname(), this->_channel_name, this->getBanList()));
 		client.sendResponse(RPL_ENDOFBANLIST(client.getNickname(), this->_channel_name));
 	}
-	else if (action == '+')
-		this->_ban_list.push_back(args);
-	else if (action == '-')
-		this->_ban_list.erase(std::remove(this->_ban_list.begin(), this->_ban_list.end(), args), this->_ban_list.end());
+	this->_handleNewMaskMode(action, this->_ban_list, args);
 }
 
 void	IRC::Channel::_handleExceptionMode(char action, const string &args, Client &client)
@@ -119,10 +130,7 @@ void	IRC::Channel::_handleExceptionMode(char action, const string &args, Client 
 		client.sendResponse(RPL_EXCEPTLIST(client.getNickname(), this->_channel_name, this->getExceptionList()));
 		client.sendResponse(RPL_ENDOFEXCEPLIST(client.getNickname(), this->_channel_name));
 	}
-	if (action == '+')
-		this->_exception_list.push_back(args);
-	else if (action == '-')
-		this->_exception_list.erase(std::remove(this->_exception_list.begin(), this->_exception_list.end(), args), this->_exception_list.end());
+	this->_handleNewMaskMode(action, this->_exception_list, args);
 }
 
 void	IRC::Channel::_handleClientLimitMode(string mode, const string &args, Client &client)

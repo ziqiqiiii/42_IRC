@@ -25,6 +25,7 @@ namespace IRC
 			string								_key;
 			int									_client_limit;
 
+			void								_handleNewMaskMode(const char& action, std::vector<string> &mask_list, const string new_masks);
 			void								_handleBanMode(char action, const string &args, IRC::Client &client);
 			void								_handleExceptionMode(char action, const string &args, IRC::Client &client);
 			void								_handleClientLimitMode(string mode, const string &args, Client &client);
