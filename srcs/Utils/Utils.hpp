@@ -12,11 +12,13 @@ namespace IRC
 		string				intToString(int num);
         std::vector<string>	splitString(const string& s, const string& del);
 		string				sockaddrIpToString(const struct sockaddr_in &address);
-        bool                containsChar(string str, string find);
+        bool                containsChar(const string& str, const string& find);
 		void                removeCharacters(std::string &str, const std::string &charsToRemove);
-		bool				isInMask(const IRC::Client& client, const string& mask);
         string              getRestOfStream(std::stringstream &ss);
 		int					stringToInt(const std::string &str);
         bool                matchMask(const string& src, const string& dest);
+		bool				isValidIp(const string &ip);
+		bool				isValidNickname(const string &nick);
+		bool				isValidChannelName(const string &name);
     };
 }

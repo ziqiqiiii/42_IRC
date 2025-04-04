@@ -1,6 +1,6 @@
 # include "Utils.hpp"
 
-bool IRC::Utils::containsChar(string str, string find)
+bool IRC::Utils::containsChar(const string& str, const string& find)
 {
     for (int i = 0; find[i]; i++)
         if (strchr(str.c_str(), find[i]))
@@ -80,51 +80,6 @@ std::vector<string> IRC::Utils::splitString(const string& s, const string& del)
     return tokens;
 }
 
-/**
- * @brief Checks whether client is in the given nickmask
- *
- * This function takes a reference to a Client object and a nickmask stored in a string.
- * If the client's nick, user and ip is included in the mask, true is returned, false otherwise.
- * 
- * @param client The client, who's nick, user an ip is checked
- * @param mask The IRC nickmask containing a nick, user and ip combination.
- * @return bool True 
- */
-bool	IRC::Utils::isInMask(const IRC::Client& client, const string& mask)
-{
-	string	ip = IRC::Utils::sockaddrIpToString(client.getAddress());
-	string	key;
-	int		result = 0;
-	size_t	start = 0;
-	size_t	end = 0;
-
-	end = mask.find('!');
-	if (end != string::npos)
-	{
-		key = mask.substr(start, end);
-		if (key == client.getNickname() || key == "*")
-		{
-			result++;
-			start = end + 1;
-		}
-	}
-	end = mask.find('@');
-	if (end != string::npos)
-	{
-		key = mask.substr(start, end);
-		if (key == client.getUsername() || key == "*")
-		{
-			result++;
-			start = end + 1;
-		}
-	}
-	if (mask.substr(start, mask.size()) == ip || key == "*")
-		result++;
-	if (result == 3)
-		return (true);
-	return (false);
-}
-
 string	IRC::Utils::sockaddrIpToString(const struct sockaddr_in &address)
 {
 	return (inet_ntoa(address.sin_addr));
@@ -165,3 +120,48 @@ bool	IRC::Utils::matchMask(const string& src, const string& dest)
 {
     return fnmatch(src.c_str(), dest.c_str(), 0) == 0;
 }
+
+bool	IRC::Utils::isValidChannelName(const string &name)
+{
+	return(!name.empty() && !IRC::Utils::containsChar(name, " ,\a") && strchr("#", name[0]));
+}
+
+bool	IRC::Utils::isValidNickname(const string &nick)
+{
+	return (!nick.empty() && !IRC::Utils::containsChar(nick, " #&*,?!@.") && !strchr(":$", nick[0]));
+}
+
+// bool	IRC::Utils::isValidIp(const string& ip)
+// {
+// 	std::vector<string>	subnets;
+
+// 	for (size_t i = 0; i < ip.size(); i++)
+// 		if (!isdigit(ip[i]) && ip[i] != '.')
+// 			return (0);
+// 	subnets = IRC::Utils::splitString(ip, ".");
+// 	if (subnets.size() != 4)
+// 		return (0);
+// 	for (std::vector<string>::iterator it = subnets.begin(); it != subnets.end(); it++)
+// 	{
+// 		int	subnet = IRC::Utils::stringToInt(*it);
+// 		if (subnet > 255 || subnet < 0)
+// 			return (0);
+// 	}
+// 	return (1);
+// }
+
+// bool	IRC::Utils::isValidMask(const string &mask)
+// {
+// 	string	key;
+
+// 	key = mask.substr(0, mask.find('!'));
+// 	if (!IRC::Utils::isValidNickname(key) && key != "*")
+// 		return (0);
+// 	key = mask.substr(mask.find('!') + 1, mask.find('@'));
+// 	if (key.empty())
+// 		return (0);
+// 	key = mask.substr(mask.find('@'), mask.size());
+// 	if (!IRC::Utils::isValidIp(key) && key != "*");
+// 		return (0);
+// 	return (1);
+// }
