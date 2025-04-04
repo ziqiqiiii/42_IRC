@@ -38,7 +38,7 @@ string	IRC::Utils::stringToUpper(const string& str)
     return tmp;
 }
 
-size_t	IRC::Utils::find_crlf(string &str)
+size_t	IRC::Utils::find_crlf(const string &str)
 {
 	size_t	i = 0;
 
