@@ -40,7 +40,7 @@
 # define INVITE(client, nick, channel)					(":" + client + " INVITE " + nick + " " + channel)
 # define KICK(client, channel, user, comment)			(":" + client + " KICK " + channel + " " + user + " :" + comment)
 # define PRIVMSG(client, target, text)					(":" + client + " PRIVMSG " + target + " :" + text)
-# define MODE(modes)									(": MODE +" +  modes)
+# define MODE(client, target, modes)					(":" + client + " MODE " + target + " " + modes)
 # define NICK(client, nick)								(":" + client + " NICK " + nick)
 # define PART(client, channel, reason)					(":" + client + " PART " + channel + " " + reason)
 
