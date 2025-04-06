@@ -98,7 +98,7 @@ void	IRC::Server::privmsg(std::stringstream &args, Client &client)
 	std::vector<string>	targets = Utils::splitString(target_names, ",");
 	for (std::vector<string>::iterator it = targets.begin(); it != targets.end(); it++)
 	{
-		if ((*it).find('#') != string::npos)
+		if (IRC::Utils::isValidChannelName(*it))
 			this->_handleChannelTarget(client, *it, text);
 		else
 			this->_handleClientTarget(client, *it, text);
