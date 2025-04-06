@@ -32,7 +32,7 @@ void	IRC::Server::_operateJoinCommand(std::vector<string>& channel_name, Client&
     {
 		Channel	*channel = this->getChannel(*it);
 		// Check if channel name is valid
-		if ((*it).find('#') == string::npos)
+		if (!IRC::Utils::isValidChannelName(*it))
 			client.sendResponse(ERR_BADCHANMASK(*it));
         // Check if the channel exists
         else if (channel){

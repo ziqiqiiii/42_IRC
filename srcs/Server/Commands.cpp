@@ -20,7 +20,7 @@ void	IRC::Server::nick(std::stringstream &args, Client &client)
 	args >> nickname;
 	if (nickname.empty())
 		client.sendResponse(ERR_NONICKNAMEGIVEN(client.getNickname()));
-	else if (strchr("$#:", nickname[0]) || isdigit(nickname[0]) || IRC::Utils::containsChar(nickname, " ,*?!@."))
+	else if (!IRC::Utils::isValidNickname(nickname))
 		client.sendResponse(ERR_ERRONEUSNICKNAME(client.getNickname(), nickname));
 	else if (this->_nickIsInUse(nickname))
 		client.sendResponse(ERR_NICKNAMEINUSE(client.getNickname(), nickname));
