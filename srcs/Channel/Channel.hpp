@@ -51,8 +51,8 @@ namespace IRC
 			
             //Getter(s)
 			const string&						getInviteExceptionList() const;
-			string								getExceptionList();
-			string								getBanList();
+			const std::vector<string>&			getExceptionList() const;
+			const std::vector<string>&			getBanList() const;
             const string&						getChannelModes() const;
             const string&						getName() const;
 			IRC::Client*						getClient(const string& client_nick);

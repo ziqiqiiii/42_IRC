@@ -117,20 +117,24 @@ void	IRC::Channel::_handleBanMode(char action, const string &args, Client &clien
 {	
 	if (args.empty())
 	{
-		client.sendResponse(RPL_BANLIST(client.getNickname(), this->_channel_name, this->getBanList()));
+		for (std::vector<string>::iterator it = this->_ban_list.begin(); it != this->_ban_list.end(); it++)
+			client.sendResponse(RPL_BANLIST(client.getNickname(), this->_channel_name, *it));
 		client.sendResponse(RPL_ENDOFBANLIST(client.getNickname(), this->_channel_name));
 	}
-	this->_handleNewMaskMode(action, this->_ban_list, args);
+	else
+		this->_handleNewMaskMode(action, this->_ban_list, args);
 }
 
 void	IRC::Channel::_handleExceptionMode(char action, const string &args, Client &client)
 {
 	if (args.empty())
 	{
-		client.sendResponse(RPL_EXCEPTLIST(client.getNickname(), this->_channel_name, this->getExceptionList()));
+		for (std::vector<string>::iterator it = this->_exception_list.begin(); it != this->_exception_list.end(); it++)
+			client.sendResponse(RPL_EXCEPTLIST(client.getNickname(), this->_channel_name, *it));
 		client.sendResponse(RPL_ENDOFEXCEPLIST(client.getNickname(), this->_channel_name));
 	}
-	this->_handleNewMaskMode(action, this->_exception_list, args);
+	else
+		this->_handleNewMaskMode(action, this->_exception_list, args);
 }
 
 void	IRC::Channel::_handleClientLimitMode(string mode, const string &args, Client &client)

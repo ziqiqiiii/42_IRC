@@ -1,24 +1,8 @@
 # include "Channel.hpp"
 
-string			IRC::Channel::getBanList()
-{
-	std::vector<string>::iterator	it;
-	string							tmp;
+const std::vector<string>	&IRC::Channel::getBanList() const { return this->_ban_list; }
 
-	for (it = this->_ban_list.begin(); it != this->_ban_list.end(); ++it)
-		tmp += *it + " ";
-	return tmp;
-}
-
-string			IRC::Channel::getExceptionList()
-{
-	std::vector<string>::iterator	it;
-	string							tmp;
-
-	for (it = this->_exception_list.begin(); it != this->_exception_list.end(); ++it)
-		tmp += *it + " ";
-	return tmp;
-}
+const std::vector<string>	&IRC::Channel::getExceptionList() const { return this->_exception_list; }
 
 const string&	IRC::Channel::getInviteExceptionList() const {return this->_invite_exception_list;}
 
