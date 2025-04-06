@@ -103,7 +103,7 @@ void	IRC::Channel::_handleNewMaskMode(const char& action, std::vector<string> &m
 {
 	std::vector<string> masks = IRC::Utils::splitString(new_masks, ",");
 
-	for (std::vector<string>::iterator it = mask_list.begin(); it != mask_list.end(); it++)
+	for (std::vector<string>::iterator it = masks.begin(); it != masks.end(); it++)
 	{
 		if (action == '+')
 			mask_list.push_back(*it);
