@@ -93,7 +93,7 @@ void	IRC::Server::_handleChannelTarget(Client &client, string &target, string &t
 	if (channel_modes.find('e') && channel->isClientException(client.getNickMask()))
 		channel->notifyAll(PRIVMSG(nick, target, text), &client);
 	else if (channel_modes.find('b') && channel->isClientBanned(client.getNickMask()))
-		client.sendResponse(ERR_BANNEDFROMCHAN(nick, target));
+		client.sendResponse(ERR_CANNOTSENDTOCHAN(client.getNickname(), channel->getName(), "Banned from chan"));
 	else
 		channel->notifyAll(PRIVMSG(nick, target, text), &client);
 }
