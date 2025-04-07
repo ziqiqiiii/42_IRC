@@ -64,24 +64,6 @@ void	IRC::Server::join(std::stringstream &args, Client &client)
 	this->_operateJoinCommand(channels_names, client);
 }
 
-void	IRC::Server::oper(std::stringstream &args, Client &client)
-{
-	string	user;
-	string	pass;
-
-	args >> user;
-	args >> pass;
-	if (user.empty() || pass.empty())
-		client.sendResponse(ERR_NEEDMOREPARAMS(client.getNickname(), "OPER"));
-	else if (user != OPER_USER || pass != OPER_PASS)
-		client.sendResponse(ERR_PASSWDMISMATCH(client.getNickname()));
-	else
-	{
-		client.setMode("+o");
-		client.sendResponse(RPL_YOUREOPER(client.getNickname()));
-	}
-}
-
 void	IRC::Server::privmsg(std::stringstream &args, Client &client)
 {
 	string	target_names;

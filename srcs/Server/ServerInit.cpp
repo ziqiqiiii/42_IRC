@@ -20,7 +20,6 @@ static void	commandsInit(std::map<string, t_irc_cmd> &commands)
 	commands["PART"] = &IRC::Server::part;
 	commands["PRIVMSG"] = &IRC::Server::privmsg;
 	commands["MODE"] = &IRC::Server::mode;
-	commands["OPER"] = &IRC::Server::oper;
 }
 
 void	IRC::Server::serverInit(int port, string password)
