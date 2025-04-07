@@ -26,7 +26,7 @@ IRC::Client	*IRC::Server::getClient(string name)
 
 	while (it != end)
 	{
-		if (it->second->getNickname() == name)
+		if (IRC::Utils::stringToUpper(it->second->getNickname()) == name)
 			return (it->second);
 		it++;
 	}
