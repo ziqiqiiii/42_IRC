@@ -110,20 +110,6 @@ void	IRC::Server::epollDel(int fd)
 }
 
 // IRC::Server::run()'s helper functions
-int		IRC::Server::_nickIsInUse(string nickname)
-{
-	std::map<int, Client*>::iterator	it = this->_server_clients.begin();
-	std::map<int, Client*>::iterator	end = this->_server_clients.end();
-
-	while (it != end)
-	{
-		if (it->second->getNickname() == nickname)
-			return (1);
-		it++;
-	}
-	return (0);
-}
-
 void	IRC::Server::_handleNewConnection()
 {
 	Client				*client;

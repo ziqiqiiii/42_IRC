@@ -22,7 +22,7 @@ void	IRC::Server::nick(std::stringstream &args, Client &client)
 		client.sendResponse(ERR_NONICKNAMEGIVEN(client.getNickname()));
 	else if (!IRC::Utils::isValidNickname(nickname))
 		client.sendResponse(ERR_ERRONEUSNICKNAME(client.getNickname(), nickname));
-	else if (this->_nickIsInUse(nickname))
+	else if (this->getClient(nickname))
 		client.sendResponse(ERR_NICKNAMEINUSE(client.getNickname(), nickname));
 	else
 	{
