@@ -93,7 +93,9 @@ void	IRC::Server::notifyAll(const string& message)
 
 void	IRC::Server::closeConnection(int fd)
 {
-	this->_server_clients.erase(fd);
+	std::map<int, Client*>::iterator it = this->_server_clients.find(fd);
+	delete it->second;
+	this->_server_clients.erase(it);
 	shutdown(fd, SHUT_RDWR);
 	epollDel(fd);
 	close(fd);
