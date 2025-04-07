@@ -179,14 +179,18 @@ void	IRC::Server::kick(std::stringstream &args, Client &client)
 
 	args >> channel_name;
 	args >> user_names;
-	args >> comment;
+	comment = IRC::Utils::getRestOfStream(args);
 	channel = this->getChannel(channel_name);
 	if (comment.empty())
 		comment = DEFAULT_KICK_MSG;
+	else if (comment[0] == ':')
+		comment.erase(0, 1);
 	if (channel_name.empty() || user_names.empty())
 		client.sendResponse(ERR_NEEDMOREPARAMS(client.getNickname(), "KICK"));
 	else if (!channel)
 		client.sendResponse(ERR_NOSUCHCHANNEL(client.getNickname(), channel_name));
+	else if (!channel->getClient(client.getNickname()))
+		client.sendResponse(ERR_NOTONCHANNEL(client.getNickname(), channel->getName()));
 	else if (!channel->isOperator(&client))
 		client.sendResponse(ERR_CHANOPRIVSNEEDED(client.getNickname(), channel_name));
 	else
