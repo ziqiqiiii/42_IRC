@@ -53,6 +53,7 @@ namespace IRC
 			void			_parseJoinCommand(std::stringstream &args, std::vector<string>& channel_names);
 			bool			_validateJoinCommand(Channel &channel, Client &client);
 			void			_operateJoinCommand(std::vector<string>& channel_names, Client& client);
+			void			_kickUsers(IRC::Client& client,  const string& users, Channel* channel, const string& comment);
 		public:
 			static Server*	getInstance();
 			static void		destroyInstance();
@@ -77,6 +78,7 @@ namespace IRC
 			void			clearClient(int fd);
 			void			createChannel(string channel_name, Client* client);
 			void			joinChannel(const string& channel_name, Client* client);
+			int				leaveChannel(Channel *channel, Client* client);
 			int				leaveChannel(const string& channel_name, Client* client);
 			void			notifyAll(const string& message);
 			void			closeConnection(int fd);

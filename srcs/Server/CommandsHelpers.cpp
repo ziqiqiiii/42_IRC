@@ -105,6 +105,24 @@ void	IRC::Server::_handleClientTarget(Client &client, string &target, string &te
 		reciever->sendResponse(PRIVMSG(nick, target, text));
 }
 
+void	IRC::Server::_kickUsers(IRC::Client& client, const string &users, IRC::Channel* channel, const string &comment)
+{
+	std::vector<string> list = IRC::Utils::splitString(users, ",");
+	IRC::Client*		user;
+
+	for (std::vector<string>::iterator it = list.begin(); it != list.end(); it++)
+	{
+		user = channel->getClient(*it);
+		if (!user)
+		{
+			client.sendResponse(ERR_USERNOTINCHANNEL(client.getNickname(), *it, channel->getName()));
+			continue;
+		}
+		channel->notifyAll(KICK(client.getNickname(), channel->getName(), user->getNickname(), comment), NULL);
+		this->leaveChannel(channel, user);
+	}
+}
+
 
 // Complex Methods of parsing mode
 

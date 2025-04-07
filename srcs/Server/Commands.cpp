@@ -190,7 +190,7 @@ void	IRC::Server::kick(std::stringstream &args, Client &client)
 	else if (!channel->isOperator(&client))
 		client.sendResponse(ERR_CHANOPRIVSNEEDED(client.getNickname(), channel_name));
 	else
-		channel->kickUsers(client, user_names, comment);
+		this->_kickUsers(client, user_names, channel, comment);
 }
 
 void	IRC::Server::invite(std::stringstream &args, Client &client)

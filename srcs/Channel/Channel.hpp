@@ -40,7 +40,6 @@ namespace IRC
 
             void								attach(IRC::Client* client);
 			int									detach(IRC::Client* client);
-			void								kickUsers(IRC::Client& client, const string &users, const string &comment);
 			void								notifyAll(const std::string& message, IRC::Client *sender);
 			void								joinNumericReplies(IRC::Client* new_client);
 			

@@ -55,24 +55,6 @@ int	IRC::Channel::detach(IRC::Client* client)
 	return (1);
 }
 
-void	IRC::Channel::kickUsers(IRC::Client &client, const string& users, const string& comment)
-{
-	std::vector<string> list = IRC::Utils::splitString(users, ",");
-	IRC::Client*		user;
-
-	for (std::vector<string>::iterator it = list.begin(); it != list.end(); it++)
-	{
-		user = this->getClient(*it);
-		if (!user)
-		{
-			client.sendResponse(ERR_USERNOTINCHANNEL(client.getNickname(), *it, this->_channel_name));
-			continue;
-		}
-		this->detach(user);
-		this->notifyAll(KICK(client.getNickname(), this->_channel_name, *it, comment), &client);
-	}
-}
-
 void	IRC::Channel::notifyAll(const std::string& message, IRC::Client *sender)
 {
 	std::map<string, IRC::Client*>::iterator	it;

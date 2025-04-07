@@ -66,6 +66,23 @@ int	IRC::Server::leaveChannel(const string& channel_name, Client* client)
 	return (1);
 }
 
+int	IRC::Server::leaveChannel(Channel *channel, Client* client)
+{
+	if (!channel)
+	{
+		client->sendResponse(ERR_NOSUCHCHANNEL(client->getNickname(), channel->getName()));
+		return (0);
+	}
+	if (!channel->detach(client))
+		return (0);
+	if (channel->getClientsList().empty())
+	{
+		this->_channels.erase(IRC::Utils::stringToUpper(channel->getName()));
+		delete (channel);
+	}
+	return (1);
+}
+
 void	IRC::Server::notifyAll(const string& message)
 {
 	std::map<string, Channel*>::iterator channel_it;
