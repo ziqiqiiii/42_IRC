@@ -33,7 +33,7 @@
 # define CRLF "\r\n"
 # define MAX_CLIENTS 50
 # define BUFFER_SIZE 512
-# define DEFAULT_KICK_MSG "No reason giver"
+# define DEFAULT_KICK_MSG "No reason given"
 
 // Message replies
 # define JOIN(client, channel)							(":" + client + " JOIN " + channel)
