@@ -14,22 +14,20 @@ void    IRC::Server::addClient(Client* client)
 
 void	IRC::Server::createChannel(string channel_name, Client* client)
 {
-	channel_name = IRC::Utils::stringToUpper(channel_name);
-	IRC::Logger* logManager = IRC::Logger::getInstance();
-	std::map<string, IRC::Channel*>::iterator it;
+	string			upper_name = IRC::Utils::stringToUpper(channel_name);
+	IRC::Logger*	logManager = IRC::Logger::getInstance();
 
 	if (channel_name.length() > 50) {
 		logManager->logMsg(RED, "Channel name too long", strerror(errno));
 		return;
 	}
 
-	it = this->_channels.find(channel_name);
-	if (it != this->_channels.end())
+	if (this->getChannel(channel_name))
         logManager->logMsg(RED, ("Channel " + channel_name + " already exist").c_str(), strerror(errno));
 	else
 	{
-		this->_channels[channel_name] = new Channel(channel_name, *client);
-		this->_channels[channel_name]->joinNumericReplies(client);
+		this->_channels[upper_name] = new Channel(channel_name, *client);
+		this->_channels[upper_name]->joinNumericReplies(client);
 	}
 }
 
