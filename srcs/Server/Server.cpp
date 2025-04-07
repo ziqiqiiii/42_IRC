@@ -135,10 +135,11 @@ void	IRC::Server::_handleClientPacket(struct epoll_event &event)
 	bzero(buffer, BUFFER_SIZE);
 	if (event.events & (EPOLLERR | EPOLLHUP) || !recv(event.data.fd, buffer, BUFFER_SIZE, 0))
 	{
-		logManager->logMsg(LIGHT_BLUE, ("Client " + IRC::Utils::intToString(event.data.fd) + " disconnected ").c_str());
+		logManager->logMsg(LIGHT_BLUE, ("Client " + IRC::Utils::intToString(event.data.fd) + "(" + client.getNickname() +")" +" disconnected ").c_str());
 		closeConnection(event.data.fd);
 		return ;
 	}
+	logManager->logMsg(YELLOW, ("Client " + IRC::Utils::intToString(event.data.fd) + " (" + client.getNickname() + ") Packet: [" + buffer + "]").c_str());
 	client.addToBuffer(buffer);
 	_parseExec(client);
 }
@@ -149,6 +150,7 @@ void	IRC::Server::_parseExec(Client &client)
 	string				buffer = client.getBuffer();
 	string 				command_name;
 	size_t				delim = 0;
+	int					client_fd = client.getClientFd();
 
 	while ((delim = IRC::Utils::find_crlf(buffer)))
 	{
@@ -167,6 +169,8 @@ void	IRC::Server::_parseExec(Client &client)
 			client.sendResponse(ERR_UNKNOWNCOMMAND(client.getNickname(), command_name));
 		else if (command)
 			(this->*command)(message, client);
+		if (!this->getClient(client_fd))
+			return ;
 		if (!client.getRegistered() && !client.getUsername().empty() && client.getAuthenticated() && client.getNickname() != "*")
 		{
 			client.setRegistered(true);
