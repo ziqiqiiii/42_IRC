@@ -20,6 +20,7 @@ IRC::Client	*IRC::Server::getClient(int fd)
 
 IRC::Client	*IRC::Server::getClient(string name)
 {
+	name = IRC::Utils::stringToUpper(name);
 	std::map<int, Client *>::iterator it = this->_server_clients.begin();
 	std::map<int, Client *>::iterator end = this->_server_clients.end();
 
