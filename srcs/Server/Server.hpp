@@ -93,5 +93,6 @@ namespace IRC
 			void			kick(std::stringstream &args, Client &client);
 			void			mode(std::stringstream &args, Client &client);
 			void			privmsg(std::stringstream &args, Client &client);
+			void			quit(std::stringstream &args, Client &client);
     };
 }

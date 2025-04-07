@@ -208,3 +208,12 @@ void	IRC::Server::invite(std::stringstream &args, Client &client)
 		target->sendResponse(INVITE(client.getNickname(), nickname, channel_name));
 	}
 }
+
+void	IRC::Server::quit(std::stringstream &args, Client &client)
+{
+	string	reason;
+	reason = IRC::Utils::getRestOfStream(args);
+	reason = "Quit: " + reason;
+	client.sendResponse(ERROR(string("Client closed connection")));
+	this->closeConnection(client.getClientFd());
+}

@@ -36,6 +36,8 @@
 # define DEFAULT_KICK_MSG "No reason given"
 
 // Message replies
+# define ERROR(reason)									(": ERROR " + reason)
+# define QUIT(client, reason)							(":" + client + " QUIT " + ":" + reason)
 # define JOIN(client, channel)							(":" + client + " JOIN " + channel)
 # define INVITE(client, nick, channel)					(":" + client + " INVITE " + nick + " " + channel)
 # define KICK(client, channel, user, comment)			(":" + client + " KICK " + channel + " " + user + " :" + comment)
