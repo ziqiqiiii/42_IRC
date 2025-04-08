@@ -68,10 +68,11 @@
 # define RPL_YOUREOPER(client)							(": 381 " + client + " :You are now an IRC operator")
 
 // Error replies
-# define ERR_CANNOTSENDTOCHAN(client, channel, text)	(": 404 " + client + " " + channel + " :" + text)
+# define ERR_INVITEONLYCHAN(client, channel)			(": 473 " + client + " " + channel + " :Cannot join channel (+i)")
 # define ERR_BADCHANMASK(channel)						(": 476 " + channel + " :Bad Channel Mask")
 # define ERR_NOSUCHNICK(client, nick)					(": 403 " + client + " " + nick + " :No such nick")
 # define ERR_NOSUCHCHANNEL(client, channel)				(": 403 " + client + " " + channel + " :No such channel")
+# define ERR_CANNOTSENDTOCHAN(client, channel, text)	(": 404 " + client + " " + channel + " :" + text)
 # define ERR_UNKNOWNCOMMAND(client, command)			(": 421 " + client + " " + command + " :Unknown command")
 # define ERR_NONICKNAMEGIVEN(client)					(": 431 " + client + " :No nickname given")
 # define ERR_ERRONEUSNICKNAME(client, nick) 			(": 432 " + client + " " + nick + " :Erroneus nickname")

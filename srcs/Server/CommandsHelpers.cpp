@@ -21,6 +21,8 @@ bool	IRC::Server::_validateJoinCommand(Channel &channel, Client &client)
 			return client.sendResponse(ERR_CHANNELISFULL(client.getNickname(), channel.getName())), false;
 	}
 	// ───── Ban & Exception Mode─────
+	if (strchr(channel_mode, 'i') && !channel.clientIsInvited(client))
+		return client.sendResponse(ERR_INVITEONLYCHAN(client.getNickname(), channel.getName())), false;
 	if (channel.isClientBanned(client_nickmask) && !channel.isClientException(client_nickmask))
             return client.sendResponse(ERR_BANNEDFROMCHAN(client.getNickname(), channel.getName())), false;
 	return true;

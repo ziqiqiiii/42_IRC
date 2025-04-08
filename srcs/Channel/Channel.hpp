@@ -44,6 +44,7 @@ namespace IRC
 			void								joinNumericReplies(IRC::Client* new_client);
 			
 			//Setter(s)
+			void								addInvite(const Client& client);
 			void								setChannelName(const string& channel_name);
 			void								setTopic(const string& new_topic, Client &setter);
 			int									setChannelMode(string mode, string args, Client &client);
@@ -62,6 +63,7 @@ namespace IRC
 			string								getClientsList();
 
 			// Boolean(s)
+			bool								clientIsInvited(const Client& client);
 			bool								isOperator(Client *client);
             bool								clientExists(const string client_nick);
 			bool								isClientLimitExceed();

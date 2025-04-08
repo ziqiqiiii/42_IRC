@@ -204,6 +204,7 @@ void	IRC::Server::invite(std::stringstream &args, Client &client)
 		client.sendResponse(ERR_CHANOPRIVSNEEDED(client.getNickname(), channel_name));
 	else
 	{
+		channel->addInvite(*target);
 		client.sendResponse(RPL_INVITING(client.getNickname(), nickname, channel_name));
 		target->sendResponse(INVITE(client.getNickname(), nickname, channel_name));
 	}
