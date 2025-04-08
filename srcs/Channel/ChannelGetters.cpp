@@ -89,3 +89,14 @@ bool	IRC::Channel::isClientException(const string& nickmask)
 	}
 	return false;
 }
+
+bool	IRC::Channel::clientIsInvited(const Client& client)
+{
+	string	client_nickmask = client.getNickMask();
+
+	for (std::vector<string>::iterator it = this->_invite_list.begin(); it != this->_invite_list.end(); it++){
+		if (*it == client_nickmask)
+			return true;
+	}
+	return false;
+}
