@@ -91,11 +91,21 @@ void	IRC::Server::notifyAll(const string& message)
 		channel_it->second->notifyAll(message, NULL);
 }
 
-void	IRC::Server::closeConnection(int fd)
+void	IRC::Server::closeConnection(int fd, const string &quit_msg)
 {
-	std::map<int, Client*>::iterator it = this->_server_clients.find(fd);
-	delete it->second;
-	this->_server_clients.erase(it);
+	std::map<int, Client*>::iterator	client_it = this->_server_clients.find(fd);
+	Client*								client;
+
+	if (client_it == this->_server_clients.end())
+		return ;
+	client = client_it->second;
+	for (std::map<string, Channel*>::iterator chan_it = this->_channels.begin(); chan_it != this->_channels.end(); chan_it++)
+	{
+		chan_it->second->notifyAll(QUIT(client->getNickname(), quit_msg), NULL);
+		leaveChannel(chan_it->second, client);
+	}
+	this->_server_clients.erase(client_it);
+	delete client;
 	shutdown(fd, SHUT_RDWR);
 	epollDel(fd);
 	close(fd);

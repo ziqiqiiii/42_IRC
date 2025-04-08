@@ -80,7 +80,7 @@ namespace IRC
 			int				leaveChannel(Channel *channel, Client* client);
 			int				leaveChannel(const string& channel_name, Client* client);
 			void			notifyAll(const string& message);
-			void			closeConnection(int fd);
+			void			closeConnection(int fd, const string& quit_msg);
 
 			// Commands
 			void			pass(std::stringstream &args, Client &client);
@@ -89,7 +89,6 @@ namespace IRC
 			void			nick(std::stringstream &args, Client &client);
 			void			user(std::stringstream &args, Client &client);
 			void			topic(std::stringstream &args, Client &client);
-			void			invite(std::stringstream &args, Client &client);
 			void			kick(std::stringstream &args, Client &client);
 			void			mode(std::stringstream &args, Client &client);
 			void			privmsg(std::stringstream &args, Client &client);
