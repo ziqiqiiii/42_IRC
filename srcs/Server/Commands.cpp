@@ -185,5 +185,5 @@ void	IRC::Server::quit(std::stringstream &args, Client &client)
 	reason = IRC::Utils::getRestOfStream(args);
 	reason = "Quit: " + reason;
 	client.sendResponse(ERROR(string("Client closed connection")));
-	this->closeConnection(client.getClientFd());
+	this->closeConnection(client.getClientFd(), reason);
 }
