@@ -56,6 +56,12 @@ IRC::Logger* IRC::Logger::getInstance() {
 	return instancePtr;
 }
 
+/**
+ * @brief Destroys the singleton instance of the Logger.
+ *
+ * This method safely deletes the logger instance and sets the pointer to NULL.
+ * A mutex lock is used to ensure thread-safe destruction.
+ */
 void	IRC::Logger::destroyInstance()
 {
 	if (instancePtr != NULL) {

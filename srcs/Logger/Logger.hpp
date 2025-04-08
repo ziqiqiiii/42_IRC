@@ -19,6 +19,12 @@
 
 namespace IRC
 {
+	/**
+	 * @brief Logger class for thread-safe colored logging with timestamps.
+	 *
+	 * Implements a thread-safe Singleton logger to print formatted and colored messages
+	 * to standard output, including time information.
+	 */
 	class Logger
 	{
 		private:

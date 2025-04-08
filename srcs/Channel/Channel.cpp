@@ -1,9 +1,23 @@
 # include "Channel.hpp"
 
+/**
+ * @brief Default constructor for Channel.
+ */
 IRC::Channel::Channel() {}
 
+/**
+ * @brief Destructor for Channel.
+ */
 IRC::Channel::~Channel() {}
 
+/**
+ * @brief Constructs a new Channel with a name and an initial client.
+ *
+ * The client is added as both a member and an operator of the channel.
+ *
+ * @param channel_name The name of the channel.
+ * @param client The client who created the channel.
+ */
 IRC::Channel::Channel(const string channel_name, IRC::Client& client)
 {
 	this->setChannelName(channel_name);
@@ -13,8 +27,21 @@ IRC::Channel::Channel(const string channel_name, IRC::Client& client)
 	this->_client_limit = 0;
 }
 
+/**
+ * @brief Copy constructor for Channel.
+ *
+ * @param other The channel to copy from.
+ */
 IRC::Channel::Channel(const Channel &other) { *this = other; }
 
+/**
+ * @brief Assignment operator for Channel.
+ *
+ * Copies the internal state of another channel.
+ *
+ * @param other The channel to copy from.
+ * @return Channel& Reference to the current object.
+ */
 IRC::Channel& IRC::Channel::operator=(const Channel &other)
 {
 	if (this != &other) {
@@ -28,6 +55,11 @@ IRC::Channel& IRC::Channel::operator=(const Channel &other)
     return *this;
 }
 
+/**
+ * @brief Adds a client to the channel.
+ *
+ * @param client Pointer to the client to add.
+ */
 void	IRC::Channel::attach(IRC::Client* client)
 {
 	string client_nick = client->getNickname();
@@ -39,6 +71,12 @@ void	IRC::Channel::attach(IRC::Client* client)
 		this->_clients[client_nick] = client;
 }
 
+/**
+ * @brief Removes a client from the channel.
+ *
+ * @param client Pointer to the client to remove.
+ * @return int 1 if removed, 0 if the client wasn't found.
+ */
 int	IRC::Channel::detach(IRC::Client* client)
 {
 	string			client_nick = client->getNickname();
@@ -55,6 +93,12 @@ int	IRC::Channel::detach(IRC::Client* client)
 	return (1);
 }
 
+/**
+ * @brief Sends a message to all clients in the channel, excluding the sender if provided.
+ *
+ * @param message The message to send.
+ * @param sender Pointer to the sender (can be NULL).
+ */
 void	IRC::Channel::notifyAll(const std::string& message, IRC::Client *sender)
 {
 	std::map<string, IRC::Client*>::iterator	it;
@@ -66,6 +110,11 @@ void	IRC::Channel::notifyAll(const std::string& message, IRC::Client *sender)
 	}
 }
 
+/**
+ * @brief Sends JOIN numeric replies (e.g., topic, name list) to the joining client.
+ *
+ * @param new_client The client who joined.
+ */
 void	IRC::Channel::joinNumericReplies(Client* new_client)
 {
 	string	message;
@@ -81,6 +130,13 @@ void	IRC::Channel::joinNumericReplies(Client* new_client)
 	new_client->sendResponse(message);
 }
 
+/**
+ * @brief Adds or removes nickmasks from a given mode list.
+ *
+ * @param action '+' to add or '-' to remove.
+ * @param mask_list The list of masks to modify.
+ * @param new_masks Comma-separated list of masks.
+ */
 void	IRC::Channel::_handleNewMaskMode(const char& action, std::vector<string> &mask_list, const string new_masks)
 {
 	std::vector<string> masks = IRC::Utils::splitString(new_masks, ",");
@@ -94,7 +150,15 @@ void	IRC::Channel::_handleNewMaskMode(const char& action, std::vector<string> &m
 	}
 }
 
-
+/**
+ * @brief Handles ban mode (`+b` / `-b`) on the channel.
+ *
+ * Sends the current ban list if no argument is provided.
+ *
+ * @param action '+' or '-'.
+ * @param args The mask to add/remove, or empty to list all.
+ * @param client The client issuing the mode command.
+ */
 void	IRC::Channel::_handleBanMode(char action, const string &args, Client &client)
 {	
 	if (args.empty())
@@ -107,6 +171,15 @@ void	IRC::Channel::_handleBanMode(char action, const string &args, Client &clien
 		this->_handleNewMaskMode(action, this->_ban_list, args);
 }
 
+/**
+ * @brief Handles exception mode (`+e` / `-e`) on the channel.
+ *
+ * Sends the current exception list if no argument is provided.
+ *
+ * @param action '+' or '-'.
+ * @param args The mask to add/remove, or empty to list all.
+ * @param client The client issuing the mode command.
+ */
 void	IRC::Channel::_handleExceptionMode(char action, const string &args, Client &client)
 {
 	if (args.empty())
@@ -119,6 +192,15 @@ void	IRC::Channel::_handleExceptionMode(char action, const string &args, Client 
 		this->_handleNewMaskMode(action, this->_exception_list, args);
 }
 
+/**
+ * @brief Handles client limit mode (`+l`).
+ *
+ * Only operators can set this mode. If the input is invalid, an error is logged.
+ *
+ * @param mode The full mode string (e.g., "+l").
+ * @param args The argument containing the limit value.
+ * @param client The client issuing the mode command.
+ */
 void	IRC::Channel::_handleClientLimitMode(string mode, const string &args, Client &client)
 {
 	//Client Limit Mode is Type-B mode, so it must always contain a parameter
@@ -150,6 +232,14 @@ void	IRC::Channel::_handleClientLimitMode(string mode, const string &args, Clien
 	this->_setChannelMode(mode);
 }
 
+/**
+ * @brief Handles protected topic mode (`+t` / `-t`).
+ *
+ * Only channel operators can change this mode.
+ *
+ * @param mode The full mode string (e.g., "+t" or "-t").
+ * @param client The client issuing the command.
+ */
 void	IRC::Channel::_handleProtectedTopicMode(string mode, Client &client)
 {
 	// ───── Permission check ─────

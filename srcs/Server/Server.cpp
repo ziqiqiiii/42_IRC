@@ -66,6 +66,11 @@ IRC::Server* IRC::Server::getInstance() {
 	return instancePtr;
 }
 
+/**
+ * @brief Destroys the singleton instance of the Server.
+ *
+ * Deletes the instance and resets the pointer, using a mutex for thread safety.
+ */
 void	IRC::Server::destroyInstance()
 {
 	if (instancePtr != NULL) {
@@ -76,6 +81,13 @@ void	IRC::Server::destroyInstance()
 	}
 }
 
+/**
+ * @brief Handles OS signals to trigger graceful shutdown.
+ *
+ * Sets an internal flag for the server to terminate.
+ *
+ * @param signum The received signal number.
+ */
 void	IRC::Server::signalHandler(int signum)
 {
 	IRC::Logger	*logManager = IRC::Logger::getInstance();
@@ -86,6 +98,13 @@ void	IRC::Server::signalHandler(int signum)
 }
 
 // Epoll functions
+/**
+ * @brief Initializes the epoll instance.
+ *
+ * Creates a new epoll file descriptor for event polling.
+ *
+ * @throws std::runtime_error if epoll creation fails.
+ */
 void	IRC::Server::epollInit()
 {
 	this->_epollFd = epoll_create1(0);
@@ -93,6 +112,14 @@ void	IRC::Server::epollInit()
 	throw std::runtime_error("Failed to epoll_create()");
 }
 
+/**
+ * @brief Adds a file descriptor to the epoll instance.
+ *
+ * @param fd The file descriptor to add.
+ * @param flags Event flags (e.g., EPOLLIN, EPOLLOUT).
+ *
+ * @throws std::runtime_error if the fd could not be added.
+ */
 void	IRC::Server::epollAdd(int fd, int flags)
 {
 	struct epoll_event event;
@@ -103,6 +130,13 @@ void	IRC::Server::epollAdd(int fd, int flags)
 	throw std::runtime_error("Failed to add fd to epoll");
 }
 
+/**
+ * @brief Removes a file descriptor from the epoll instance.
+ *
+ * @param fd The file descriptor to remove.
+ *
+ * @throws std::runtime_error if the fd could not be removed.
+ */
 void	IRC::Server::epollDel(int fd)
 {
 	if (epoll_ctl(this->_epollFd, EPOLL_CTL_DEL, fd, NULL) == -1)
@@ -110,6 +144,11 @@ void	IRC::Server::epollDel(int fd)
 }
 
 // IRC::Server::run()'s helper functions
+/**
+ * @brief Handles a new incoming client connection.
+ *
+ * Accepts the connection, creates a Client instance, adds it to epoll, and logs the event.
+ */
 void	IRC::Server::_handleNewConnection()
 {
 	Client				*client;
@@ -126,6 +165,14 @@ void	IRC::Server::_handleNewConnection()
 	logManager->logMsg(LIGHT_BLUE, ("Client " + IRC::Utils::intToString(client_fd) + " connected ").c_str());
 }
 
+/**
+ * @brief Processes packets received from a client.
+ *
+ * Reads data from the client, logs it, and sends it to the parser.
+ * If the client disconnects, the connection is closed.
+ *
+ * @param event The epoll event associated with the client.
+ */
 void	IRC::Server::_handleClientPacket(struct epoll_event &event)
 {
 	char			buffer[BUFFER_SIZE + 1];
@@ -144,6 +191,14 @@ void	IRC::Server::_handleClientPacket(struct epoll_event &event)
 	_parseExec(client);
 }
 
+/**
+ * @brief Parses and executes a complete IRC command from a client's buffer.
+ *
+ * Handles registration commands and ensures only valid commands are processed.
+ * Cleans up the buffer as commands are executed.
+ *
+ * @param client Reference to the client sending commands.
+ */
 void	IRC::Server::_parseExec(Client &client)
 {
 	t_irc_cmd			command;
@@ -182,6 +237,12 @@ void	IRC::Server::_parseExec(Client &client)
 	client.setBuffer(buffer);
 }
 
+/**
+ * @brief Starts the main event loop of the IRC server.
+ *
+ * Continuously waits for and handles incoming connections and client messages.
+ * Exits when a signal is caught via signalHandler().
+ */
 void	IRC::Server::run()
 {
 	struct	epoll_event	queue[MAX_CLIENTS];

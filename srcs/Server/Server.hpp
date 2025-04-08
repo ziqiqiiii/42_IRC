@@ -10,29 +10,35 @@ class Socket;
 
 namespace IRC
 {
+	/**
+	 * @brief Main IRC Server class.
+	 *
+	 * Manages all connected clients, channels, and commands. Implements the Singleton pattern
+	 * and uses `epoll` for efficient I/O event handling.
+	 */
     class Server
     {
         private:
-			static Server *instancePtr; /**< Pointer to the Singleton instance of Server. */
-			static pthread_mutex_t mtx; /**< Mutex for thread-safe Singleton access. */
-			
-			int	_epollFd;
-			int	_port;
-			int	_socketFd;
-			static bool	_signal;
-			Socket*	_socket;
-			string	_password;
+			static Server* instancePtr;     /**< Pointer to the Singleton instance of Server. */
+			static pthread_mutex_t mtx;     /**< Mutex for thread-safe Singleton access. */
 
-			std::map<int, Client*> _server_clients; /**<client_fd, Client* client>*/
-			std::map<string, Channel*> _channels; /**<channel_name, ISubject* channel>*/
-			std::map<string, t_irc_cmd> _commands;
+			int _epollFd;                   /**< File descriptor for epoll instance. */
+			int _port;                      /**< Port the server listens on. */
+			int _socketFd;                  /**< Listening socket descriptor. */
+			static bool _signal;            /**< Shutdown signal flag. */
+			Socket* _socket;                /**< Pointer to the Socket abstraction. */
+			string _password;               /**< Password for client authentication. */
+
+			std::map<int, Client*> _server_clients;     /**< Map of connected clients (fd -> Client*). */
+			std::map<string, Channel*> _channels;       /**< Map of channels (channel name -> Channel*). */
+			std::map<string, t_irc_cmd> _commands;      /**< Map of command strings to function pointers. */
 			
 			Server();
 			~Server();
 			Server(const Server &other);
 			Server &operator=(const Server &other);
 
-			// For destructor
+			// Destructor helpers
 			void			_closeFds();
 			void			_clearClients();
 			void			_clearChannels();
@@ -43,7 +49,7 @@ namespace IRC
 			void			_handleClientPacket(struct epoll_event &event);
 			void			_parseExec(Client &client);
 
-			// Commands Helper functions
+			// Command processing helpers
 			void			_handleChannelTarget(Client &client, string &target, string &text);
 			void			_handleClientTarget(Client &client, string &target, string &text);
 			void			_handleEmptyTopic(Client &client, Channel &channel);
@@ -54,20 +60,21 @@ namespace IRC
 			void			_operateJoinCommand(std::vector<string>& channel_names, Client& client);
 			void			_kickUsers(IRC::Client& client,  const string& users, Channel* channel, const string& comment);
 		public:
+			// ───── Singleton Access ─────
 			static Server*	getInstance();
 			static void		destroyInstance();
 			static void		signalHandler(int signum);
 			void			serverInit(int port, string password);
 			void			run();
 			
-			// Getter(s)
+			// ───── Getters ─────
 			t_irc_cmd		getCommand(string name);
 			Client			*getClient(int fd);
 			Client			*getClient(string name);
 			Channel			*getChannel(string name);
 			int				getSocketFd() const;
 
-			// Epoll functions
+			// ───── Epoll Handlers ─────
 			void			epollAdd(int fd, int flags);
 			void			epollDel(int fd);
 			void			epollInit();
