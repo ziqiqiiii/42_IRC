@@ -56,6 +56,16 @@ IRC::Logger* IRC::Logger::getInstance() {
 	return instancePtr;
 }
 
+void	IRC::Logger::destroyInstance()
+{
+	if (instancePtr != NULL) {
+		pthread_mutex_lock(&mtx);
+		delete instancePtr;
+		instancePtr = NULL;
+		pthread_mutex_unlock(&mtx);
+	}
+}
+
 /**
  * @brief Logs a formatted message to the console with the specified color.
  *

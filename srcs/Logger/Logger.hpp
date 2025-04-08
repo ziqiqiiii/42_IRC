@@ -30,7 +30,8 @@ namespace IRC
 			Logger(const Logger &other);
 			Logger &operator=(const Logger &other);
 		public:
-			static Logger* getInstance();
+			static Logger*	getInstance();
+			static void		destroyInstance();
 
 			void	logMsg(const char *color, const char *msg, ...);
 			string	getCurrTime();
