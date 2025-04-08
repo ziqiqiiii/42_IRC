@@ -66,7 +66,7 @@ IRC::Server* IRC::Server::getInstance() {
 	return instancePtr;
 }
 
-void		IRC::Server::destroyInstance()
+void	IRC::Server::destroyInstance()
 {
 	if (instancePtr != NULL) {
 		pthread_mutex_lock(&mtx);
