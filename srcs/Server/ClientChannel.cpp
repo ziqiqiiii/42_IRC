@@ -1,5 +1,12 @@
 # include "Server.hpp"
 
+/**
+ * @brief Adds a new client to the server's client map.
+ *
+ * If the client already exists (based on file descriptor), logs an error.
+ *
+ * @param client Pointer to the client to be added.
+ */
 void    IRC::Server::addClient(Client* client)
 {
     int	client_fd = client->getClientFd();
@@ -12,6 +19,15 @@ void    IRC::Server::addClient(Client* client)
         this->_server_clients[client_fd] = client;
 }
 
+/**
+ * @brief Creates a new channel and adds the client to it.
+ *
+ * Converts the channel name to uppercase for key storage.
+ * Logs an error if the name is too long or already exists.
+ *
+ * @param channel_name The name of the new channel.
+ * @param client Pointer to the client creating the channel.
+ */
 void	IRC::Server::createChannel(string channel_name, Client* client)
 {
 	string			upper_name = IRC::Utils::stringToUpper(channel_name);
@@ -31,7 +47,14 @@ void	IRC::Server::createChannel(string channel_name, Client* client)
 	}
 }
 
-
+/**
+ * @brief Adds a client to an existing channel.
+ *
+ * Validates if the client already exists in the channel.
+ *
+ * @param channel_name Name of the channel to join.
+ * @param client Pointer to the joining client.
+ */
 void	IRC::Server::joinChannel(const string& channel_name, Client* client)
 {
 	std::map<string, Channel*>::iterator	channel_it	= this->_channels.find(IRC::Utils::stringToUpper(channel_name));
@@ -47,6 +70,15 @@ void	IRC::Server::joinChannel(const string& channel_name, Client* client)
 	}
 }
 
+/**
+ * @brief Removes a client from a channel by name.
+ *
+ * If the channel becomes empty after removal, it is deleted.
+ *
+ * @param channel_name Name of the channel to leave.
+ * @param client Pointer to the leaving client.
+ * @return int 1 if successfully left, 0 otherwise.
+ */
 int	IRC::Server::leaveChannel(const string& channel_name, Client* client)
 {
 	std::map<string, Channel*>::iterator	channel_it	= this->_channels.find(IRC::Utils::stringToUpper(channel_name));
@@ -66,6 +98,13 @@ int	IRC::Server::leaveChannel(const string& channel_name, Client* client)
 	return (1);
 }
 
+/**
+ * @brief Removes a client from a channel by pointer.
+ *
+ * @param channel Pointer to the channel.
+ * @param client Pointer to the client.
+ * @return int 1 if successfully left, 0 otherwise.
+ */
 int	IRC::Server::leaveChannel(Channel *channel, Client* client)
 {
 	if (!channel)
@@ -83,6 +122,11 @@ int	IRC::Server::leaveChannel(Channel *channel, Client* client)
 	return (1);
 }
 
+/**
+ * @brief Broadcasts a message to all channels and all clients within.
+ *
+ * @param message The message to broadcast.
+ */
 void	IRC::Server::notifyAll(const string& message)
 {
 	std::map<string, Channel*>::iterator channel_it;
@@ -91,6 +135,14 @@ void	IRC::Server::notifyAll(const string& message)
 		channel_it->second->notifyAll(message, NULL);
 }
 
+/**
+ * @brief Closes a client connection and removes the client from the server.
+ *
+ * Notifies all channels of the quit event, removes the client, and closes the socket.
+ *
+ * @param fd The file descriptor of the client to close.
+ * @param quit_msg Quit message to be sent to all affected clients.
+ */
 void	IRC::Server::closeConnection(int fd, const string &quit_msg)
 {
 	std::map<int, Client*>::iterator	client_it = this->_server_clients.find(fd);
@@ -111,6 +163,11 @@ void	IRC::Server::closeConnection(int fd, const string &quit_msg)
 	close(fd);
 }
 
+/**
+ * @brief Removes a client from the server's internal map without deleting the object.
+ *
+ * @param fd File descriptor of the client to remove.
+ */
 void	IRC::Server::clearClient(int fd)
 {
 	this->_server_clients.erase(fd);

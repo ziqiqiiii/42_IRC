@@ -4,6 +4,11 @@
 
 namespace IRC
 {
+	/**
+	 * @brief Utility functions for IRC server operations.
+	 *
+	 * Provides helpers for string manipulation, parsing, validation, and formatting.
+	 */
     namespace Utils
     {
         void				checker(int argc);

@@ -1,5 +1,10 @@
 # include "Server.hpp"
 
+/**
+ * @brief Closes the server's epoll and socket file descriptors.
+ *
+ * This should be called during shutdown to release system resources.
+ */
 void	IRC::Server::_closeFds()
 {
 
@@ -7,6 +12,12 @@ void	IRC::Server::_closeFds()
 	close(this->_socketFd);
 }
 
+/**
+ * @brief Clears all connected clients.
+ *
+ * Sends an error message to each client, logs disconnections, 
+ * deallocates memory, and closes their sockets.
+ */
 void	IRC::Server::_clearClients()
 {
 	IRC::Logger* logManager = IRC::Logger::getInstance();
@@ -20,6 +31,11 @@ void	IRC::Server::_clearClients()
 	_server_clients.clear();
 }
 
+/**
+ * @brief Clears all existing channels from the server.
+ *
+ * Logs the cleanup and deallocates channel memory.
+ */
 void	IRC::Server::_clearChannels()
 {
 	IRC::Logger* logManager = IRC::Logger::getInstance();
@@ -31,6 +47,11 @@ void	IRC::Server::_clearChannels()
 	_channels.clear();
 }
 
+/**
+ * @brief Deletes the server's listening socket.
+ *
+ * Should be called during shutdown to free memory.
+ */
 void	IRC::Server::_deleteSocket()
 {
 	delete this->_socket;

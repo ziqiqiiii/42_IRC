@@ -1,5 +1,12 @@
 # include "Utils.hpp"
 
+/**
+ * @brief Checks if a string contains any character from another string.
+ *
+ * @param str The string to search in.
+ * @param find The string containing characters to look for.
+ * @return true if any character in `find` exists in `str`, false otherwise.
+ */
 bool IRC::Utils::containsChar(const string& str, const string& find)
 {
     for (int i = 0; find[i]; i++)
@@ -8,12 +15,24 @@ bool IRC::Utils::containsChar(const string& str, const string& find)
     return (false);
 }
 
+/**
+ * @brief Validates the number of command-line arguments.
+ *
+ * @param argc Argument count from main.
+ * @throws std::invalid_argument if argc is not 3.
+ */
 void IRC::Utils::checker(int argc)
 {
     if (argc != 3)
         throw std::invalid_argument("Invalid number of arguments");
 }
 
+/**
+ * @brief Converts an integer to a string.
+ *
+ * @param num Integer value to convert.
+ * @return string The resulting string.
+ */
 string IRC::Utils::intToString(int num)
 {
     char buffer[30];
@@ -21,6 +40,13 @@ string IRC::Utils::intToString(int num)
     return string(buffer);
 }
 
+/**
+ * @brief Converts a string to an integer.
+ *
+ * @param str The string to convert.
+ * @return int The resulting integer.
+ * @throws std::invalid_argument if the conversion fails.
+ */
 int	IRC::Utils::stringToInt(const std::string &str) {
 	std::istringstream iss(str);
 	int num;
@@ -29,6 +55,12 @@ int	IRC::Utils::stringToInt(const std::string &str) {
 	return num;
 }
 
+/**
+ * @brief Converts a string to uppercase.
+ *
+ * @param str The input string.
+ * @return string The uppercase version of the string.
+ */
 string	IRC::Utils::stringToUpper(const string& str)
 {
     string tmp;
@@ -38,6 +70,12 @@ string	IRC::Utils::stringToUpper(const string& str)
     return tmp;
 }
 
+/**
+ * @brief Finds the first CRLF ("\r\n") sequence in a string.
+ *
+ * @param str The string to search in.
+ * @return size_t The index after the CRLF sequence, or 0 if not found.
+ */
 size_t	IRC::Utils::find_crlf(const string &str)
 {
 	size_t	i = 0;
@@ -80,11 +118,23 @@ std::vector<string> IRC::Utils::splitString(const string& s, const string& del)
     return tokens;
 }
 
+/**
+ * @brief Converts a sockaddr_in IP address to a human-readable string.
+ *
+ * @param address The sockaddr_in structure containing the IP address.
+ * @return string The IP address as a string.
+ */
 string	IRC::Utils::sockaddrIpToString(const struct sockaddr_in &address)
 {
 	return (inet_ntoa(address.sin_addr));
 }
 
+/**
+ * @brief Removes specific characters from a string.
+ *
+ * @param str The string to modify (in-place).
+ * @param charsToRemove A string containing characters to remove.
+ */
 void	IRC::Utils::removeCharacters(std::string &str, const std::string &charsToRemove) {
 	std::string result;
 	for (std::string::iterator it = str.begin(); it != str.end(); ++it) {
@@ -116,16 +166,37 @@ string	IRC::Utils::getRestOfStream(std::stringstream &ss)
 	return (ret);
 }
 
+/**
+ * @brief Checks if a string matches a wildcard mask.
+ *
+ * Uses fnmatch for wildcard comparison.
+ *
+ * @param src The wildcard mask (e.g., *!user@host).
+ * @param dest The string to compare against.
+ * @return true if it matches, false otherwise.
+ */
 bool	IRC::Utils::matchMask(const string& src, const string& dest)
 {
     return fnmatch(src.c_str(), dest.c_str(), 0) == 0;
 }
 
+/**
+ * @brief Validates a channel name according to IRC rules.
+ *
+ * @param name The channel name.
+ * @return true if valid, false otherwise.
+ */
 bool	IRC::Utils::isValidChannelName(const string &name)
 {
 	return(!name.empty() && !IRC::Utils::containsChar(name, " ,\a") && strchr("#", name[0]));
 }
 
+/**
+ * @brief Validates a nickname according to IRC rules.
+ *
+ * @param nick The nickname to validate.
+ * @return true if valid, false otherwise.
+ */
 bool	IRC::Utils::isValidNickname(const string &nick)
 {
 	return (!nick.empty() && !IRC::Utils::containsChar(nick, " #&*,?!@.") && !strchr(":$", nick[0]));

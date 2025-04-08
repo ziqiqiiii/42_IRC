@@ -1,5 +1,14 @@
 #include "Server.hpp"
 
+/**
+ * @brief Handles the PASS command from a client.
+ *
+ * Verifies the provided password against the server's password.
+ * If correct, marks the client as authenticated.
+ *
+ * @param args Input stream containing the password.
+ * @param client Reference to the client issuing the command.
+ */
 void	IRC::Server::pass(std::stringstream &args, Client &client)
 {
 	string	password;
@@ -14,6 +23,14 @@ void	IRC::Server::pass(std::stringstream &args, Client &client)
 		client.sendResponse(ERR_PASSWDMISMATCH(client.getNickname()));
 }
 
+/**
+ * @brief Handles the NICK command from a client.
+ *
+ * Validates the nickname and ensures it's not already in use.
+ *
+ * @param args Input stream containing the nickname.
+ * @param client Reference to the client issuing the command.
+ */
 void	IRC::Server::nick(std::stringstream &args, Client &client)
 {
 	string nickname;
@@ -31,6 +48,15 @@ void	IRC::Server::nick(std::stringstream &args, Client &client)
 	}
 }
 
+
+/**
+ * @brief Handles the USER command from a client.
+ *
+ * Registers the user's username. Checks if already registered.
+ *
+ * @param args Input stream containing the username and other parameters.
+ * @param client Reference to the client issuing the command.
+ */
 void	IRC::Server::user(std::stringstream &args, Client &client)
 {
 	string	username;
@@ -56,6 +82,14 @@ void	IRC::Server::user(std::stringstream &args, Client &client)
 	client.setUsername(username);
 }
 
+/**
+ * @brief Handles the JOIN command from a client.
+ *
+ * Parses and executes the join request for multiple channels.
+ *
+ * @param args Input stream containing channel names.
+ * @param client Reference to the client issuing the command.
+ */
 void	IRC::Server::join(std::stringstream &args, Client &client)
 {
 	std::vector<string> channels_names;
@@ -64,6 +98,14 @@ void	IRC::Server::join(std::stringstream &args, Client &client)
 	this->_operateJoinCommand(channels_names, client);
 }
 
+/**
+ * @brief Handles the PRIVMSG command from a client.
+ *
+ * Sends private messages to users or channels.
+ *
+ * @param args Input stream containing targets and message text.
+ * @param client Reference to the client issuing the command.
+ */
 void	IRC::Server::privmsg(std::stringstream &args, Client &client)
 {
 	string	target_names;
@@ -87,6 +129,14 @@ void	IRC::Server::privmsg(std::stringstream &args, Client &client)
 	}
 }
 
+/**
+ * @brief Handles the TOPIC command from a client.
+ *
+ * Allows clients to view or change a channel's topic.
+ *
+ * @param args Input stream containing channel name and topic.
+ * @param client Reference to the client issuing the command.
+ */
 void	IRC::Server::topic(std::stringstream &args, Client &client)
 {	
 	Channel	*channel;
@@ -114,6 +164,14 @@ void	IRC::Server::topic(std::stringstream &args, Client &client)
 		channel->setTopic(topic, client);
 }
 
+/**
+ * @brief Handles the MODE command from a client.
+ *
+ * Applies mode changes to users or channels.
+ *
+ * @param args Input stream containing the target and mode settings.
+ * @param client Reference to the client issuing the command.
+ */
 void	IRC::Server::mode(std::stringstream &args, Client &client)
 {
 	string	target;
@@ -131,6 +189,14 @@ void	IRC::Server::mode(std::stringstream &args, Client &client)
 		this->_handleClientMode(client, target, mode);
 }
 
+/**
+ * @brief Handles the PART command from a client.
+ *
+ * Processes a request to leave one or more channels.
+ *
+ * @param args Input stream containing channel names and optional reason.
+ * @param client Reference to the client issuing the command.
+ */
 void	IRC::Server::part(std::stringstream &args, Client &client)
 {
 	string targets;
@@ -152,6 +218,14 @@ void	IRC::Server::part(std::stringstream &args, Client &client)
 	}
 }
 
+/**
+ * @brief Handles the KICK command from a client.
+ *
+ * Allows a channel operator to remove users from a channel.
+ *
+ * @param args Input stream containing the channel name, usernames, and reason.
+ * @param client Reference to the client issuing the command.
+ */
 void	IRC::Server::kick(std::stringstream &args, Client &client)
 {
 	Channel	*channel;

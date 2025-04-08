@@ -19,6 +19,12 @@
 
 namespace IRC
 {
+	/**
+	 * @brief Logger class for thread-safe colored logging with timestamps.
+	 *
+	 * Implements a thread-safe Singleton logger to print formatted and colored messages
+	 * to standard output, including time information.
+	 */
 	class Logger
 	{
 		private:
@@ -30,7 +36,8 @@ namespace IRC
 			Logger(const Logger &other);
 			Logger &operator=(const Logger &other);
 		public:
-			static Logger* getInstance();
+			static Logger*	getInstance();
+			static void		destroyInstance();
 
 			void	logMsg(const char *color, const char *msg, ...);
 			string	getCurrTime();

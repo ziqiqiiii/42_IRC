@@ -7,10 +7,17 @@
 
 namespace IRC
 {
+	/**
+	 * @brief Represents a single IRC channel.
+	 *
+	 * Handles clients, operators, modes, bans, topics, and server messages within the channel.
+	 */
 	class Client;
     class Channel
     {
         private:
+			// ───── Private Members ─────
+
 			string								_channel_name;
 			string								_channel_modes;
 			std::vector<string>					_invite_list;
@@ -25,6 +32,7 @@ namespace IRC
 			string								_key;
 			int									_client_limit;
 
+			// ───── Internal Mode Handlers ─────
 			void								_handleNewMaskMode(const char& action, std::vector<string> &mask_list, const string new_masks);
 			void								_handleBanMode(char action, const string &args, IRC::Client &client);
 			void								_handleExceptionMode(char action, const string &args, IRC::Client &client);
@@ -38,6 +46,7 @@ namespace IRC
             Channel &operator=(const Channel &other);
             Channel(const string channel_name, IRC::Client& client);
 
+			// ───── Core Channel Operations ─────
             void								attach(IRC::Client* client);
 			int									detach(IRC::Client* client);
 			void								notifyAll(const std::string& message, IRC::Client *sender);
@@ -49,7 +58,7 @@ namespace IRC
 			void								setTopic(const string& new_topic, Client &setter);
 			int									setChannelMode(string mode, string args, Client &client);
 			
-            //Getter(s)
+            // ───── Getters ─────
 			const string&						getInviteExceptionList() const;
 			const std::vector<string>&			getExceptionList() const;
 			const std::vector<string>&			getBanList() const;

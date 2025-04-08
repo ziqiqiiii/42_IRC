@@ -1,7 +1,21 @@
 # include "Channel.hpp"
 
+/**
+ * @brief Sets the name of the channel.
+ *
+ * @param channel_name The new channel name.
+ */
 void	IRC::Channel::setChannelName(const string& channel_name) { this->_channel_name = channel_name; }
 
+/**
+ * @brief Sets the topic of the channel.
+ *
+ * If the topic is a single character, it clears the topic. Otherwise, sets the topic
+ * (excluding the first character, usually a colon) and records the setter and timestamp.
+ *
+ * @param new_topic The new topic string.
+ * @param client The client who set the topic.
+ */
 void	IRC::Channel::setTopic(const string& new_topic, Client &client) 
 {
 	if (new_topic.size() == 1)
@@ -12,6 +26,16 @@ void	IRC::Channel::setTopic(const string& new_topic, Client &client)
 	time(&this->_topicSetTime);
 }
 
+/**
+ * @brief Applies a channel mode change (e.g., +b, -t, +l).
+ *
+ * Delegates the specific mode logic to the relevant handler function.
+ *
+ * @param mode The mode string, including the + or - (e.g. "+b").
+ * @param args Optional arguments (e.g., for limit or ban masks).
+ * @param client The client issuing the mode command.
+ * @return int 1 if the mode was handled, 0 if the flag is unknown.
+ */
 int IRC::Channel::setChannelMode(string mode, string args, Client &client)
 {
 	// Ensure mode string is valid
@@ -37,6 +61,14 @@ int IRC::Channel::setChannelMode(string mode, string args, Client &client)
     return (1);
 }
 
+/**
+ * @brief Internally updates the channel mode string based on input.
+ *
+ * Adds or removes a single-character mode flag depending on whether
+ * the mode string starts with '+' or '-'.
+ *
+ * @param mode The mode string (e.g., "+t" or "-l").
+ */
 void	IRC::Channel::_setChannelMode(string mode)
 {
 	size_t pos = this->_channel_modes.find(mode[1]);

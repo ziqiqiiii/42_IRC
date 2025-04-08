@@ -28,6 +28,7 @@ int	main(int argc, char **argv)
 		std::cerr << "Error: " << e.what() << '\n';
 		return (1);
 	}
+	IRC::Logger::destroyInstance();
 	IRC::Server::destroyInstance();
 	return (0);
 }

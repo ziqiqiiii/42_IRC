@@ -57,6 +57,22 @@ IRC::Logger* IRC::Logger::getInstance() {
 }
 
 /**
+ * @brief Destroys the singleton instance of the Logger.
+ *
+ * This method safely deletes the logger instance and sets the pointer to NULL.
+ * A mutex lock is used to ensure thread-safe destruction.
+ */
+void	IRC::Logger::destroyInstance()
+{
+	if (instancePtr != NULL) {
+		pthread_mutex_lock(&mtx);
+		delete instancePtr;
+		instancePtr = NULL;
+		pthread_mutex_unlock(&mtx);
+	}
+}
+
+/**
  * @brief Logs a formatted message to the console with the specified color.
  *
  * This method uses ANSI escape codes to print the message in the given color.
