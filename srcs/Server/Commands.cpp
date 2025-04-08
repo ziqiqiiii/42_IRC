@@ -144,9 +144,9 @@ void	IRC::Server::part(std::stringstream &args, Client &client)
 	{
 		if (this->leaveChannel(*it, &client))
 		{
-			Channel	*channel = this->getChannel(*it);
+			Channel*	channel = this->getChannel(*it);
 			if (channel)
-				channel->notifyAll(PART(client.getNickname(), *it, reason), NULL);	
+				channel->notifyAll(PART(client.getNickname(), *it, reason), NULL);
 			client.sendResponse(PART(client.getNickname(), *it, reason));
 		}
 	}
