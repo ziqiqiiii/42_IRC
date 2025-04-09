@@ -231,7 +231,6 @@ void	IRC::Server::_parseExec(Client &client)
 				break ;
 			command_name.clear();
 		}
-		command_name = IRC::Utils::stringToUpper(command_name);
 		command = this->getCommand(command_name);
 		if (!client.getRegistered())
 			this->_handleUnregisteredClient(client, command_name, command, message);

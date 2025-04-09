@@ -10,6 +10,7 @@
  */
 t_irc_cmd	IRC::Server::getCommand(string name)
 {
+	name = IRC::Utils::stringToUpper(name);
 	std::map<string, t_irc_cmd>::iterator it = this->_commands.find(name);
 
 	if (it == this->_commands.end())
