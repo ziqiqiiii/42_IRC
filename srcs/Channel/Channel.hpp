@@ -3,7 +3,7 @@
 # include "ircserv.hpp"
 
 # define MAX_KEY_LEN	10
-# define CHANNEL_MODES	"belt"
+# define CHANNEL_MODES	"belti"
 
 namespace IRC
 {
