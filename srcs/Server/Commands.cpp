@@ -35,6 +35,8 @@ void	IRC::Server::nick(std::stringstream &args, Client &client)
 {
 	string nickname;
 	args >> nickname;
+	if (IRC::Utils::stringToUpper(nickname) == IRC::Utils::stringToUpper(client.getNickname()))
+		return ;
 	if (nickname.empty())
 		client.sendResponse(ERR_NONICKNAMEGIVEN(client.getNickname()));
 	else if (!IRC::Utils::isValidNickname(nickname))

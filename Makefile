@@ -22,7 +22,7 @@ NAME			=	ircserv
 
 CC				=	c++
 RM				=	rm -rf
-CFLAGS			=	-Wall -Wextra -Werror -D_GLIBCXX_DEBUG -fsanitize=address -g3 -std=c++98
+CFLAGS			=	-Wall -Wextra -Werror -fsanitize=address -g3 -std=c++98
 
 ### Commandes
 
