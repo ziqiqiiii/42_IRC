@@ -144,6 +144,7 @@ void	IRC::Server::topic(std::stringstream &args, Client &client)
 	Channel	*channel;
 	string	channel_name;
 	string	topic;
+
 	args >> channel_name;
 	topic = IRC::Utils::getRestOfStream(args);
 	channel = this->getChannel(channel_name);
@@ -155,15 +156,13 @@ void	IRC::Server::topic(std::stringstream &args, Client &client)
 		client.sendResponse(ERR_NOTONCHANNEL(client.getNickname(), channel_name));
 	else if (topic.empty())
 		this->_handleEmptyTopic(client, *channel);
-	else if (channel->getChannelModes().find('t') != string::npos)
-	{	
-		if (channel->isOperator(&client))
-			channel->setTopic(topic, client);
-		else
-			client.sendResponse(ERR_CHANOPRIVSNEEDED(client.getNickname(), channel_name));
+	else if (channel->getChannelModes().find('t') == string::npos || (channel->getChannelModes().find('t') != string::npos && channel->isOperator(&client)))
+	{
+		channel->setTopic(topic, client);
+		channel->notifyAll(TOPIC(client.getNickname(), channel->getName(), topic), NULL);
 	}
 	else
-		channel->setTopic(topic, client);
+		client.sendResponse(ERR_CHANOPRIVSNEEDED(client.getNickname(), channel_name));
 }
 
 /**

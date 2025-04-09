@@ -36,6 +36,7 @@
 # define DEFAULT_KICK_MSG "No reason given"
 
 // Message replies
+# define TOPIC(client, channel, topic)					(":" + client + " TOPIC " + channel + " " + topic)
 # define ERROR(reason)									(": ERROR " + reason)
 # define QUIT(client, reason)							(":" + client + " QUIT " + ":" + reason)
 # define JOIN(client, channel)							(":" + client + " JOIN " + channel)
