@@ -34,13 +34,22 @@ IRC::Client*	IRC::Command::_getClient(const string& name)
 
 void	IRC::Command::execute(std::vector<string>& args, IRC::Client& issuer)
 {
+	IRC::Logger*	logger = IRC::Logger::getInstance();
+
+	this->_issuer = &issuer;
 	if (args.size() < this->_min_args)
 	{
 		issuer.sendResponse(ERR_NEEDMOREPARAMS(issuer.getNickname(), this->_name));
-		throw std::runtime_error("Need more params");
+		return ;
 	}
-	this->_issuer = &issuer;
-	this->_parse(args);
-	this->_validate();
-	this->_operate();
+	try
+	{
+		this->_parse(args);
+		this->_validate();
+		this->_operate();
+	}
+	catch(std::exception &e)
+	{
+		logger->logMsg(RED, (this->_name + " command error: " + e.what()).c_str());
+	}
 }
