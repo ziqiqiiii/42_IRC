@@ -88,6 +88,7 @@ namespace IRC
 			void			joinChannel(const string& channel_name, Client* client);
 			int				leaveChannel(Channel *channel, Client* client);
 			int				leaveChannel(const string& channel_name, Client* client);
+			void			notifyAllJoined(const string& message, Client* client);
 			void			notifyAll(const string& message);
 			void			closeConnection(int fd, const string& quit_msg);
 

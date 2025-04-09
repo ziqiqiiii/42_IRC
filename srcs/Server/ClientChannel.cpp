@@ -135,6 +135,18 @@ void	IRC::Server::notifyAll(const string& message)
 		channel_it->second->notifyAll(message, NULL);
 }
 
+void	IRC::Server::notifyAllJoined(const string& message, Client* client)
+{
+	string	nickname = client->getNickname();
+
+	for (std::map<string, Channel*>::iterator it = this->_channels.begin(); it != this->_channels.end(); it++)
+	{
+		if (it->second->getClient(nickname))
+			it->second->notifyAll(message, client);
+	}
+}
+
+
 /**
  * @brief Closes a client connection and removes the client from the server.
  *
