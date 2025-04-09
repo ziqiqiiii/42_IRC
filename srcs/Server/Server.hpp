@@ -74,6 +74,7 @@ namespace IRC
 			Client			*getClient(string name);
 			Channel			*getChannel(string name);
 			int				getSocketFd() const;
+			string			getPassword() const;
 
 			// ───── Epoll Handlers ─────
 			void			epollAdd(int fd, int flags);

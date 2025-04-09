@@ -80,3 +80,5 @@ IRC::Channel	*IRC::Server::getChannel(string name)
  * @return int The socket file descriptor.
  */
 int		IRC::Server::getSocketFd() const { return this->_socketFd; }
+
+string	IRC::Server::getPassword() const { return (this->_password); }
