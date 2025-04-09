@@ -45,6 +45,7 @@ namespace IRC
 			void			_deleteSocket();
 			
 			// IRC::Server::run()'s helper functions
+			void			_handleUnregisteredClient(Client& client, const string& command_name, t_irc_cmd& command, std::stringstream& args);
 			void			_handleNewConnection();
 			void			_handleClientPacket(struct epoll_event &event);
 			void			_parseExec(Client &client);

@@ -191,6 +191,21 @@ void	IRC::Server::_handleClientPacket(struct epoll_event &event)
 	_parseExec(client);
 }
 
+void	IRC::Server::_handleUnregisteredClient(Client& client, const string &command_name, t_irc_cmd& command, std::stringstream& args)
+{
+	if (string("PASS NICK USER").find(command_name) != string::npos)
+	{
+		(this->*command)(args, client);
+		if (!client.getUsername().empty() && client.getAuthenticated() && client.getNickname() != "*")
+		{
+			client.setRegistered(true);
+			client.sendResponse(RPL_WELCOME(client.getNickname()));
+		}
+	}
+	else
+		client.sendResponse(ERR_NOTREGISTERED(client.getNickname()));
+}
+
 /**
  * @brief Parses and executes a complete IRC command from a client's buffer.
  *
@@ -218,19 +233,14 @@ void	IRC::Server::_parseExec(Client &client)
 		}
 		command_name = IRC::Utils::stringToUpper(command_name);
 		command = this->getCommand(command_name);
-		if (!client.getRegistered() && string("PASS NICK USER").find(command_name) == string::npos && command)
-			client.sendResponse(ERR_NOTREGISTERED(client.getNickname()));
-		else if (client.getRegistered() && !command)
+		if (!client.getRegistered())
+			this->_handleUnregisteredClient(client, command_name, command, message);
+		else if (!command)
 			client.sendResponse(ERR_UNKNOWNCOMMAND(client.getNickname(), command_name));
-		else if (command)
+		else
 			(this->*command)(message, client);
 		if (!this->getClient(client_fd))
 			return ;
-		if (!client.getRegistered() && !client.getUsername().empty() && client.getAuthenticated() && client.getNickname() != "*")
-		{
-			client.setRegistered(true);
-			client.sendResponse(RPL_WELCOME(client.getNickname()));
-		}
 		buffer.erase(0, delim + 1);
 		command_name.clear();
 	}
