@@ -82,14 +82,17 @@ int	IRC::Channel::detach(IRC::Client* client)
 	string			client_nick = client->getNickname();
 	IRC::Logger*	logManager = IRC::Logger::getInstance();
 
-	std::map<string, IRC::Client*>::iterator it = this->_clients.find(client_nick);
-	if (it == this->_clients.end())
+	std::map<string, IRC::Client*>::iterator	clients_it = this->_clients.find(client_nick);
+	std::vector<IRC::Client*>::iterator			operators_it = std::find(this->_operators.begin(), this->_operators.end(), client);
+	if (clients_it == this->_clients.end())
 	{
 		client->sendResponse(ERR_NOTONCHANNEL(client->getNickname(), this->_channel_name));
 		logManager->logMsg(RED, (client->getNickname() + " doesn't exist in channel " + this->_channel_name).c_str(), strerror(errno));
 		return (0);
 	}
-	this->_clients.erase(it);
+	if (operators_it != this->_operators.end())
+		this->_operators.erase(operators_it);
+	this->_clients.erase(clients_it);
 	return (1);
 }
 
@@ -209,8 +212,8 @@ void	IRC::Channel::_handleClientLimitMode(string mode, const string &args, Clien
 	string	str_clt_lmt;
 
 	// ───── Check for empty parameters ─────
-	if (args.empty())
-		return ;
+	// if (args.empty())
+	// 	return ;
 	// ───── Permission check ─────
 	if (!this->isOperator(&client))
 		return client.sendResponse(ERR_CHANOPRIVSNEEDED(client.getNickname(), this->getName()));
@@ -230,6 +233,23 @@ void	IRC::Channel::_handleClientLimitMode(string mode, const string &args, Clien
 	this->notifyAll(MODE(client.getNickname(), this->getName(), mode + " " + str_clt_lmt), NULL);
 	// ───── Update the _channel_modes ─────
 	this->_setChannelMode(mode);
+}
+
+void	IRC::Channel::_handleOperatorMode(string mode, const string& args, Client& client)
+{
+	Client*	target = this->getClient(args);
+
+	if (args.empty())
+		return ;
+	if (!target)
+	{
+		client.sendResponse(ERR_USERNOTINCHANNEL(client.getNickname(), args,this->_channel_name));
+		return ;
+	}
+	if (this->isOperator(target))
+		return ;
+	if (mode[0] == '+')
+		this->_operators.push_back(target);
 }
 
 /**
