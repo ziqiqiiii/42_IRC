@@ -2,7 +2,7 @@
 
 # include "ircserv.hpp"
 
-# define USER_MODES "io"
+# define USER_MODES "i"
 
 namespace IRC
 {
