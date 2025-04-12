@@ -182,11 +182,11 @@ void	IRC::Server::_handleClientPacket(struct epoll_event &event)
 	bzero(buffer, BUFFER_SIZE);
 	if (event.events & (EPOLLERR | EPOLLHUP) || !recv(event.data.fd, buffer, BUFFER_SIZE, 0))
 	{
-		logManager->logMsg(LIGHT_BLUE, ("Client " + IRC::Utils::intToString(event.data.fd) + "(" + client.getNickname() +")" +" disconnected ").c_str());
+		logManager->logMsg(LIGHT_BLUE, ("Client " + IRC::Utils::intToString(event.data.fd) + "(" + client.getNickMask() +")" +" disconnected ").c_str());
 		closeConnection(event.data.fd, "Client disconnected");
 		return ;
 	}
-	logManager->logMsg(YELLOW, ("Client " + IRC::Utils::intToString(event.data.fd) + " (" + client.getNickname() + ") Packet: [" + buffer + "]").c_str());
+	logManager->logMsg(YELLOW, ("Client " + IRC::Utils::intToString(event.data.fd) + " (" + client.getNickMask() + ") Packet: [" + buffer + "]").c_str());
 	client.addToBuffer(buffer);
 	_parseExec(client);
 }
