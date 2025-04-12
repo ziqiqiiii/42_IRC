@@ -3,7 +3,7 @@
 # include "ircserv.hpp"
 
 # define MAX_KEY_LEN	10
-# define CHANNEL_MODES	"belti"
+# define CHANNEL_MODES	"beltio"
 
 namespace IRC
 {
@@ -37,6 +37,7 @@ namespace IRC
 			void								_handleBanMode(char action, const string &args, IRC::Client &client);
 			void								_handleExceptionMode(char action, const string &args, IRC::Client &client);
 			void								_handleClientLimitMode(string mode, const string &args, Client &client);
+			void								_handleOperatorMode(string mode, const string &args, Client &client);
 			void								_handleProtectedTopicMode(string mode, Client &client);
 			void								_setChannelMode(string mode);
         public:

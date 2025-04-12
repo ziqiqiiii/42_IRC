@@ -55,6 +55,8 @@ int IRC::Channel::setChannelMode(string mode, string args, Client &client)
 		case 'l':
 			this->_handleClientLimitMode(mode, args, client);
 			break;
+		case 'o':
+			this->_handleOperatorMode(mode, args, client);
         default:
 			this->_setChannelMode(mode);
     }
