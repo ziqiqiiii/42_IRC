@@ -59,6 +59,7 @@ int IRC::Channel::setChannelMode(string mode, string args, Client &client)
 			this->_handleOperatorMode(mode, args, client);
         default:
 			this->_setChannelMode(mode);
+			this->notifyAll(MODE(client.getNickname(), this->_channel_name, mode), NULL);
     }
     return (1);
 }

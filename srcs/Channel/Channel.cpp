@@ -171,7 +171,10 @@ void	IRC::Channel::_handleBanMode(char action, const string &args, Client &clien
 		client.sendResponse(RPL_ENDOFBANLIST(client.getNickname(), this->_channel_name));
 	}
 	else
+	{
 		this->_handleNewMaskMode(action, this->_ban_list, args);
+		this->notifyAll(MODE(client.getNickname(), this->_channel_name, "+b " + args), NULL);
+	}
 }
 
 /**
@@ -192,7 +195,10 @@ void	IRC::Channel::_handleExceptionMode(char action, const string &args, Client 
 		client.sendResponse(RPL_ENDOFEXCEPLIST(client.getNickname(), this->_channel_name));
 	}
 	else
+	{
 		this->_handleNewMaskMode(action, this->_exception_list, args);
+		this->notifyAll(MODE(client.getNickname(), this->_channel_name, "+e " + args), NULL);
+	}
 }
 
 /**
@@ -249,7 +255,10 @@ void	IRC::Channel::_handleOperatorMode(string mode, const string& args, Client& 
 	if (this->isOperator(target))
 		return ;
 	if (mode[0] == '+')
+	{
 		this->_operators.push_back(target);
+		this->notifyAll(MODE(client.getNickname(), this->_channel_name, "+o " + target->getNickname()), NULL);
+	}
 }
 
 /**
